@@ -1,0 +1,29 @@
+<launch>
+  <!--remap from="/cmd_vel" to ="mobile_base/commands/velocity"/-->
+  <include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"/>
+  <!--node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0  world map 100" /-->
+<!--
+  <include file="$(find gazebo_ros)/launch/willowgarage_world.launch"/>
+  <include file="$(find turtlebot_gazebo)/launch/single_robot.launch">
+    <arg name="init_pose" value="x 1 y 1 z 0" />
+    <arg name="robot_name"  value="robot" /> 
+  </include>
+  -->
+  <node name="rviz" type="rviz" pkg="rviz" args="-d $(find my_2d_nav)/rviz/single_robot.rviz" />
+  <!--node name="rviz" type="rviz" pkg="rviz" args="-d $(find my_2d_nav)/rviz/config.rviz" /-->
+
+  <!--include file="/home/mastertsoutsos/catkin_ws/src/crsm-slam-ros-pkg/crsm_slam/launch/crsm_slam_simulation.launch" /-->
+  
+  <!--include file="$(find my_2d_nav)/move_base_config/move_base.xml"/-->
+
+</launch>
+
+
+
+
+
+
+
+
+
+

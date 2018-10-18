@@ -1,0 +1,23 @@
+<launch>
+
+  <!--node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/playground.pgm"/-->
+  <!--- Run AMCL --> 
+      <!--include file="$(find my_2d_nav)/move_base_config/amcl_node.xml" /-->
+      
+
+
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <remap from="cmd_vel" to="mobile_base/commands/velocity"/>
+    <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
+    <rosparam file="$(find my_2d_nav)/move_base_config/costmap_common_params1.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find my_2d_nav)/move_base_config/costmap_common_params1.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find my_2d_nav)/move_base_config/local_costmap_params1.yaml" command="load" />
+    <rosparam file="$(find my_2d_nav)/move_base_config/global_costmap_params1.yaml" command="load" />
+    <rosparam file="$(find my_2d_nav)/move_base_config/move_base_params.yaml" command="load" />
+    <rosparam file="$(find my_2d_nav)/move_base_config/dwa_local_planner_params.yaml" command="load"/>
+    <!-- rosparam file="$(find my_2d_nav)/move_base_config/base_local_planner_params.yaml" command="load"/ -->
+
+  </node>
+
+
+</launch>
