@@ -32,21 +32,21 @@ class Topology:
     skeleton = Cffi.thinning(local, ogml)
     skeleton = Cffi.prune(skeleton, ogml, 10)
   
-    # viz = []
-    # for i in range(0, width):
-    #   for j in range(0, height):
-    #     if skeleton[i][j] == 1:
-    #       viz.append([i * resolution + origin['x'],j * resolution + origin['y']])
+    viz = []
+    for i in range(0, width):
+      for j in range(0, height):
+        if skeleton[i][j] == 1:
+          viz.append([i * resolution + origin['x'],j * resolution + origin['y']])
 
-    # RvizHandler.printMarker(\
-    #         viz,\
-    #         1, # Type: Arrow
-    #         0, # Action: Add
-    #         "map", # Frame
-    #         "art_skeletonization_cffi", # Namespace
-    #         [0.5, 0, 0, 0.5], # Color RGBA
-    #         0.05 # Scale
-    #     )
+    RvizHandler.printMarker(\
+            viz,\
+            1, # Type: Arrow
+            0, # Action: Add
+            "map", # Frame
+            "art_skeletonization_cffi", # Namespace
+            [0.5, 0, 0, 0.5], # Color RGBA
+            0.05 # Scale
+        )
 
     return skeleton
 
@@ -98,13 +98,11 @@ class Topology:
     
     width = ogm.shape[0]
     height = ogm.shape[1]
-    # width = coverage.shape[0]
-    # height = coverage.shape[1]
 
     for i in range(1, width - 1):
       for j in range(1, height - 1):
-        if ogm[i][j] <= 49 and coverage[i][j] != 100 and \
-            brush[i][j] > 3 and skeleton[i][j] == 1:
+        if ogm[i][j] <= 49 and brush[i][j] > 3 and \
+            skeleton[i][j] == 1 and coverage[i][j] != 100:
           c = 0
           for ii in range(-1, 2):
             for jj in range(-1, 2):
@@ -145,4 +143,5 @@ class Topology:
             if c == 2:
               tmp_img[i][j] = 0
       img = numpy.copy(tmp_img)
-return img
+    return img
+
