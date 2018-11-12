@@ -7,7 +7,7 @@ import random
 #import this
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from nav_msgs.msg import OccupancyGrid
-from target_selection_class import TargetSelect
+
 
 
 
@@ -19,10 +19,7 @@ def movebase_client():
     goal = MoveBaseGoal()
     goal.target_pose.header.frame_id = "map"
     goal.target_pose.header.stamp = rospy.Time.now()
-   
-    t1 = TargetSelect()
-    # t1.rotateRobot()
-
+    
     c = 5
     x = random.randrange(-c,c)
     y = random.randrange(-c,c)

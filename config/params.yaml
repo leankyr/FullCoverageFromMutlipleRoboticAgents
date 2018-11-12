@@ -1,0 +1,12 @@
+#~ Goal Selection Param File ~#
+
+#~ General Parameters
+slam_map: /map                              # SLAM map topic
+coverage_map: /coverage_map                 # Coverage map topic
+map_frame: map                              # Map frame
+base_footprint_frame: base_footprint        # Base footprint frame
+# velocity pub topic
+velocity_pub: /mobile_base/commands/velocity
+resolution: 0.05                        # Map resolution
+
+
