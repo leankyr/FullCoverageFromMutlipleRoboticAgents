@@ -11,11 +11,12 @@ import numpy
 
 from geometry_msgs.msg import PoseStamped, Twist
 from nav_msgs.msg import OccupancyGrid
-
+from brushfires import Brushfires
 
 class TargetSelect:
 
     def __init__(self):
+        self.brush = Brushfires()
         # velocity publisher
         self.velocityPub = rospy.Publisher(rospy.get_param('velocity_pub'),Twist,queue_size = 10)
         # subscriber to OGmap 
@@ -33,6 +34,7 @@ class TargetSelect:
         self.listener = tf.TransformListener()
         self.mapFrame = rospy.get_param('map_frame')
         self.baseFrame = rospy.get_param('base_footprint_frame')
+        self.resolution = rospy.get_param('resolution')
 
     def slamCallback(self,data):
         rospy.loginfo("------------------------------")
@@ -59,6 +61,8 @@ class TargetSelect:
         print x_coord
         print y_coord
         
+        origin_x = data.info.origin.position.x
+        origin_y = data.info.origin.position.y
         # the grids dimensions is in meters
         # I don't take into consideration resolution (yet)
         grid = numpy.reshape(data.data,(data.info.width,data.info.height))
@@ -67,7 +71,11 @@ class TargetSelect:
 
         # Somewhere here I have to start BrushFire I guess
         # Check P110 Phd Tsardoulias
-
+        
+        origin = [int(origin_x/self.resolution),int(origin_y/self.resolution)]
+        pose = [int(x_coord),int(y_coord)]
+        brush = self.brush.coverageLimitsBrushfire(grid,grid,pose,origin,self.resolution)
+        print brush
         return
 
     def get_init_rot(self):
