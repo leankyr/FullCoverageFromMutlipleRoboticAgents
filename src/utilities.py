@@ -114,10 +114,10 @@ class OgmOperations:
 
     @staticmethod
     def findUsefulBoundaries(ogm, origin, resolution):
-      min_x = origin[0] / resolution
-      min_y = origin[1] / resolution
-      max_x = origin[0] / resolution
-      max_y = origin[1] / resolution
+      min_x = origin['x'] / resolution
+      min_y = origin['y'] / resolution
+      max_x = origin['x'] / resolution
+      max_y = origin['y'] / resolution
       
       x = ogm.shape[0]
       y = ogm.shape[1]
@@ -171,20 +171,20 @@ class OgmOperations:
       RvizHandler.printMarker(\
             [
                 [
-                    min_x * resolution + origin[0],
-                    min_y * resolution + origin[1]
+                    min_x * resolution + origin['x'],
+                    min_y * resolution + origin['y']
                 ],
                 [
-                    max_x * resolution + origin[0], 
-                    min_y * resolution + origin[1]
+                    max_x * resolution + origin['x'],
+                    min_y * resolution + origin['y']
                 ],
                 [
-                    max_x * resolution + origin[0], 
-                    max_y * resolution + origin[1]
+                    max_x * resolution + origin['x'],
+                    max_y * resolution + origin['y']
                 ],
                 [
-                    min_x * resolution + origin[0], 
-                    max_y * resolution + origin[1]
+                    min_x * resolution + origin['x'],
+                    max_y * resolution + origin['y']
                 ]
             ],\
             1, # Type: Line strip

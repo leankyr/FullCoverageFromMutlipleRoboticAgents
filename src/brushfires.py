@@ -77,6 +77,41 @@ class Brushfires:
         for i in range(1, width - 1):
             for j in range(1, height - 1):
                 if coverage[i][j] == 100:
+                    continue
+                if coverage[i][j] == -1:
+                #if coverage[i][j] == 0:
+                    ogm_ok = True
+                    for ii in range(-1, 2):
+                        for jj in range(-1, 2):
+                            if ogm[i + ii][j + jj] > 49:
+                            #if ogm[i + ii][j + jj] < 49:
+                                ogm_ok = False
+                    if ogm_ok is False:
+                        continue
+                    cov_ok = False
+                    for ii in range(-1, 2):
+                        for jj in range(-1, 2):
+                            if coverage[i + ii][j + jj] != 100:
+                            #if coverage[i + ii][j + jj] == 0:
+                                cov_ok = True
+                    if cov_ok:
+                        limits.add((\
+                                float(i) * resolution + origin['x'], \
+                                float(j) * resolution + origin['y']\
+                                ))
+        return limits
+        
+    def coverageLimitsBrushfire2(self, ogm, coverage, robot_pose, origin, resolution):
+
+        limits = Set()
+
+        width = ogm.shape[0]
+        height = ogm.shape[1]
+
+        for i in range(1, width - 1):
+            for j in range(1, height - 1):
+                #if coverage[i][j] == -1:
+                if coverage[i][j] == 100:
                     ogm_ok = True
                     for ii in range(-1, 2):
                         for jj in range(-1, 2):
@@ -95,6 +130,7 @@ class Brushfires:
                                 float(j) * resolution + origin['y']\
                                 ))
         return limits
+
 
     def closestUncoveredBrushfire(self, ogm, coverage, brushogm, robot_pose, origin, resolution):
         limits = Set()

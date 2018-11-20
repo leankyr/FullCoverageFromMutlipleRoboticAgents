@@ -4,17 +4,18 @@ import rospy
 import actionlib
 import time
 import math
+import random
 from geometry_msgs.msg import PoseStamped, Twist
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node import SubscriberNode
-#from target_select import SelectTarget #,selectRandomTarget
+from target_selection_class import TargetSelect #,selectRandomTarget
 
 
 class SendMoveBaseGoalClient:
 
     def __init__(self):
         self.subNode = SubscriberNode()
-        #self.selectTarget = SelectTarget()
+        self.selectTarget = TargetSelect()
         # self.selectTarget = selectRandomTarget()
         self.moveBaseGoal = MoveBaseGoal()
 
@@ -31,22 +32,23 @@ class SendMoveBaseGoalClient:
 
     def calculateSendGoal(self, event):
         ogm = self.subNode.getSlamMap()
+        costmap = self.subNode.getCostMap()
         #coverage = self.subNode.getCoverage()
         origin = self.subNode.origin
         robotPose = self.subNode.robotPose
         resolution = rospy.get_param('resolution')
 
-        #target = self.selectTarget.targetSelection(ogm, coverage, origin, \
-        #                            resolution, robotPose)
+        target = self.selectTarget.targetSelection(ogm,costmap, origin, \
+                                    resolution, robotPose)
 
         # self.rotateRobot()
 
         moveBaseClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)
 
-        #self.moveBaseGoal.target_pose.pose.position.x = float(target[0])
-        #self.moveBaseGoal.target_pose.pose.position.y = float(target[1])
-        self.moveBaseGoal.target_pose.pose.position.x = float(-3)
-        self.moveBaseGoal.target_pose.pose.position.y = float(-2)
+        self.moveBaseGoal.target_pose.pose.position.x = float(target[0])
+        self.moveBaseGoal.target_pose.pose.position.y = float(target[1])
+        #self.moveBaseGoal.target_pose.pose.position.x = float(-3)
+        #self.moveBaseGoal.target_pose.pose.position.y = float(-2)
         self.moveBaseGoal.target_pose.pose.position.z = 0.0
         self.moveBaseGoal.target_pose.pose.orientation.x = 0.0
         self.moveBaseGoal.target_pose.pose.orientation.y = 0.0

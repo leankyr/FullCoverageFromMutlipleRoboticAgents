@@ -7,7 +7,7 @@ DWAPlannerROS:
   acc_lim_y: 0.0
 
   max_vel_x: 0.3 # used to be 0.5
-  min_vel_x: -0.3 #set negative to make robot go reverse gear
+  min_vel_x: -0.3  #set negative to make robot go reverse gear
 
   max_vel_y: 0.0
   min_vel_y: 0.0

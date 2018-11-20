@@ -3,83 +3,191 @@
 
 import rospy
 import actionlib
+import scipy
 import time
 import math
 import tf
 import numpy
+import random
+import bresenham
 
-
+from utilities import OgmOperations
 from geometry_msgs.msg import PoseStamped, Twist
 from nav_msgs.msg import OccupancyGrid
 from brushfires import Brushfires
+from topology import Topology
 
+visited = set()
 class TargetSelect:
 
     def __init__(self):
-        self.brush = Brushfires()
-        # velocity publisher
-        self.velocityPub = rospy.Publisher(rospy.get_param('velocity_pub'),Twist,queue_size = 10)
-        # subscriber to OGmap 
-        self.mapSub = rospy.Subscriber(rospy.get_param('slam_map'),OccupancyGrid,self.slamCallback,queue_size = 1, buff_size=2**24)
-        # Map Dimensions
-        self.coverage = OccupancyGrid()
         self.xLimitUp = 0
         self.xLimitDown = 0
         self.yLimitUp = 0
         self.yLimitDown = 0
-        self.resolution = rospy.get_param('resolution')
-        # self.height = data.info.height
-        # self.width = data.info.width
 
-        self.listener = tf.TransformListener()
-        self.mapFrame = rospy.get_param('map_frame')
-        self.baseFrame = rospy.get_param('base_footprint_frame')
-        self.resolution = rospy.get_param('resolution')
-
-    def slamCallback(self,data):
-        rospy.loginfo("------------------------------")
-        #rospy.loginfo("[Target Select Node] map_origin: [x,y] = [%f, %f]", \
-        #                data.info.origin.position.x , data.info.origin.position.x)
-        #rospy.loginfo("[Target Select Node] dims: [width,height] = [%f, %f]", \
-        #                data.info.width , data.info.height)
-
-        # Calculate Robot's Pose
-        try:
-            (translation, rotation) = self.listener.lookupTransform\
-            (self.mapFrame, self.baseFrame, rospy.Time(0))
-        except (tf.LookupException, tf.ConnectivityException, \
-            tf.ExtrapolationException):
-            rospy.logwarn("Error in tf")
+        self.brush = Brushfires()
+        self.topo = Topology()
+        self.target = [-1, -1]
+        self.previousTarget = [-1, -1]
+        self.costs = []
 
 
-        rospy.loginfo("[Target Select Node] Robot Pose: [x,y] = [%f, %f]", \
-                        translation[0], translation[1])
-        
-        x_coord = round(translation[0] + data.info.width/2)
-        y_coord = round(translation[1] + data.info.height/2)
+    def targetSelection(self, initOgm,costmap, origin, resolution, robotPose):
+        rospy.loginfo("-----------------------------------------")
+        rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", \
+                    robotPose['x'], robotPose['y'], robotPose['th'])
+        rospy.loginfo("[Target Select Node] OGM_Origin = [%i, %i]", origin['x'], origin['y'])
+        rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
-        print x_coord
-        print y_coord
-        
-        origin_x = data.info.origin.position.x
-        origin_y = data.info.origin.position.y
-        # the grids dimensions is in meters
-        # I don't take into consideration resolution (yet)
-        grid = numpy.reshape(data.data,(data.info.width,data.info.height))
-        print grid[x_coord,y_coord]
-        # This returns 0 (fee space) as expected
+        ogmLimits = {}
+        ogmLimits['min_x'] = -1
+        ogmLimits['max_x'] = -1
+        ogmLimits['min_y'] = -1
+        ogmLimits['max_y'] = -1
 
-        # Somewhere here I have to start BrushFire I guess
-        # Check P110 Phd Tsardoulias
-        
-        origin = [int(origin_x/self.resolution),int(origin_y/self.resolution)]
-        pose = [int(x_coord),int(y_coord)]
-        brush = self.brush.coverageLimitsBrushfire(grid,grid,pose,origin,self.resolution)
-        print brush
-        return
+        # Find only the useful boundaries of OGM. Only there calculations have meaning
+        ogmLimits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
+        print (ogmLimits)
+        while ogmLimits['min_x'] < 0 or ogmLimits['max_x'] < 0 or \
+                ogmLimits['min_y'] < 0 or ogmLimits['max_y'] < 0:
+            rospy.logwarn("[Main Node] Negative OGM limits. Retrying...")
+            ogmLimits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
+            ogmLimits['min_x'] = abs(int(ogmLimits['min_x']))
+            ogmLimits['min_y'] = abs(int(ogmLimits['min_y']))
+            ogmLimits['max_x'] = abs(int(ogmLimits['max_x']))
+            ogmLimits['max_y'] = abs(int(ogmLimits['max_y']))
+        rospy.loginfo("[Target Select] OGM_Limits[x] = [%i, %i]", \
+                            ogmLimits['min_x'], ogmLimits['max_x'])
+        rospy.loginfo("[Target Select] OGM_Limits[y] = [%i, %i]", \
+                            ogmLimits['min_y'], ogmLimits['max_y'])
 
-    def get_init_rot(self):
-        return self.init_rot
+        # Blur the OGM to erase discontinuities due to laser rays
+        ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogmLimits)
+
+        # Calculate Brushfire field
+        #itime = time.time()
+        #brush = self.brush.obstaclesBrushfireCffi(ogm, ogmLimits)
+        #rospy.loginfo("[Target Select] Brush ready! Elapsed time = %fsec", time.time() - itime)
+
+        #obst = self.brush.coverageLimitsBrushfire2(initOgm,ogm,robotPose,origin, resolution )
+        rospy.loginfo("Calculating brush2....")
+        brush2 = self.brush.coverageLimitsBrushfire(ogm,ogm,robotPose,origin, resolution )
+
+        #robotPosePx = []
+        #robotPosePx[0] = robotPose['x']/resolution
+        #robotPosePy[1] = robotPose['y']/resolution
+        #print 'brush2 is :'
+        #print brush2
+        min_dist = 10**24
+        store_goal = ()
+       # rospy.loginfo("finding the difference between the two sets...")
+       # brush2.difference(visited)
+        #max_dist = random.randrange(1,10)
+        #rospy.loginfo("max_dist for this it is: %d ", max_dist)
+        for goal in brush2:
+            #goal = list(goal)
+            #dist = math.hypot(goal[0] - robotPose['x'],goal[1] - robotPose['y'])\
+            # manhattan dist
+            dist = abs(goal[0] - robotPose['x']) + abs(goal[1] - robotPose['y'])
+            if dist < min_dist: #and dist > max_dist:
+                found = False
+                ### in this loop I try to see if goal is a frontier but does not seem to work
+                for i in range(-15,16):
+                    # this found shot worked in the end
+                    for j in range(-15,16):
+                        if ogm[goal[0]/resolution - origin['x'] + i][goal[1]/resolution - origin['y'] + j]\
+                                    != -1:
+                         #if costmap[goal[0]][goal[1]] == 100:
+                            print "continued!!"
+                            found = True
+                            break
+                    if found == True:
+                        break
+
+                if found == True:
+                    continue
+
+                if costmap[goal[0]/resolution - origin['x']][goal[1]/resolution - origin['y']] >= 128:
+                    print 'Goal on obstacle!!!'
+                    continue
+
+                #goal[0] = round(goal[0],2)
+                #goal[1] = round(goal[1],2)
+                #goal = tuple(goal)
+                #if goal in visited:
+                #    print "goal in Banlist!!"
+                    #store_goal = self.selectRandomTarget(self, ogm, brush2, origin, ogmLimits, resolution)
+                #    continue
+
+                #visited.add(goal)
+                # print "ban list is:"
+                # print ban_list
+                min_dist = dist
+                visited.add(goal)
+                store_goal = goal
+
+
+        #rospy.loginfo(" Costmap vaule of our goal is: %d",costmap[store_goal[0]][store_goal[1]] )
+        rospy.loginfo("min dist is %f" , min_dist)
+
+        #rospy.loginfo("Costmap Value is: %d", costmap[goal[0]/resolution - origin['x']][goal[1]/resolution\
+        #                - origin['y']])
+       # store_goal[0] = store_goal[0] + random.randrange(-2,2)
+       # store_goal[1] = store_goal[1] + random.randrange(-2,2)
+        #visited.add(store_goal)
+        store_goal = list(store_goal)
+        rospy.loginfo("goal BEFORE unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
+        if min_dist < 0.5:
+            while(1):
+                store_goal[0] = random.uniform(store_goal[0] - 2,store_goal[0] + 2)
+                store_goal[1] = random.uniform(store_goal[1] - 2,store_goal[1] + 2)
+                if costmap[store_goal[0]][store_goal[1]] < 128:
+                    break
+
+        rospy.loginfo("goal AFTER unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
+        self.target = store_goal
+
+        print self.target
+        # print brush2
+        #print brush
+        # Calculate skeletonization
+        #itime = time.time()
+        #skeleton = self.topo.skeletonizationCffi(ogm, origin, resolution, ogmLimits)
+        #rospy.loginfo("[Target Select] Skeleton ready! Elapsed time = %fsec", time.time() - itime)
+
+        # Find topological graph (nodes coordinates are in PIXELS!!!)
+        #itime = time.time()
+        #nodes = self.topo.topologicalNodes(ogm, skeleton, origin, resolution, \
+        #                                    brush, ogmLimits)
+        #for i in range(len(nodes)):
+        #    rospy.loginfo("[Target Select Nodes are: %d]",nodes[i])
+        #rospy.loginfo("[Target Select] Number of nodes: %d",len(nodes))
+        #print nodes
+
+        #if len(nodes) == 0:
+        #    self.target == self.selectRandomTarget(ogm,brush,origin,ogmLimits,resolution)
+       
+        return self.target
+        #return [-3,-2]
+
+    def selectRandomTarget(self, ogm, brush, origin, ogmLimits, resolution):
+        rospy.logwarn("[Main Node] Random Target Selection!")
+        target = [-1, -1]
+        found = False
+        while not found:
+          x_rand = random.randint(0, int(ogm.shape[0] - 1))
+          y_rand = random.randint(0, int(ogm.shape[1] - 1))
+          if ogm[x_rand][y_rand] <= 49 and brush[x_rand][y_rand] > 3:# and \#coverage[x_rand][y_rand] != 100:
+            tempX = x_rand * resolution + int(origin['x'])
+            tempY = y_rand * resolution + int(origin['y'])
+            target = [tempX, tempY]
+            found = True
+            rospy.loginfo("[Main Node] Random node selected at [%f, %f]", target[0], target[1])
+            rospy.loginfo("-----------------------------------------")
+            return self.target
+
+
 
     def rotateRobot(self):
         velocityMsg = Twist()

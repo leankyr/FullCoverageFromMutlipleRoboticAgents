@@ -1,7 +1,7 @@
 <!--Target Selection Algorithm Launch File-->
 <launch>
 <!-- launch main node -->
-  <node name="target_select_node" type="main.py" pkg="my_2d_nav" output="screen"/>
+  <node name="target_select_node" type="main2.py" pkg="my_2d_nav" output="screen"/>
   <rosparam file="$(find my_2d_nav)/config/params.yaml" command="load" />
 </launch>
 
