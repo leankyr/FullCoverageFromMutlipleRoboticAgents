@@ -17,7 +17,6 @@ from nav_msgs.msg import OccupancyGrid
 from brushfires import Brushfires
 from topology import Topology
 
-visited = set()
 class TargetSelect:
 
     def __init__(self):
@@ -65,6 +64,11 @@ class TargetSelect:
         # Blur the OGM to erase discontinuities due to laser rays
         ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogmLimits)
 
+#        for i in range(len(ogm)):
+#            for j in range(len(ogm)):
+#                if ogm[i][j] == 100:
+#                    rospy.loginfo('i,j = [%d, %d]', i, j)
+#
         # Calculate Brushfire field
         #itime = time.time()
         #brush = self.brush.obstaclesBrushfireCffi(ogm, ogmLimits)
@@ -72,13 +76,16 @@ class TargetSelect:
 
         #obst = self.brush.coverageLimitsBrushfire2(initOgm,ogm,robotPose,origin, resolution )
         rospy.loginfo("Calculating brush2....")
+        # brush = self.brush.obstaclesBrushfireCffi(ogm,ogmLimits)
         brush2 = self.brush.coverageLimitsBrushfire(ogm,ogm,robotPose,origin, resolution )
 
+
+        #goals = self.brush.closestUncoveredBrushfire(ogm, ogm, brush, robotPose, origin, resolution  )
         #robotPosePx = []
         #robotPosePx[0] = robotPose['x']/resolution
         #robotPosePy[1] = robotPose['y']/resolution
-        #print 'brush2 is :'
-        #print brush2
+        print 'size of goals :'
+        print len(goals)
         min_dist = 10**24
         store_goal = ()
        # rospy.loginfo("finding the difference between the two sets...")
@@ -87,30 +94,30 @@ class TargetSelect:
         #rospy.loginfo("max_dist for this it is: %d ", max_dist)
         for goal in brush2:
             #goal = list(goal)
-            #dist = math.hypot(goal[0] - robotPose['x'],goal[1] - robotPose['y'])\
+            dist = math.hypot(goal[0] - robotPose['x'],goal[1] - robotPose['y'])\
             # manhattan dist
-            dist = abs(goal[0] - robotPose['x']) + abs(goal[1] - robotPose['y'])
+            #dist = abs(goal[0] - robotPose['x']) + abs(goal[1] - robotPose['y'])
             if dist < min_dist: #and dist > max_dist:
-                found = False
-                ### in this loop I try to see if goal is a frontier but does not seem to work
-                for i in range(-15,16):
-                    # this found shot worked in the end
-                    for j in range(-15,16):
-                        if ogm[goal[0]/resolution - origin['x'] + i][goal[1]/resolution - origin['y'] + j]\
-                                    != -1:
-                         #if costmap[goal[0]][goal[1]] == 100:
-                            print "continued!!"
-                            found = True
-                            break
-                    if found == True:
-                        break
+#                found = False
+#                ### in this loop I try to see if goal is a frontier but does not seem to work
+#                for i in range(-15,16):
+#                    # this found shot worked in the end
+#                    for j in range(-15,16):
+#                        if ogm[int(goal[0]/resolution - origin['x']/resolution + i)]\
+#                                [int(goal[1]/resolution - origin['y']/resolution + j)] != -1 :
+#                         #if costmap[goal[0]][goal[1]] == 100:
+#                            print "continued!!"
+#                            found = True
+#                            break
+#                    if found == True:
+#                        break
+#
+#                if found == True:
+#                    continue
 
-                if found == True:
-                    continue
-
-                if costmap[goal[0]/resolution - origin['x']][goal[1]/resolution - origin['y']] >= 128:
-                    print 'Goal on obstacle!!!'
-                    continue
+                #if costmap[goal[0]/resolution - origin['x']][goal[1]/resolution - origin['y']] >= 128:
+                #    print 'Goal on obstacle!!!'
+                #    continue
 
                 #goal[0] = round(goal[0],2)
                 #goal[1] = round(goal[1],2)
@@ -124,50 +131,127 @@ class TargetSelect:
                 # print "ban list is:"
                 # print ban_list
                 min_dist = dist
-                visited.add(goal)
                 store_goal = goal
 
 
-        #rospy.loginfo(" Costmap vaule of our goal is: %d",costmap[store_goal[0]][store_goal[1]] )
-        rospy.loginfo("min dist is %f" , min_dist)
+#        #rospy.loginfo(" Costmap vaule of our goal is: %d",costmap[store_goal[0]][store_goal[1]] )
+#        rospy.loginfo("min dist is %f" , min_dist)
+#
+#        #rospy.loginfo("Costmap Value is: %d", costmap[goal[0]/resolution - origin['x']][goal[1]/resolution\
+#        #                - origin['y']])
+#       # store_goal[0] = store_goal[0] + random.randrange(-2,2)
+#       # store_goal[1] = store_goal[1] + random.randrange(-2,2)
+#        #visited.add(store_goal)
+#        store_goal = list(store_goal)
+#        rospy.loginfo("goal BEFORE unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
+#        if min_dist < 0.5:
+#            while(1):
+#                store_goal[0] = random.uniform(store_goal[0] - 0.5, store_goal[0] + 0.5)
+#                store_goal[1] = random.uniform(store_goal[1] - 0.5, store_goal[1] + 0.5)
+#                if costmap[int(store_goal[0]/resolution - origin['x']/resolution)]\
+#                            [int(store_goal[1]/resolution - origin['y']/resolution)] != 100  :
+#                    break
+#
+#
+#        rospy.loginfo('OGM SIZE IS = %d',len(ogm))
+#
+#        found_north = False
+#        c = 10
+#        d = 4
+## expand north
+#        rospy.loginfo("!!!  NORTH  !!!!")
+#        for ii in range(c):
+##            rospy.loginfo("x coord is: %d", int(store_goal[0]/resolution - origin['x']/resolution - ii))
+##            rospy.loginfo("y coord is: %d", int(store_goal[1]/resolution - origin['y']/resolution))
+##            rospy.loginfo("ogm value is: %d",\
+##                    ogm[int(store_goal[0]/resolution - origin['x']/resolution - ii)]\
+##                    [int(store_goal[1]/resolution - origin['y']/resolution)])
+##
+#            if ogm[int(round(store_goal[0])/resolution - origin['x']/resolution - ii)]\
+#                [int(round(store_goal[1])/resolution - origin['y']/resolution)] == 100:
+#                print 'Obstacle found North!!'
+#                found_north = True
+#                break
+## if obst found north adjust target
+#        if found_north == True:
+#            print 'went found into north'
+#            store_goal[0] = round(store_goal[0])  #+ d * resolution
+#
+#
+#        found_south = False
+## expand south
+#        rospy.loginfo("!!!  SOUTH  !!!!")
+#        for ii in range(c):
+##            rospy.loginfo("x coord is: %d", int(store_goal[0]/resolution - origin['x']/resolution + ii))
+##            rospy.loginfo("y coord is: %d", int(store_goal[1]/resolution - origin['y']/resolution))
+##            rospy.loginfo("ogm value is: %d",\
+##                    ogm[int(store_goal[0]/resolution - origin['x']/resolution + ii)]\
+##                    [int(store_goal[1]/resolution - origin['y']/resolution)])
+#
+#            if ogm[int(round(store_goal[0])/resolution - origin['x']/resolution + ii)]\
+#                [int(round(store_goal[1])/resolution - origin['y']/resolution)] == 100:
+#                print 'Obstacle found South!!'
+#                found_south = True
+#                break
+## if obst found south adjust target
+#        if found_south == True:
+#            print 'went found into south'
+#            store_goal[0] = round(store_goal[0])  #- d * resolution
+#
+#        found_east = False
+## expand right
+#        rospy.loginfo("!!!  EAST  !!!!")
+#        for ii in range(c):
+##            rospy.loginfo("x coord is: %d", int(store_goal[0]/resolution - origin['x']/resolution))
+##            rospy.loginfo("y coord is: %d", int(store_goal[1]/resolution - origin['y']/resolution - ii))
+##            rospy.loginfo("ogm value is: %d",\
+##                    ogm[int(store_goal[0]/resolution - origin['x']/resolution)]\
+##                    [int(store_goal[1]/resolution - origin['y']/resolution  - ii)])
+#
+#            if ogm[int(round(store_goal[0])/resolution - origin['x']/resolution)]\
+#            [int(round(store_goal[1])/resolution - origin['y']/resolution - ii)] == 100:
+#                print 'Obstacle found East!!'
+#                found_east = True
+#                break
+## if obst found north adjust target
+#        if found_east == True:
+#            print 'went into found east'
+#            store_goal[1] = round(store_goal[1])  #+ d * resolution
+#
+#        found_west = False
+## expand left
+#        rospy.loginfo("!!!  WEST  !!!!")
+#        for ii in range(c):
+##            rospy.loginfo("x coord is: %d", int(store_goal[0]/resolution - origin['x']/resolution))
+##            rospy.loginfo("y coord is: %d", int(store_goal[1]/resolution - origin['y']/resolution + ii))
+##            rospy.loginfo("ogm value is: %d",\
+##                    ogm[int(store_goal[0]/resolution - origin['x']/resolution)]\
+##                    [int(store_goal[1]/resolution - origin['y']/resolution + ii)])
+##
+#            if ogm[int(round(store_goal[0])/resolution - origin['x']/resolution)]\
+#                [int(round(store_goal[1])/resolution - origin['y']/resolution + ii)] == 100:
+#                print 'Obstacle found West!!'
+#                found_west = True
+#                break
+## if obst found north adjust target
+#        if found_west == True:
+#            print 'went into found west'
+#            store_goal[1] = round(store_goal[1])  #- d * resolution
 
-        #rospy.loginfo("Costmap Value is: %d", costmap[goal[0]/resolution - origin['x']][goal[1]/resolution\
-        #                - origin['y']])
-       # store_goal[0] = store_goal[0] + random.randrange(-2,2)
-       # store_goal[1] = store_goal[1] + random.randrange(-2,2)
-        #visited.add(store_goal)
-        store_goal = list(store_goal)
-        rospy.loginfo("goal BEFORE unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
-        if min_dist < 0.5:
-            while(1):
-                store_goal[0] = random.uniform(store_goal[0] - 2,store_goal[0] + 2)
-                store_goal[1] = random.uniform(store_goal[1] - 2,store_goal[1] + 2)
-                if costmap[store_goal[0]][store_goal[1]] < 128:
-                    break
+
+
 
         rospy.loginfo("goal AFTER unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
+
+        #rospy.loginfo("print Costmap value of goal = [%d]",\
+        #                costmap[int(store_goal[0]/resolution - origin['x'])]\
+        #                                [int(store_goal[1]/resolution - origin['y'])])
+
+
         self.target = store_goal
 
         print self.target
-        # print brush2
-        #print brush
-        # Calculate skeletonization
-        #itime = time.time()
-        #skeleton = self.topo.skeletonizationCffi(ogm, origin, resolution, ogmLimits)
-        #rospy.loginfo("[Target Select] Skeleton ready! Elapsed time = %fsec", time.time() - itime)
 
-        # Find topological graph (nodes coordinates are in PIXELS!!!)
-        #itime = time.time()
-        #nodes = self.topo.topologicalNodes(ogm, skeleton, origin, resolution, \
-        #                                    brush, ogmLimits)
-        #for i in range(len(nodes)):
-        #    rospy.loginfo("[Target Select Nodes are: %d]",nodes[i])
-        #rospy.loginfo("[Target Select] Number of nodes: %d",len(nodes))
-        #print nodes
-
-        #if len(nodes) == 0:
-        #    self.target == self.selectRandomTarget(ogm,brush,origin,ogmLimits,resolution)
-       
         return self.target
         #return [-3,-2]
 
