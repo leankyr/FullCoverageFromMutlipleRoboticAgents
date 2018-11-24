@@ -11,6 +11,6 @@ velocity_pub: /mobile_base/commands/velocity
 # change also delta param according in
 # gmapping.launch.xml in turtlebot
 # navigation package
-resolution: 0.05                 # Map resolution
+resolution: 0.1                 # Map resolution
 
 

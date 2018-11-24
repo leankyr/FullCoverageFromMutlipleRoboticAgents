@@ -17,6 +17,7 @@ from nav_msgs.msg import OccupancyGrid
 from brushfires import Brushfires
 from topology import Topology
 
+import operator
 class TargetSelect:
 
     def __init__(self):
@@ -84,54 +85,89 @@ class TargetSelect:
         #robotPosePx = []
         #robotPosePx[0] = robotPose['x']/resolution
         #robotPosePy[1] = robotPose['y']/resolution
-        print 'size of goals :'
-        print len(goals)
+        print 'size of brush2 :'
+        print len(brush2)
         min_dist = 10**24
         store_goal = ()
        # rospy.loginfo("finding the difference between the two sets...")
        # brush2.difference(visited)
         #max_dist = random.randrange(1,10)
         #rospy.loginfo("max_dist for this it is: %d ", max_dist)
+        throw = set()
         for goal in brush2:
-            #goal = list(goal)
-            dist = math.hypot(goal[0] - robotPose['x'],goal[1] - robotPose['y'])\
-            # manhattan dist
-            #dist = abs(goal[0] - robotPose['x']) + abs(goal[1] - robotPose['y'])
-            if dist < min_dist: #and dist > max_dist:
-#                found = False
-#                ### in this loop I try to see if goal is a frontier but does not seem to work
-#                for i in range(-15,16):
-#                    # this found shot worked in the end
-#                    for j in range(-15,16):
-#                        if ogm[int(goal[0]/resolution - origin['x']/resolution + i)]\
-#                                [int(goal[1]/resolution - origin['y']/resolution + j)] != -1 :
-#                         #if costmap[goal[0]][goal[1]] == 100:
-#                            print "continued!!"
-#                            found = True
-#                            break
-#                    if found == True:
-#                        break
-#
-#                if found == True:
-#                    continue
+            goal = list(goal)
+            for i in range(-10,11):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) ] == 100:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
 
-                #if costmap[goal[0]/resolution - origin['x']][goal[1]/resolution - origin['y']] >= 128:
-                #    print 'Goal on obstacle!!!'
-                #    continue
+        for goal in brush2:
+            goal = list(goal)
+            for j in range(-10,11):
+                if int(goal[1]/resolution - origin['y']/resolution) + j >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution)]\
+                [int(goal[1]/resolution - origin['y']/resolution) + j] == 100:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
 
-                #goal[0] = round(goal[0],2)
-                #goal[1] = round(goal[1],2)
-                #goal = tuple(goal)
-                #if goal in visited:
-                #    print "goal in Banlist!!"
-                    #store_goal = self.selectRandomTarget(self, ogm, brush2, origin, ogmLimits, resolution)
-                #    continue
+        print 'size of throw :'
+        print len(throw)
 
-                #visited.add(goal)
-                # print "ban list is:"
-                # print ban_list
-                min_dist = dist
-                store_goal = goal
+        brush2.difference_update(throw)
+
+        print 'size of brush2 after update :'
+        print len(brush2)
+
+        distance_map = dict()
+        for goal in brush2:
+            dist = math.hypot(goal[0] - robotPose['x'],goal[1] - robotPose['y'])
+            distance_map[goal] = dist
+
+
+        #sorted_dist_map = sorted(distance_map.items(), key=operator.itemgetter(1))
+
+        #for key, value in sorted(distance_map.iteritems(), key=lambda (k,v): (v,k)):
+        #    pass
+            #print "%s: %s" % (key, value)
+
+        #for key in distance_map:
+        #    if distance_map[key] > random.randrange(1,5):
+        #        goal = key
+        #        break
+
+        rand_target = random.choice(distance_map.keys())
+
+        goal = rand_target
+
+        goal = list(goal)
+        goal[0] = goal[0] + random.uniform(-0.5,0.5)
+        goal[1] = goal[1] + random.uniform(-0.5,0.5)
+        print goal
+        self.target = goal
+        #for goal in brush2:
+        #    print sorted_distance_map[goal]
+
+
+        return self.target
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #        #rospy.loginfo(" Costmap vaule of our goal is: %d",costmap[store_goal[0]][store_goal[1]] )
@@ -248,11 +284,11 @@ class TargetSelect:
         #                                [int(store_goal[1]/resolution - origin['y'])])
 
 
-        self.target = store_goal
+        #self.target = store_goal
 
-        print self.target
+        #print self.target
 
-        return self.target
+        #return self.target
         #return [-3,-2]
 
     def selectRandomTarget(self, ogm, brush, origin, ogmLimits, resolution):
