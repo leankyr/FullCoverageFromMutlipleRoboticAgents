@@ -48,9 +48,10 @@ class CoverageMapPublisher:
         # coverage list
         self.coverage_ogm = list()
         # origin of our coverage map
-        self.coverage.info.origin.position.x = self.origin['x']
-        self.coverage.info.origin.position.y = self.origin['y']
-
+        # will try to get from yaml cause from sub node does 
+        # not seem to work
+        self.coverage.info.origin.position.x = rospy.get_param('origin_x')
+        self.coverage.info.origin.position.y = rospy.get_param('origin_y')
 
         # size of our coverage map
         self.coverage.info.width = rospy.get_param('width')
@@ -69,18 +70,17 @@ class CoverageMapPublisher:
 
     # Class Methods 
     def calcSquare(self,event):
-        #rospy.loginfo("Robot Pose is x,y = [%f,%f]", self.pose['x'],self.pose['y'])
+        rospy.loginfo("Robot Pose is x,y = [%f,%f]", self.pose['x'],self.pose['y'])
         #rospy.loginfo("Size of our map is: width,height = [%f,%f]", self.coverage.info.width,\
                 #self.coverage.info.height)
-        rospy.loginfo("origin of our map is: origin_x,origin_y = [%f,%f]", self.origin['x'],\
-                            self.origin['y'])
-
+        #rospy.loginfo("origin of our map is: origin_x,origin_y = [%f,%f]", self.coverage.info.origin.position.x,\
+        #                    self.coverage.info.origin.position.y)
         for i in range(int(-self.radius/self.resolution),int(self.radius/self.resolution) + 1):
             for j in range(int(-self.radius/self.resolution),int(self.radius/self.resolution) + 1):
                 index = int(self.pose['x_px'] - self.origin['x_px']) + i \
                         + self.coverage.info.width \
                         * (int(self.pose['y_px'] - self.origin['y_px']) + j)
- 
+
                 self.coverage.data[index] = 100
 
         self.cov_pub.publish(self.coverage)
