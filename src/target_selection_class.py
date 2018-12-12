@@ -157,22 +157,7 @@ class TargetSelect:
         return self.target
 
 
-
-
-
         rospy.loginfo("goal AFTER unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
-
-        #rospy.loginfo("print Costmap value of goal = [%d]",\
-        #                costmap[int(store_goal[0]/resolution - origin['x'])]\
-        #                                [int(store_goal[1]/resolution - origin['y'])])
-
-
-        #self.target = store_goal
-
-        #print self.target
-
-        #return self.target
-        #return [-3,-2]
 
     def selectRandomTarget(self, ogm, brush, origin, ogmLimits, resolution):
         rospy.logwarn("[Main Node] Random Target Selection!")
@@ -197,7 +182,7 @@ class TargetSelect:
         angularSpeed = 0.3
         relativeAngle = 2*math.pi
         currentAngle = 0
-        
+
         rospy.loginfo("Roatating robot...")
         velocityMsg.linear.x = 0
         velocityMsg.linear.y = 0
@@ -205,7 +190,7 @@ class TargetSelect:
         velocityMsg.angular.x = 0
         velocityMsg.angular.y = 0
         velocityMsg.angular.z = angularSpeed
-        
+
         t0 = rospy.Time.now().to_sec()
         rospy.logwarn(rospy.get_caller_id() + ": Rotate Robot! Please wait...")
         while currentAngle < relativeAngle:
@@ -216,7 +201,6 @@ class TargetSelect:
         velocityMsg.angular.z = 0
         self.velocityPub.publish(velocityMsg)
         rospy.logwarn(rospy.get_caller_id() + ": Robot Rotation OVER!")
-
 
 
 

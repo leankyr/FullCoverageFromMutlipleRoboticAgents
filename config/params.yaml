@@ -13,10 +13,10 @@ velocity_pub: /mobile_base/commands/velocity
 # navigation package
 resolution: 0.1                 # Map resolution
 
-#num_of_sensors: 1
-#
-#dist_of_use_1: 3
-#hfov_1: 360
-sensor_frame_1: base_footprint
+# Radius around pose
+radius: 2
 
+# Size Of Coverage Map
+width: 704
+height: 576
 

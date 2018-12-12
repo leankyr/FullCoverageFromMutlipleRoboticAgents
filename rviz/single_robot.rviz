@@ -385,7 +385,7 @@ Visualization Manager:
       Axes Radius: 0.00999999978
       Class: rviz/PoseArray
       Color: 255; 25; 0
-      Enabled: true
+      Enabled: false
       Head Length: 0.0700000003
       Head Radius: 0.0299999993
       Name: PoseArray
@@ -394,7 +394,7 @@ Visualization Manager:
       Shape: Arrow (Flat)
       Topic: /particlecloud
       Unreliable: false
-      Value: true
+      Value: false
     - Angle Tolerance: 0.100000001
       Class: rviz/Odometry
       Covariance:
@@ -605,7 +605,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 0.214999989
+      Angle: 0.00499985833
       Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
@@ -615,11 +615,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 47.3035126
-      Target Frame: base_link
+      Scale: 10.9799242
+      Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 1.39855027
-      Y: 2.33455491
+      X: 1.40374482
+      Y: 2.30400538
     Saved: ~
 Window Geometry:
   Displays:
