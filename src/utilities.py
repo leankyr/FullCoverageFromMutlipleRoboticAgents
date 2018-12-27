@@ -9,7 +9,7 @@ from timeit import default_timer as timer
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 
-from _cpp_functions import ffi, lib
+from _cpp_functions import ffi ,lib
 
 class Print:
     HEADER = '\033[95m'
@@ -29,19 +29,18 @@ class Cffi:
     @staticmethod
     def brushfireFromObstacles(ogm, brush, ogml):
       #TODO improve: by map limits
-      x = [np.array(v, dtype='int') for v in ogm]
+      x = [np.array(v, dtype='int32') for v in ogm]
       xi = ffi.new(("int* [%d]") % (len(x)))
       for i in range(len(x)):
         xi[i] = ffi.cast("int *", x[i].ctypes.data)
 
-      y = [np.array(v, dtype='int') for v in brush]
+      y = [np.array(v, dtype='int32') for v in brush]
       yi = ffi.new(("int* [%d]") % (len(y)))
       for i in range(len(y)):
         yi[i] = ffi.cast("int *", y[i].ctypes.data)
 
       br_c = lib.brushfireFromObstacles(xi, yi, len(x), len(x[0]), 
           ogml['min_x'], ogml['max_x'], ogml['min_y'], ogml['max_y'])
-
       # TODO: Must be faster!
       for i in range(ogm.shape[0]):
         for j in range(ogm.shape[1]):
@@ -51,12 +50,12 @@ class Cffi:
 
     @staticmethod
     def thinning(skeleton, ogml):
-      x = [np.array(v, dtype='int32') for v in skeleton] #int64
+      x = [np.array(v, dtype='int32') for v in skeleton]
       xi = ffi.new(("int* [%d]") % (len(x)))
       for i in range(len(x)):
         xi[i] = ffi.cast("int *", x[i].ctypes.data)
 
-      y = [np.array(v, dtype='int32') for v in skeleton] #int64
+      y = [np.array(v, dtype='int32') for v in skeleton]
       yi = ffi.new(("int* [%d]") % (len(y)))
       for i in range(len(y)):
         yi[i] = ffi.cast("int *", y[i].ctypes.data)
@@ -76,12 +75,12 @@ class Cffi:
     @staticmethod
     def prune(skeleton, ogml, iterations):
       itime = time.time()
-      x = [np.array(v, dtype='int32') for v in skeleton] #int64
+      x = [np.array(v, dtype='int32') for v in skeleton]
       xi = ffi.new(("int* [%d]") % (len(x)))
       for i in range(len(x)):
         xi[i] = ffi.cast("int *", x[i].ctypes.data)
 
-      y = [np.array(v, dtype='int32') for v in skeleton] #int64
+      y = [np.array(v, dtype='int32') for v in skeleton]
       yi = ffi.new(("int* [%d]") % (len(y)))
       for i in range(len(y)):
         yi[i] = ffi.cast("int *", y[i].ctypes.data)
@@ -127,7 +126,7 @@ class OgmOperations:
       ok = False
       for i in range(0, x, 20):
         for j in range(0, y):
-          if ogm[i][j] != -1:
+          if ogm[i][j] != 51:
             min_x = i - 20
             ok = True
             break
@@ -138,7 +137,7 @@ class OgmOperations:
       ok = False
       for i in range(min_x + 20, x, 20):
         for j in range(0, y):
-          if ogm[i][j] != -1:
+          if ogm[i][j] != 51:
             ok = True
             break
         if not ok:
@@ -150,7 +149,7 @@ class OgmOperations:
       ok = False
       for j in range(0, y, 20):
         for i in range(0, x):
-          if ogm[i][j] != -1:
+          if ogm[i][j] != 51:
             min_y = j - 20
             ok = True
             break
@@ -161,7 +160,7 @@ class OgmOperations:
       ok = False
       for j in range(min_y + 20, y, 20):
         for i in range(0, x):
-          if ogm[i][j] != -1:
+          if ogm[i][j] != 51:
             ok = True
             break
         if not ok:
@@ -176,15 +175,15 @@ class OgmOperations:
                     min_y * resolution + origin['y']
                 ],
                 [
-                    max_x * resolution + origin['x'], 
+                    max_x * resolution + origin['x'],
                     min_y * resolution + origin['y']
                 ],
                 [
-                    max_x * resolution + origin['x'], 
+                    max_x * resolution + origin['x'],
                     max_y * resolution + origin['y']
                 ],
                 [
-                    min_x * resolution + origin['x'], 
+                    min_x * resolution + origin['x'],
                     max_y * resolution + origin['y']
                 ]
             ],\
@@ -273,3 +272,4 @@ class RvizHandler:
 
 
         RvizHandler.markers_publisher.publish(markers)
+

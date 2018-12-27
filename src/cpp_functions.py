@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from cffi import FFI
-
+# import lib
 ffi = FFI()
 
 ffi.cdef("void brushfireFromObstacles(int ** input, int ** output, int width, int height, int min_x, int max_x, int min_y, int max_y);")

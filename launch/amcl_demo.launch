@@ -1,5 +1,0 @@
-<launch>
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/WillowGarageTeleopHours.yaml"/>
-     
-  <include file="$(find my_2d_nav)/move_base_config/amcl_omni.xml" />
-</launch>
