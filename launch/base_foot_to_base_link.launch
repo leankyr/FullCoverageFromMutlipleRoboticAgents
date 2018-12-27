@@ -1,0 +1,3 @@
+<launch>
+  <node pkg="tf" type="static_transform_publisher" name="map2footprint" args="0 0 0 0 0 0 map base_footprint 100" />
+</launch>
