@@ -84,32 +84,38 @@ class SubscriberNode:
 
         self.mapDataReady = True
 
-    def costmapCallback(self, data):
-        # Map origin data to struct
-        self.costorigin['x'] = data.info.origin.position.x
-        self.costorigin['y'] = data.info.origin.position.y
-        self.costorigin['x_px'] = int(data.info.origin.position.x / self.resolution)
-        self.costorigin['y_px'] = int(data.info.origin.position.y / self.resolution)
-
-        # Resize SLAM and Coverage OGMs when the SLAM map expands
-        if data.info.width != self.previousCostMapWidth or \
-                data.info.height != self.previousCostMapHeight:
-            rospy.logwarn("[Main Node] Resizing SLAM OGM! New size: [%u, %u]", \
-                            data.info.width, data.info.height)
-            self.costmap = numpy.zeros((data.info.width, data.info.height), dtype = numpy.int)
-
-            # Update previous SLAM OGM width and height
-            self.previousCostMapWidth = data.info.width
-            self.previousCostMapHeight = data.info.height
-
-        # Construct 2-D OGM matrix
-        for i in range(0, data.info.width):
-            for j in range(0, data.info.height):
-                self.costmap[i][j] = data.data[i + data.info.width * j]
-
-        self.CostMapDataReady = True
+#    def costmapCallback(self, data):
+#        # Map origin data to struct
+#        self.costorigin['x'] = data.info.origin.position.x
+#        self.costorigin['y'] = data.info.origin.position.y
+#        self.costorigin['x_px'] = int(data.info.origin.position.x / self.resolution)
+#        self.costorigin['y_px'] = int(data.info.origin.position.y / self.resolution)
+#
+#        # Resize SLAM and Coverage OGMs when the SLAM map expands
+#        if data.info.width != self.previousCostMapWidth or \
+#                data.info.height != self.previousCostMapHeight:
+#            rospy.logwarn("[Main Node] Resizing SLAM OGM! New size: [%u, %u]", \
+#                            data.info.width, data.info.height)
+#            self.costmap = numpy.zeros((data.info.width, data.info.height), dtype = numpy.int)
+#
+#            # Update previous SLAM OGM width and height
+#            self.previousCostMapWidth = data.info.width
+#            self.previousCostMapHeight = data.info.height
+#
+#        # Construct 2-D OGM matrix
+#        for i in range(0, data.info.width):
+#            for j in range(0, data.info.height):
+#                self.costmap[i][j] = data.data[i + data.info.width * j]
+#
+#        self.CostMapDataReady = True
 
     def coverageCallback(self, data):
+        # Map origin data to struct
+        self.origin['x'] = data.info.origin.position.x
+        self.origin['y'] = data.info.origin.position.y
+        self.origin['x_px'] = int(data.info.origin.position.x / self.resolution)
+        self.origin['y_px'] = int(data.info.origin.position.y / self.resolution)
+
         if self.previousCovWidth != data.info.width or \
                 self.previousCovHeight != data.info.height:
             rospy.logwarn("[Main Node] Resizing Coverage OGM! New size: [%u, %u]", \

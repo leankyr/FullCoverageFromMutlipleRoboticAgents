@@ -8,8 +8,8 @@ import random
 from geometry_msgs.msg import PoseStamped, Twist
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node import SubscriberNode
-from target_selection_class import TargetSelect #,selectRandomTarget
-
+#from target_selection_class import TargetSelect #,selectRandomTarget
+from cov_based_target_select import TargetSelect
 
 class SendMoveBaseGoalClient:
 
@@ -30,25 +30,25 @@ class SendMoveBaseGoalClient:
 
 
     def calculateSendGoal(self, event):
-        #ogm = self.subNode.getSlamMap()
+        ogm = self.subNode.getSlamMap()
         #costmap = self.subNode.getCostMap()
         coverage = self.subNode.getCoverage()
         origin = self.subNode.origin
         robotPose = self.subNode.robotPose
         resolution = rospy.get_param('resolution')
 
-#        target = self.selectTarget.targetSelection(ogm,costmap, origin, \
-#                                    resolution, robotPose)
+        target = self.selectTarget.targetSelection(ogm, coverage, origin, \
+                                    resolution, robotPose)
 
         # self.rotateRobot()
 
         moveBaseClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)
 
-#        self.moveBaseGoal.target_pose.pose.position.x = float(target[0])
-#        self.moveBaseGoal.target_pose.pose.position.y = float(target[1])
+        self.moveBaseGoal.target_pose.pose.position.x = float(target[0])
+        self.moveBaseGoal.target_pose.pose.position.y = float(target[1])
 
-        self.moveBaseGoal.target_pose.pose.position.x = 1.0
-        self.moveBaseGoal.target_pose.pose.position.y = 1.0
+#        self.moveBaseGoal.target_pose.pose.position.x = 1.0
+#        self.moveBaseGoal.target_pose.pose.position.y = 1.0
 
         self.moveBaseGoal.target_pose.pose.position.z = 0.0
         self.moveBaseGoal.target_pose.pose.orientation.x = 0.0
@@ -64,7 +64,7 @@ class SendMoveBaseGoalClient:
                          self.moveBaseGoal.target_pose.pose.position.z)
         moveBaseClient.send_goal(self.moveBaseGoal)
         moveBaseClient.wait_for_result()
-        
+
 
     def rotateRobot(self):
         velocityMsg = Twist()
@@ -78,7 +78,7 @@ class SendMoveBaseGoalClient:
         velocityMsg.angular.x = 0
         velocityMsg.angular.y = 0
         velocityMsg.angular.z = angularSpeed
-        
+
         t0 = rospy.Time.now().to_sec()
         rospy.logwarn(rospy.get_caller_id() + ": Rotate Robot! Please wait...")
         while currentAngle < relativeAngle:

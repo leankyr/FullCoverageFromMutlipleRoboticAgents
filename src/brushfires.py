@@ -71,15 +71,15 @@ class Brushfires:
 
         limits = Set()
 
-        width = ogm.shape[0]
-        height = ogm.shape[1]
+        width = coverage.shape[0]
+        height = coverage.shape[1]
 
         for i in range(1, width - 1):
             for j in range(1, height - 1):
                 #if coverage[i][j] == 100:
                 #    continue
-                if coverage[i][j] == -1:
-                #if coverage[i][j] == 0:
+                #if coverage[i][j] == -1:
+                if coverage[i][j] == 100:
                     ogm_ok = True
                     for ii in range(-1, 2):
                         for jj in range(-1, 2):
@@ -91,8 +91,8 @@ class Brushfires:
                     cov_ok = False
                     for ii in range(-1, 2):
                         for jj in range(-1, 2):
-                            if coverage[i + ii][j + jj] != -1:
-                            #if coverage[i + ii][j + jj] == 0:
+                            #if coverage[i + ii][j + jj] != -1:
+                            if coverage[i + ii][j + jj] == 0:
                                 cov_ok = True
                     if cov_ok:
                         limits.add((\
