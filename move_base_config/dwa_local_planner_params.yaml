@@ -7,7 +7,7 @@ DWAPlannerROS:
   acc_lim_y: 0.0
 
   max_vel_x: 0.3 # used to be 0.5
-  min_vel_x: 0.0  #set negative to make robot go reverse gear
+  min_vel_x: -0.3  #set negative to make robot go reverse gear
 
   max_vel_y: 0.0
   min_vel_y: 0.0
@@ -21,8 +21,8 @@ DWAPlannerROS:
   sim_time: 1.7
   sim_granularity: 0.025
 
-  goal_distance_bias: 14.0
-  path_distance_bias: 74.0
+  goal_distance_bias: 24.0
+  path_distance_bias: 64.0
   occdist_scale: 0.3 # I tried 0.3 too 0.1 tho seems small 
 
   stop_time_buffer: 0.2

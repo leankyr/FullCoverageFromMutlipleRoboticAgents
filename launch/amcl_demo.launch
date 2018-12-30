@@ -1,0 +1,5 @@
+<launch>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/map_25_11_time_01_30_willow.yaml"/>
+     
+  <include file="$(find my_2d_nav)/move_base_config/amcl_diff.xml" />
+</launch>
