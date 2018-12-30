@@ -1,0 +1,15 @@
+<launch>
+  
+  <!-- Willow Garage Launch -->
+  <include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch"/>
+  
+  <!-- Rviz  -->
+  <node name="rviz" type="rviz" pkg="rviz" args="-d $(find my_2d_nav)/rviz/single_robot.rviz"/>
+  
+	  <!-- include slam_gmapping_launch -->
+  	<include file="$(find turtlebot_navigation)/launch/includes/gmapping/hokuyo_gmapping.launch.xml"/>
+
+	<!-- include Move Base-->
+  <include file="$(find my_2d_nav)/launch/start_move_base.launch"/>
+
+</launch>
