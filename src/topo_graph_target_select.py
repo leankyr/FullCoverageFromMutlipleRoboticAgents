@@ -12,11 +12,17 @@ import random
 import bresenham
 
 from utilities import OgmOperations
+from utilities import RvizHandler
+from utilities import Print
+from utilities import Cffi
+
 from geometry_msgs.msg import PoseStamped, Twist
 from nav_msgs.msg import OccupancyGrid
 from brushfires import Brushfires
 from topology import Topology
 from visualization_msgs.msg import Marker
+
+from timeit import default_timer as timer
 
 import operator
 class TargetSelect:
@@ -41,46 +47,83 @@ class TargetSelect:
         rospy.loginfo("[Target Select Node] OGM_Origin = [%i, %i]", origin['x'], origin['y'])
         rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
-        ogmLimits = {}
-        ogmLimits['min_x'] = -1
-        ogmLimits['max_x'] = -1
-        ogmLimits['min_y'] = -1
-        ogmLimits['max_y'] = -1
+        ogm_limits = {}
+        ogm_limits['min_x'] = -1
+        ogm_limits['max_x'] = -1
+        ogm_limits['min_y'] = -1
+        ogm_limits['max_y'] = -1
 
         # Find only the useful boundaries of OGM. Only there calculations have meaning
-        ogmLimits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
-        print (ogmLimits)
-        while ogmLimits['min_x'] < 0 or ogmLimits['max_x'] < 0 or \
-                ogmLimits['min_y'] < 0 or ogmLimits['max_y'] < 0:
+        ogm_limits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
+        print (ogm_limits)
+        while ogm_limits['min_x'] < 0 or ogm_limits['max_x'] < 0 or \
+                ogm_limits['min_y'] < 0 or ogm_limits['max_y'] < 0:
             rospy.logwarn("[Main Node] Negative OGM limits. Retrying...")
-            ogmLimits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
-            ogmLimits['min_x'] = abs(int(ogmLimits['min_x']))
-            ogmLimits['min_y'] = abs(int(ogmLimits['min_y']))
-            ogmLimits['max_x'] = abs(int(ogmLimits['max_x']))
-            ogmLimits['max_y'] = abs(int(ogmLimits['max_y']))
+            ogm_limits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
+            ogm_limits['min_x'] = abs(int(ogm_limits['min_x']))
+            ogm_limits['min_y'] = abs(int(ogm_limits['min_y']))
+            ogm_limits['max_x'] = abs(int(ogm_limits['max_x']))
+            ogm_limits['max_y'] = abs(int(ogm_limits['max_y']))
         rospy.loginfo("[Target Select] OGM_Limits[x] = [%i, %i]", \
-                            ogmLimits['min_x'], ogmLimits['max_x'])
+                            ogm_limits['min_x'], ogm_limits['max_x'])
         rospy.loginfo("[Target Select] OGM_Limits[y] = [%i, %i]", \
-                            ogmLimits['min_y'], ogmLimits['max_y'])
+                            ogm_limits['min_y'], ogm_limits['max_y'])
 
         # Blur the OGM to erase discontinuities due to laser rays
-        #ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogmLimits)
-        ogm = initOgm
-#        for i in range(len(ogm)):
-#            for j in range(len(ogm)):
-#                if ogm[i][j] == 100:
-#                    rospy.loginfo('i,j = [%d, %d]', i, j)
+        ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogm_limits)
+
+        # find brushfire field
+        brush2 = self.brush.obstaclesBrushfireCffi(ogm, ogm_limits)
+
+        # Calculate skeletonization
+        skeleton = self.topo.skeletonizationCffi(ogm, origin, resolution, ogm_limits)
+
+        # Find Topological Graph
+        tinit = time.time()
+        nodes = self.topo.topologicalNodes(ogm, skeleton, coverage, origin, \
+                                    resolution, brush2, ogm_limits)
+        # print took to calculate....
+        rospy.loginfo("Calculation time: %s",str(time.time() - tinit))
+        # print length of nodes
+        rospy.loginfo("The size of the matrix is: %d ",len(nodes))
+        # Visualization of topological nodes
+        print nodes
+        #print nodes[0]
+        ind = random.randrange(0,len(nodes))
+        print ind
+
+        goal = list()
+        goal = [nodes[0][0]*resolution + origin['x'],nodes[0][1]*resolution + origin['y']]
+        print 'the goal is:'
+        print goal
+
+        self.target = goal
+        return self.target
+
+
+
+
+#        vis_nodes = []
+#        for n in nodes:
+#            vis_nodes.append([
+#                n[0] * resolution + origin['x'],
+#                n[1] * resolution + origin['y']
+#            ])
+#        RvizHandler.printMarker(\
+#              vis_nodes,\
+#              1, # Type: Arrow
+#              0, # Action: Add
+#              "map", # Frame
+#              "art_topological_nodes", # Namespace
+#              [0.3, 0.4, 0.7, 0.5], # Color RGBA
+#              0.1 # Scale
+#        )
 #
-        # Calculate Brushfire field
-        #itime = time.time()
-        #brush = self.brush.obstaclesBrushfireCffi(ogm, ogmLimits)
-        #rospy.loginfo("[Target Select] Brush ready! Elapsed time = %fsec", time.time() - itime)
+#        target = self.selectRandomTarget(ogm, coverage, brush2, origin, ogm_limits, resolution)
+#        return target
 
-        #obst = self.brush.coverageLimitsBrushfire2(initOgm,ogm,robotPose,origin, resolution )
-        rospy.loginfo("Calculating brush2....")
-        # brush = self.brush.obstaclesBrushfireCffi(ogm,ogmLimits)
-        brush2 = self.brush.coverageLimitsBrushfire(initOgm, coverage, robotPose, origin, resolution )
 
+        # On All the Above I could print time spent to calculate!! ## 
 
         #goals = self.brush.closestUncoveredBrushfire(ogm, ogm, brush, robotPose, origin, resolution  )
         #robotPosePx = []
@@ -191,21 +234,22 @@ class TargetSelect:
 
         rospy.loginfo("goal AFTER unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
 
-    def selectRandomTarget(self, ogm, brush, origin, ogmLimits, resolution):
+    def selectRandomTarget(self, ogm, coverage, brush, origin, ogm_limits, resolution):
         rospy.logwarn("[Main Node] Random Target Selection!")
-        target = [-1, -1]
+        target = [-2, -2]
         found = False
         while not found:
           x_rand = random.randint(0, int(ogm.shape[0] - 1))
           y_rand = random.randint(0, int(ogm.shape[1] - 1))
-          if ogm[x_rand][y_rand] <= 49 and brush[x_rand][y_rand] > 3:# and \#coverage[x_rand][y_rand] != 100:
+          if ogm[x_rand][y_rand] <= 49 and brush[x_rand][y_rand] > 3 and coverage[x_rand][y_rand] != 100:
             tempX = x_rand * resolution + int(origin['x'])
             tempY = y_rand * resolution + int(origin['y'])
             target = [tempX, tempY]
             found = True
             rospy.loginfo("[Main Node] Random node selected at [%f, %f]", target[0], target[1])
             rospy.loginfo("-----------------------------------------")
-            return self.target
+
+        return self.target
 
 
 

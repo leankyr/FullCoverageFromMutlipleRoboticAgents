@@ -98,7 +98,7 @@ class Cffi:
 class OgmOperations:
 
     @staticmethod
-    def blurUnoccupiedOgm(ogm, ogml):
+    def blurUnoccupiedOgm(ogm, ogml): # ogml stands for omg Limits
       local = np.copy(ogm)
       for i in range(ogml['min_x'], ogml['max_x']):
         for j in range(ogml['min_y'], ogml['max_y']):
