@@ -131,7 +131,7 @@ class TargetSelect:
 
 #        marker_pub = rospy.Publisher('Marker_pub_topic',Marker,queue_size = 10)
 #        for i in brush2:
-#            self.publish_markers(marker_pub,i[0],i[1])
+#            self.publish_markers(mark er_pub,i[0],i[1])
 #
         #print brush2
         distance_map = dict()
@@ -189,7 +189,7 @@ class TargetSelect:
         return self.target
 
 
-        rospy.loginfo("goal AFTER unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
+#        rospy.loginfo("goal AFTER unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
 
     def selectRandomTarget(self, ogm, brush, origin, ogmLimits, resolution):
         rospy.logwarn("[Main Node] Random Target Selection!")
