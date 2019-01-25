@@ -10,6 +10,7 @@ from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node import SubscriberNode
 #from target_selection_class import TargetSelect #,selectRandomTarget
 from cov_based_target_select import TargetSelect
+#from topo_graph_target_select import TargetSelect
 
 class SendMoveBaseGoalClient:
 

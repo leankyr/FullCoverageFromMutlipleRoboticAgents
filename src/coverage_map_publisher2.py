@@ -94,7 +94,7 @@ class CoverageMapPublisher:
         for coord in line:
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius = abs(yy - coord[1])*self.resolution
-                print 'found West'
+                #print 'found West'
                 break
 
         ### LINE EAST ####
@@ -104,7 +104,7 @@ class CoverageMapPublisher:
         for coord in line:
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius = abs(yy - coord[1])*self.resolution
-                print 'found East'
+                #print 'found East'
                 break
 
         ### LINE SOUTH ####
@@ -114,7 +114,7 @@ class CoverageMapPublisher:
         for coord in line:
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius = abs(xx - coord[0])*self.resolution
-                print 'found South'
+                #print 'found South'
                 break
 
         ### LINE NORTH ###
@@ -124,7 +124,7 @@ class CoverageMapPublisher:
         for coord in line:
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius = abs(xx - coord[0])*self.resolution
-                print 'found North'
+                #print 'found North'
                 break
 
         ### LINE WEST-South ####
@@ -135,7 +135,7 @@ class CoverageMapPublisher:
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius = min(abs(yy - coord[1])*self.resolution,\
                                 abs(xx - coord[0])*self.resolution)
-                print 'found West-South'
+                #print 'found West-South'
                 break
          ### LINE WEST-north ####
         line = list(bresenham(int(xx),int(yy),int(xx-self.radius/self.resolution),int(yy+self.radius/self.resolution)))
@@ -145,7 +145,7 @@ class CoverageMapPublisher:
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius = min(abs(yy - coord[1])*self.resolution,\
                                 abs(xx - coord[0])*self.resolution)
-                print 'found West-North'
+                #print 'found West-North'
                 break
     ### LINE East-South ####
         line = list(bresenham(int(xx),int(yy),int(xx+self.radius/self.resolution),int(yy-self.radius/self.resolution)))
@@ -155,7 +155,7 @@ class CoverageMapPublisher:
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius = min(abs(yy - coord[1])*self.resolution,\
                                 abs(xx - coord[0])*self.resolution)
-                print 'found East-South'
+                #print 'found East-South'
                 break
          ### LINE East-north ####
         line = list(bresenham(int(xx),int(yy),int(xx-self.radius/self.resolution),int(yy-self.radius/self.resolution)))
@@ -165,10 +165,10 @@ class CoverageMapPublisher:
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius = min(abs(yy - coord[1])*self.resolution,\
                                 abs(xx - coord[0])*self.resolution)
-                print 'found East-South'
+                #print 'found East-South'
                 break
 
-        print self.radius
+        #print self.radius
 
 
                 #line_pxls = list(bresneham)
