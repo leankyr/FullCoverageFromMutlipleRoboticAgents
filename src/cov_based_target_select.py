@@ -151,7 +151,7 @@ class TargetSelect:
 
         #rand_target = random.choice(distance_map.keys())
         #goal = rand_target
-        ind = random.randrange(0,min(8,len(sorted_goal_list)))
+        ind = random.randrange(0,min(4,len(sorted_goal_list)))
         print 'ind is'
         print ind
         goal = sorted_goal_list[ind]
