@@ -86,9 +86,9 @@ class CoverageMapPublisher:
         xx = self.pose['x_px'] - self.origin['x_px']
         yy = self.pose['y_px'] - self.origin['y_px']
         
-        print 'the radius at line 88 is: '
-        print self.radius
-
+#        print 'the radius at line 88 is: '
+#        print self.radius
+#
         #print 'self.radius[0] + xx =='
         #print self.radius[0] + xx
         #print int(self.radius[0] + xx)
@@ -99,8 +99,8 @@ class CoverageMapPublisher:
         for idx,coord in enumerate(line):
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius[0] = len(line[0: idx]) * self.resolution
-                print self.radius[0]
-                print 'got East'
+                #print self.radius[0]
+                #print 'got East'
                 break
 
         ### LINE West ####
@@ -110,8 +110,8 @@ class CoverageMapPublisher:
         for idx,coord in enumerate(line):
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius[1] = len(line[0: idx]) * self.resolution
-                print self.radius[1]
-                print 'got West'
+                #print self.radius[1]
+                #print 'got West'
                 break
 
         ### LINE SOUTH ####
@@ -121,8 +121,8 @@ class CoverageMapPublisher:
         for idx,coord in enumerate(line):
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius[2] = len(line[0: idx]) * self.resolution
-                print self.radius[2]
-                print 'got South'
+                #print self.radius[2]
+                #print 'got South'
                 break
 
         ### LINE NORTH ###
@@ -132,8 +132,8 @@ class CoverageMapPublisher:
         for idx,coord in enumerate(line):
             if ogm[coord[0]][coord[1]] > 59:
                 self.radius[3] = len(line[0: idx]) * self.resolution
-                print self.radius[3]
-                print 'got North'
+                #print self.radius[3]
+                #print 'got North'
                 break
 
         ### LINE East-South ####
@@ -146,7 +146,7 @@ class CoverageMapPublisher:
                     self.radius[0] = (coord[1] - yy) * self.resolution
                 else:
                     self.radius[2] = (coord[0] - xx) * self.resolution
-                print 'Got East South!!'
+                #print 'Got East South!!'
                 break
 
 
@@ -160,7 +160,7 @@ class CoverageMapPublisher:
                     self.radius[1] = (yy - coord[1]) * self.resolution
                 else:
                     self.radius[2] = (coord[0] - xx) * self.resolution
-                print 'Got West South'
+                #print 'Got West South'
                 break
 
 #        ### LINE East-North ####
@@ -173,7 +173,7 @@ class CoverageMapPublisher:
                     self.radius[0] = (coord[1] - yy) * self.resolution
                 else:
                     self.radius[3] = (xx - coord[0]) * self.resolution
-                print 'got East North'
+                #print 'got East North'
                 break
 
 #        ### LINE West-North ####
@@ -186,10 +186,10 @@ class CoverageMapPublisher:
                     self.radius[1] = (yy - coord[1]) * self.resolution
                 else:
                     self.radius[3] = (xx - coord[0]) * self.resolution
-                print 'got West North'
+                #print 'got West North'
                 break
 
-        print self.radius
+        #print self.radius
 
 
                 #line_pxls = list(bresneham)

@@ -13,6 +13,6 @@
   <include file="$(find my_2d_nav)/launch/start_move_base.launch"/>
 
 	<!-- include Coverage Node Publisher-->
-	<!-- include file="$(find my_2d_nav)/launch/coverage_node.launch"/-->
+	<include file="$(find my_2d_nav)/launch/coverage_node.launch"/>
 
 </launch>
