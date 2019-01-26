@@ -101,9 +101,9 @@ class TargetSelect:
                 if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm):
                     break
                 if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
-                [int(goal[1]/resolution - origin['y']/resolution) ] > 49: #\
-                #or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
-                #[int(goal[1]/resolution - origin['y']/resolution) ] == -1:
+                [int(goal[1]/resolution - origin['y']/resolution) ] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) ] == -1:
                     goal = tuple(goal)
                     throw.add(goal)
                     break
@@ -114,9 +114,9 @@ class TargetSelect:
                 if int(goal[1]/resolution - origin['y']/resolution) + j >= len(ogm[0]):
                     break
                 if ogm[int(goal[0]/resolution - origin['x']/resolution)]\
-                [int(goal[1]/resolution - origin['y']/resolution) + j] > 49: #\
-                #or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
-                #[int(goal[1]/resolution - origin['y']/resolution) ] == -1:
+                [int(goal[1]/resolution - origin['y']/resolution) + j] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) ] == -1:
                     goal = tuple(goal)
                     throw.add(goal)
                     break
