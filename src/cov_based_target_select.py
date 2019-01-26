@@ -41,85 +41,21 @@ class TargetSelect:
         rospy.loginfo("[Target Select Node] OGM_Origin = [%i, %i]", origin['x'], origin['y'])
         rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
-        ogmLimits = {}
-        ogmLimits['min_x'] = -1
-        ogmLimits['max_x'] = -1
-        ogmLimits['min_y'] = -1
-        ogmLimits['max_y'] = -1
-
-        # Find only the useful boundaries of OGM. Only there calculations have meaning
-        ogmLimits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
-        print (ogmLimits)
-        while ogmLimits['min_x'] < 0 or ogmLimits['max_x'] < 0 or \
-                ogmLimits['min_y'] < 0 or ogmLimits['max_y'] < 0:
-            rospy.logwarn("[Main Node] Negative OGM limits. Retrying...")
-            ogmLimits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
-            ogmLimits['min_x'] = abs(int(ogmLimits['min_x']))
-            ogmLimits['min_y'] = abs(int(ogmLimits['min_y']))
-            ogmLimits['max_x'] = abs(int(ogmLimits['max_x']))
-            ogmLimits['max_y'] = abs(int(ogmLimits['max_y']))
-        rospy.loginfo("[Target Select] OGM_Limits[x] = [%i, %i]", \
-                            ogmLimits['min_x'], ogmLimits['max_x'])
-        rospy.loginfo("[Target Select] OGM_Limits[y] = [%i, %i]", \
-                            ogmLimits['min_y'], ogmLimits['max_y'])
-
         # Blur the OGM to erase discontinuities due to laser rays
         #ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogmLimits)
         ogm = initOgm
-#        for i in range(len(ogm)):
-#            for j in range(len(ogm)):
-#                if ogm[i][j] == 100:
-#                    rospy.loginfo('i,j = [%d, %d]', i, j)
-#
-        # Calculate Brushfire field
-        #itime = time.time()
-        #brush = self.brush.obstaclesBrushfireCffi(ogm, ogmLimits)
-        #rospy.loginfo("[Target Select] Brush ready! Elapsed time = %fsec", time.time() - itime)
 
-        #obst = self.brush.coverageLimitsBrushfire2(initOgm,ogm,robotPose,origin, resolution )
         rospy.loginfo("Calculating brush2....")
-        # brush = self.brush.obstaclesBrushfireCffi(ogm,ogmLimits)
+
         brush2 = self.brush.coverageLimitsBrushfire(initOgm, coverage, robotPose, origin, resolution )
 
-
-        #goals = self.brush.closestUncoveredBrushfire(ogm, ogm, brush, robotPose, origin, resolution  )
-        #robotPosePx = []
-        #robotPosePx[0] = robotPose['x']/resolution
-        #robotPosePy[1] = robotPose['y']/resolution
         print 'size of brush2:'
         print len(brush2)
         min_dist = 10**24
         store_goal = ()
-       # rospy.loginfo("finding the difference between the two sets...")
-       # brush2.difference(visited)
-        #max_dist = random.randrange(1,10)
-        #rospy.loginfo("max_dist for this it is: %d ", max_dist)
         throw = set()
-        for goal in brush2:
-            goal = list(goal)
-            for i in range(-3,4):
-                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm):
-                    break
-                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
-                [int(goal[1]/resolution - origin['y']/resolution) ] > 49 \
-                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
-                [int(goal[1]/resolution - origin['y']/resolution) ] == -1:
-                    goal = tuple(goal)
-                    throw.add(goal)
-                    break
 
-        for goal in brush2:
-            goal = list(goal)
-            for j in range(-3,4):
-                if int(goal[1]/resolution - origin['y']/resolution) + j >= len(ogm[0]):
-                    break
-                if ogm[int(goal[0]/resolution - origin['x']/resolution)]\
-                [int(goal[1]/resolution - origin['y']/resolution) + j] > 49 \
-                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
-                [int(goal[1]/resolution - origin['y']/resolution) ] == -1:
-                    goal = tuple(goal)
-                    throw.add(goal)
-                    break
+        throw = self.filterGoal(brush2, ogm, resolution, origin)
 
         print 'size of throw:'
         print len(throw)
@@ -157,39 +93,14 @@ class TargetSelect:
         goal = sorted_goal_list[ind]
         print 'the dist is'
         print distance_map[goal]
-        #goal = key
-#        for key in sorted_goal_list:
-#            if distance_map[key] > random.randrange(1,5):
-#                print 'the dist is:'
-#                print distance_map[key]
-#                print '!!! FOUND !!!!'
-#                goal = key
-#                break
-#        for key in distance_map.keys():
-#            print 'the value of ogm is:'
-#            print ogm[int(key[0] - origin['x_px'])][int(key[1] - origin['y_px'])]
-
-        #while ogm[int(goal[0])][int(goal[1])] != 0:
-        #rand_target = random.choice(distance_map.keys())
-        #goal = rand_target
-        #    print ogm[int(goal[0])][int(goal[1])]
 
         goal = list(goal)
 
         print 'the ogm value is'
         print ogm[int(goal[0] - origin['x_px'])][int(goal[1] - origin['y_px'])]
-        #goal[0] = goal[0] + random.uniform(-0.5,0.5)
-        #goal[1] = goal[1] + random.uniform(-0.5,0.5)
         print goal
         self.target = goal
-        #for goal in brush2:
-        #    print sorted_distance_map[goal]
-
-
         return self.target
-
-
-#        rospy.loginfo("goal AFTER unifrom is: goal = [%f,%f]" , store_goal[0],store_goal[1])
 
     def selectRandomTarget(self, ogm, brush, origin, ogmLimits, resolution):
         rospy.logwarn("[Main Node] Random Target Selection!")
@@ -266,3 +177,32 @@ class TargetSelect:
 
         marker_pub.publish(msg)
         return
+
+    def filterGoal(self, brush2, ogm, resolution, origin):
+        throw = set()
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-3,4):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) ] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) ] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+        for goal in brush2:
+            goal = list(goal)
+            for j in range(-3,4):
+                if int(goal[1]/resolution - origin['y']/resolution) + j >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution)]\
+                [int(goal[1]/resolution - origin['y']/resolution) + j] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) ] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+        return throw
