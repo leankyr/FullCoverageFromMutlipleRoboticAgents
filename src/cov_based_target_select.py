@@ -9,7 +9,7 @@ import math
 import tf
 import numpy
 import random
-import bresenham
+from bresenham import bresenham
 
 from utilities import OgmOperations
 from geometry_msgs.msg import PoseStamped, Twist
@@ -65,37 +65,125 @@ class TargetSelect:
         print 'size of brush2 after update:'
         print len(brush2)
 
-#        marker_pub = rospy.Publisher('Marker_pub_topic',Marker,queue_size = 10)
-#        for i in brush2:
-#            self.publish_markers(mark er_pub,i[0],i[1])
-#
-        #print brush2
-        distance_map = dict()
+        ###################################################################################
+        ##################### Here I implement Topological Cost ###########################
+        ###################################################################################
+        
+        half_side = rospy.get_param('radius')
+        topo_gain = dict()
         for goal in brush2:
-            dist = math.hypot(goal[0] - robotPose['x'],goal[1] - robotPose['y'])
+            xx = goal[0]/resolution
+            yy = goal[1]/resolution
+            rays_len = numpy.full([8], rospy.get_param('radius'))
+
+            line = list(bresenham(int(xx), int(yy), int(xx), int(yy + half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[0] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx),int(yy - half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[1] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx + half_side/resolution),int(yy)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[2] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx - half_side/resolution),int(yy)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[3] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx + half_side/resolution),int(yy + half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[4] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx + half_side/resolution),int(yy - half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[5] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx - half_side/resolution),int(yy + half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[6] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx - half_side/resolution),int(yy - half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[7] = len(line[0: idx]) * resolution
+                    break
+
+            #topo_gain[goal] = sum(rays_len)/len(rays_len)
+            topo_gain[goal] = sum(rays_len) #/len(rays_len)
+            #rospy.loginfo('The topo gain for goal = [%f,%f] is %f', xx, yy, topo_gain[goal])
+
+        ##################################################################################
+        ##################################################################################
+        ##################################################################################
+
+        ## Sort Topo Gain goal ##
+
+        sorted_topo_gain = sorted(topo_gain.items(), key=operator.itemgetter(1), reverse = True)
+        #print sorted_topo_gain
+        #print 'the lens are below... '
+        #print len(sorted_topo_gain)
+        sorted_topo_gain_sampled = sorted_topo_gain[0:len(sorted_topo_gain):10]
+        print sorted_topo_gain_sampled
+
+        distance_map = dict()
+
+        for goal, value in sorted_topo_gain_sampled:
+            #print goal
+            #goal = list(goal)
+            #rospy.loginfo('goal is = [%f,%f]!!', goal[0], goal[1])
+            dist = math.hypot(goal[0] - robotPose['x'], goal[1] - robotPose['y'])
             distance_map[goal] = dist
-
-
-        sorted_dist_map = sorted(distance_map.items(), key=operator.itemgetter(1))
-
-        sorted_goal_list = list()
-        for key, value in sorted(distance_map.iteritems(), key=lambda (k,v): (v,k)):
-            sorted_goal_list.append(key)
-            pass
+#
+#
+#        sorted_dist_map = sorted(distance_map.items(), key=operator.itemgetter(1))
+#
+#        sorted_goal_list = list()
+#        for key, value in sorted(distance_map.iteritems(), key=lambda (k,v): (v,k)):
+#            sorted_goal_list.append(key)
+#            pass
             #print "%s: %s" % (key, value)
 
 
-        #rand_target = random.choice(distance_map.keys())
-        #goal = rand_target
-        ind = random.randrange(0,min(4,len(sorted_goal_list)))
-        print 'ind is'
-        print ind
-        goal = sorted_goal_list[ind]
-        print 'the dist is'
-        print distance_map[goal]
+#        sorted_goal_list_sampled = sorted_goal_list[0:len(sorted_goal_list):10]
+        #print sorted_goal_list_top_10
+ 
+        stored_goal = list()
+        dist = 1000
+        for goal in distance_map:
+            if distance_map[goal] < dist:
+                dist = distance_map[goal]
+                stored_goal = goal
 
-        goal = list(goal)
-
+        rospy.loginfo('The stored goal is = [%f,%f]!!' ,stored_goal[0], stored_goal[1])
+        rospy.loginfo('The distance is %f!!', distance_map[stored_goal])
+        rospy.loginfo('The gain is %f!!', topo_gain[stored_goal])
+#        #rand_target = random.choice(distance_map.keys())
+#        #goal = rand_target
+#        ind = random.randrange(0,min(4,len(sorted_goal_list)))
+#        print 'ind is'
+#        print ind
+#        goal = sorted_goal_list[ind]
+#        print 'the dist is'
+#        print distance_map[goal]
+#
+#        goal = list(goal)
+        goal = stored_goal
         print 'the ogm value is'
         print ogm[int(goal[0] - origin['x_px'])][int(goal[1] - origin['y_px'])]
         print goal
