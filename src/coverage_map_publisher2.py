@@ -93,89 +93,101 @@ class CoverageMapPublisher:
         #print self.radius[0] + xx
         #print int(self.radius[0] + xx)
         ### LINE East ####
-        line = list(bresenham(int(xx),int(yy),int(xx),int(yy+self.radius[0]/self.resolution)))
+        line = list(bresenham(int(xx),int(yy),int(xx),int(yy + self.radius[0]/self.resolution)))
         #print "the line is:"
         #print line
         for idx,coord in enumerate(line):
             if ogm[coord[0]][coord[1]] > 59:
-                self.radius[0] = len(line[0:idx])*self.resolution
+                self.radius[0] = len(line[0: idx]) * self.resolution
                 print self.radius[0]
                 print 'got East'
                 break
 
         ### LINE West ####
-        line = list(bresenham(int(xx),int(yy),int(xx),int(yy-self.radius[1]/self.resolution)))
+        line = list(bresenham(int(xx),int(yy),int(xx),int(yy - self.radius[1]/self.resolution)))
         #print "the line is:"
         #print line1
         for idx,coord in enumerate(line):
             if ogm[coord[0]][coord[1]] > 59:
-                self.radius[1] = len(line[0:idx])*self.resolution
+                self.radius[1] = len(line[0: idx]) * self.resolution
                 print self.radius[1]
                 print 'got West'
                 break
 
         ### LINE SOUTH ####
-        line = list(bresenham(int(xx),int(yy),int(xx+self.radius[2]/self.resolution),int(yy)))
+        line = list(bresenham(int(xx),int(yy),int(xx + self.radius[2]/self.resolution),int(yy)))
         #print "the line is:"
         #print line1
         for idx,coord in enumerate(line):
             if ogm[coord[0]][coord[1]] > 59:
-                self.radius[2] = len(line[0:idx])*self.resolution
+                self.radius[2] = len(line[0: idx]) * self.resolution
                 print self.radius[2]
                 print 'got South'
                 break
 
         ### LINE NORTH ###
-        line = list(bresenham(int(xx),int(yy),int(xx-self.radius[3]/self.resolution),int(yy)))
+        line = list(bresenham(int(xx),int(yy),int(xx - self.radius[3]/self.resolution),int(yy)))
         #print "the line is:"
         #print line1
         for idx,coord in enumerate(line):
             if ogm[coord[0]][coord[1]] > 59:
-                self.radius[3] = len(line[0:idx])*self.resolution
+                self.radius[3] = len(line[0: idx]) * self.resolution
                 print self.radius[3]
                 print 'got North'
                 break
 
-#        ### LINE WEST-South ####
-#        line = list(bresenham(int(xx),int(yy),int(xx+self.radius/self.resolution),int(yy+self.radius/self.resolution)))
-#        #print "the line is:"
-#        #print line
-#        for coord in line:
-#            if ogm[coord[0]][coord[1]] > 59:
-#                self.radius = min(abs(yy - coord[1])*self.resolution,\
-#                                abs(xx - coord[0])*self.resolution)
-#                #print 'found West-South'
-#                break
-#         ### LINE WEST-north ####
-#        line = list(bresenham(int(xx),int(yy),int(xx-self.radius/self.resolution),int(yy+self.radius/self.resolution)))
-#        #print "the line is:"
-#        #print line
-#        for coord in line:
-#            if ogm[coord[0]][coord[1]] > 59:
-#                self.radius = min(abs(yy - coord[1])*self.resolution,\
-#                                abs(xx - coord[0])*self.resolution)
-#                #print 'found West-North'
-#                break
-#    ### LINE East-South ####
-#        line = list(bresenham(int(xx),int(yy),int(xx+self.radius/self.resolution),int(yy-self.radius/self.resolution)))
-#        #print "the line is:"
-#        #print line
-#        for coord in line:
-#            if ogm[coord[0]][coord[1]] > 59:
-#                self.radius = min(abs(yy - coord[1])*self.resolution,\
-#                                abs(xx - coord[0])*self.resolution)
-#                #print 'found East-South'
-#                break
-#         ### LINE East-north ####
-#        line = list(bresenham(int(xx),int(yy),int(xx-self.radius/self.resolution),int(yy-self.radius/self.resolution)))
-#        #print "the line is:"
-#        #print line
-#        for coord in line:
-#            if ogm[coord[0]][coord[1]] > 59:
-#                self.radius = min(abs(yy - coord[1])*self.resolution,\
-#                                abs(xx - coord[0])*self.resolution)
-#                #print 'found East-South'
-#                break
+        ### LINE East-South ####
+        line = list(bresenham(int(xx),int(yy),int(xx + rospy.get_param('radius')/self.resolution),int(yy + rospy.get_param('radius')/self.resolution)))
+        #print "the line is:"
+        #print line
+        for coord in line:
+            if ogm[coord[0]][coord[1]] > 59:
+                if coord[1] - yy < coord[0] - xx:
+                    self.radius[0] = (coord[1] - yy) * self.resolution
+                else:
+                    self.radius[2] = (coord[0] - xx) * self.resolution
+                print 'Got East South!!'
+                break
+
+
+#         ### LINE West-South ####
+        line = list(bresenham(int(xx),int(yy),int(xx + rospy.get_param('radius')/self.resolution),int(yy - rospy.get_param('radius')/self.resolution)))
+        #print "the line is:"
+        #print line
+        for coord in line:
+            if ogm[coord[0]][coord[1]] > 59:
+                if yy - coord[1] < coord[0] - xx:
+                    self.radius[1] = (yy - coord[1]) * self.resolution
+                else:
+                    self.radius[2] = (coord[0] - xx) * self.resolution
+                print 'Got West South'
+                break
+
+#        ### LINE East-North ####
+        line = list(bresenham(int(xx),int(yy),int(xx - rospy.get_param('radius')/self.resolution),int(yy + rospy.get_param('radius')/self.resolution)))
+        #print "the line is:"
+        #print line
+        for coord in line:
+            if ogm[coord[0]][coord[1]] > 59:
+                if coord[1] - yy < xx - coord[0]:
+                    self.radius[0] = (coord[1] - yy) * self.resolution
+                else:
+                    self.radius[3] = (xx - coord[0]) * self.resolution
+                print 'got East North'
+                break
+
+#        ### LINE West-North ####
+        line = list(bresenham(int(xx),int(yy),int(xx - rospy.get_param('radius')/self.resolution),int(yy - rospy.get_param('radius')/self.resolution)))
+        #print "the line is:"
+        #print line
+        for coord in line:
+            if ogm[coord[0]][coord[1]] > 59:
+                if yy - coord[1] < xx - coord[0]:
+                    self.radius[1] = (yy - coord[1]) * self.resolution
+                else:
+                    self.radius[3] = (xx - coord[0]) * self.resolution
+                print 'got West North'
+                break
 
         print self.radius
 
