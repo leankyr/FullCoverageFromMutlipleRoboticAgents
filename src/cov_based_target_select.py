@@ -65,10 +65,18 @@ class TargetSelect:
         print 'size of brush2 after update:'
         print len(brush2)
 
+        # sampled brush2
+        ########## Here I Sample the Goals for performance ############
+        ########## However I do not feel it's the main set back #######
+#        brush2 = random.sample(brush2, int(len(brush2)/10))
+#        print 'size of brush 2 after sampling... '
+#        print len(brush2)
+        ###############################################################
+
         ###################################################################################
         ##################### Here I implement Topological Cost ###########################
         ###################################################################################
-        
+
         half_side = rospy.get_param('radius')
         topo_gain = dict()
         for goal in brush2:
@@ -134,23 +142,76 @@ class TargetSelect:
 
         ## Sort Topo Gain goal ##
 
-        sorted_topo_gain = sorted(topo_gain.items(), key=operator.itemgetter(1), reverse = True)
-        #print sorted_topo_gain
-        #print 'the lens are below... '
-        #print len(sorted_topo_gain)
-        sorted_topo_gain_sampled = sorted_topo_gain[0:len(sorted_topo_gain):10]
-        print sorted_topo_gain_sampled
+        #sorted_topo_gain = sorted(topo_gain.items(), key=operator.itemgetter(1), reverse = True)
+        #rospy.loginfo('the length of sorted_topo_gain is %d !!', len(sorted_topo_gain))
+
 
         distance_map = dict()
 
-        for goal, value in sorted_topo_gain_sampled:
+        for goal in brush2:
             #print goal
             #goal = list(goal)
             #rospy.loginfo('goal is = [%f,%f]!!', goal[0], goal[1])
             dist = math.hypot(goal[0] - robotPose['x'], goal[1] - robotPose['y'])
             distance_map[goal] = dist
-#
-#
+
+
+        rospy.loginfo('the length of distance map is %d !!', len(distance_map))
+
+
+        ######################################################################################
+        ##################### Here I calculate the gain of my Goals ##########################
+        ######################################################################################
+        normTopo = dict()
+        normDist = dict()
+        for goal in brush2:
+            if max(topo_gain.values()) - min(topo_gain.values()) == 0:
+                normTopo[(0,0)] = 0
+            else:
+                normTopo[goal] = 1 - (topo_gain[goal] - min(topo_gain.values())) \
+                            / (max(topo_gain.values()) - min(topo_gain.values()))
+            if max(distance_map.values()) - min(distance_map.values()) == 0:
+                normDist[(0,0)] = 0
+            else:
+                normDist[goal] = 1 - (distance_map[goal] - min(distance_map.values())) \
+                            / (max(distance_map.values()) - min(distance_map.values()))
+
+        # Calculate Priority Weight
+        priorWeight = dict()
+        for goal in brush2:
+            pre = 2 * round((normTopo[goal] / 0.5), 0) + \
+                    1 * round((normDist[goal] / 0.5), 0)
+            priorWeight[goal] = pre
+
+        # Calculate smoothing factor
+        smoothFactor = dict()
+        for goal in brush2:
+            coeff = (2 * (1 - normTopo[goal]) + 1 * (1 - normDist[goal]))  / (2**2 - 1)
+            # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
+            #             (1 - wRotNorm[i])) / (2**3 - 1)
+            smoothFactor[goal] = coeff
+
+        # Calculate costs
+        goalGains = dict()
+        for goal in brush2:
+            goalGains[goal] = priorWeight[goal] * smoothFactor[goal]
+
+        # Choose goal with max gain 
+        store_goal = set()
+        for goal in brush2:
+            if goalGains[goal] == max(goalGains.values()):
+                store_goal = goal
+                rospy.loginfo("[Main Node] Goal at = [%u, %u]!!!", goal[0], goal[1])
+                rospy.loginfo("The Gain is = %f!!",goalGains[goal] )
+            else:
+                pass
+                #rospy.logwarn("[Main Node] Did not find any goals :( ...")
+                #self.target = self.selectRandomTarget(ogm, coverage, brush2, \
+                #                        origin, ogm_limits, resolution)
+
+
+
+
 #        sorted_dist_map = sorted(distance_map.items(), key=operator.itemgetter(1))
 #
 #        sorted_goal_list = list()
@@ -162,17 +223,17 @@ class TargetSelect:
 
 #        sorted_goal_list_sampled = sorted_goal_list[0:len(sorted_goal_list):10]
         #print sorted_goal_list_top_10
- 
-        stored_goal = list()
-        dist = 1000
-        for goal in distance_map:
-            if distance_map[goal] < dist:
-                dist = distance_map[goal]
-                stored_goal = goal
 
-        rospy.loginfo('The stored goal is = [%f,%f]!!' ,stored_goal[0], stored_goal[1])
-        rospy.loginfo('The distance is %f!!', distance_map[stored_goal])
-        rospy.loginfo('The gain is %f!!', topo_gain[stored_goal])
+#        stored_goal = list()
+#        dist = 1000
+#        for goal in distance_map:
+#            if distance_map[goal] < dist:
+#                dist = distance_map[goal]
+#                stored_goal = goal
+#
+#        rospy.loginfo('The stored goal is = [%f,%f]!!' ,stored_goal[0], stored_goal[1])
+#        rospy.loginfo('The distance is %f!!', distance_map[stored_goal])
+#        rospy.loginfo('The gain is %f!!', topo_gain[stored_goal])
 #        #rand_target = random.choice(distance_map.keys())
 #        #goal = rand_target
 #        ind = random.randrange(0,min(4,len(sorted_goal_list)))
@@ -183,7 +244,7 @@ class TargetSelect:
 #        print distance_map[goal]
 #
 #        goal = list(goal)
-        goal = stored_goal
+        goal = list(store_goal)
         print 'the ogm value is'
         print ogm[int(goal[0] - origin['x_px'])][int(goal[1] - origin['y_px'])]
         print goal
