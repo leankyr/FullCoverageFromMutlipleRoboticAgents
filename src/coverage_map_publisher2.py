@@ -85,7 +85,7 @@ class CoverageMapPublisher:
         ogm = self.subNode.getSlamMap()
         xx = self.pose['x_px'] - self.origin['x_px']
         yy = self.pose['y_px'] - self.origin['y_px']
-        
+
 #        print 'the radius at line 88 is: '
 #        print self.radius
 #
@@ -217,9 +217,4 @@ if __name__ == '__main__':
     rospy.init_node('coverage_map_publisher')
     CoverageMapPublisher()
     rospy.spin()
-
-
-
-
-
 
