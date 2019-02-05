@@ -4,6 +4,8 @@ My thesis repository.
 
 how to execute:
 
+As long as you have the willow garage world on the gazebo resource path,
+
 1.0) clone master repo
 
 2.0) open one terminal
