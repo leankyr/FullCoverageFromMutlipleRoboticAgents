@@ -4,7 +4,7 @@ My thesis repository.
 
 how to execute:
 
-As long as you have the willow garage world on the gazebo resource path,
+As long as you have the willow garage world on the gazebo resource path and GAZEBO simulator and gazebo_ros_pkgs,
 
 1.0) clone master repo
 
