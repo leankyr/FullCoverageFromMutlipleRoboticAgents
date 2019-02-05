@@ -1,0 +1,9 @@
+<launch>
+	<arg name="robot_name"/>
+	<arg name="init_pose"/>
+
+	<node name="spawn_turtlebot_model" pkg="gazebo_ros" type="spawn_model" args="$(arg init_pose)
+					-unpause -urdf -param /robot_description -model $(arg robot_name)"/>
+	
+	<node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/>
+</launch>
