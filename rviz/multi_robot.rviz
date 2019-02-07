@@ -6,8 +6,7 @@ Panels:
       Expanded:
         - /Status1
         - /Robot1 Footprint1
-        - "/Robot2: Laser1"
-        - /RobotModel2
+        - /PoseArray2
       Splitter Ratio: 0.5
     Tree Height: 775
   - Class: rviz/Selection
@@ -473,9 +472,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 0; 0; 255
-      Max Intensity: 3.92432361e-35
+      Max Intensity: 1.27934193e-35
       Min Color: 0; 0; 255
-      Min Intensity: 8.40779079e-45
+      Min Intensity: 1.27934193e-35
       Name: "Robot1: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -503,9 +502,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 0
-      Max Intensity: 3.92432361e-35
+      Max Intensity: 1.27934193e-35
       Min Color: 255; 255; 0
-      Min Intensity: 3.92432361e-35
+      Min Intensity: 1.27934193e-35
       Name: "Robot2: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -840,6 +839,38 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Alpha: 1
+      Arrow Length: 0.300000012
+      Axes Length: 0.300000012
+      Axes Radius: 0.00999999978
+      Class: rviz/PoseArray
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.0700000003
+      Head Radius: 0.0299999993
+      Name: PoseArray
+      Shaft Length: 0.230000004
+      Shaft Radius: 0.00999999978
+      Shape: Arrow (Flat)
+      Topic: /robot1/particlecloud
+      Unreliable: false
+      Value: true
+    - Alpha: 1
+      Arrow Length: 0.300000012
+      Axes Length: 0.300000012
+      Axes Radius: 0.00999999978
+      Class: rviz/PoseArray
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.0700000003
+      Head Radius: 0.0299999993
+      Name: PoseArray
+      Shaft Length: 0.230000004
+      Shaft Radius: 0.00999999978
+      Shape: Arrow (Flat)
+      Topic: /robot2/particlecloud
+      Unreliable: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -855,35 +886,30 @@ Visualization Manager:
     - Class: rviz/FocusCamera
     - Class: rviz/Measure
     - Class: rviz/SetInitialPose
-      Topic: /initialpose
+      Topic: robot1/amcl_pose
     - Class: rviz/SetGoal
-      Topic: /move_base_simple/goal
+      Topic: /robot1/move_base_simple/goal
     - Class: rviz/PublishPoint
       Single click: true
       Topic: /clicked_point
   Value: true
   Views:
     Current:
-      Class: rviz/Orbit
-      Distance: 31.0584812
+      Angle: 0
+      Class: rviz/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
-      Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
-      Focal Shape Fixed Size: true
-      Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 1.56979632
+      Scale: 59.7275543
       Target Frame: <Fixed Frame>
-      Value: Orbit (rviz)
-      Yaw: 3.55039811
+      Value: TopDownOrtho (rviz)
+      X: -0.0210158899
+      Y: -0.00910433009
     Saved: ~
 Window Geometry:
   Displays:
