@@ -10,7 +10,7 @@
   <arg name="gui" default="true"/> 
   	-->
   <!--include file="$(find gazebo_ros)/launch/empty_world.launch"-->
-  <include file="/home/mastertsoutsos/catkin_ws/src/gazebo_ros_pkgs/gazebo_ros/launch/willowgarage_world.launch">
+  <include file="/home/mastertsoutsos/catkin_ws/src/gazebo_ros_pkgs/gazebo_ros/launch/willowgarage_world2.launch">
     <!--
     <arg name="use_sim_time" value="true"/>
     <arg name="debug" value="false"/>

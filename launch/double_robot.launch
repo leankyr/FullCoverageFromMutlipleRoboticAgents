@@ -4,7 +4,7 @@
   <include file="$(find my_2d_nav)/launch/turtlebot_world2.launch"/>
 	
 	<!-- set Tf Tree -->
-	<include file="$(find my_2d_nav)/launch/set_tf.launch"/>
+	<!--include file="$(find my_2d_nav)/launch/set_tf.launch"/-->
   
   <!-- Rviz  -->
   <node name="rviz" type="rviz" pkg="rviz" args="-d $(find my_2d_nav)/rviz/multi_robot.rviz"/>

@@ -20,8 +20,8 @@
       <arg name="init_pose" value="-x -1 -y -1 -z 0" />
       <arg name="robot_name"  value="Robot1" />
     </include>
-		<include file="$(find my_2d_nav)/launch/amcl_and_move_base.launch"/>
-		<include file="$(find my_2d_nav)/move_base_config/amcl_diff.launch"/>
+		<!--include file="$(find my_2d_nav)/launch/amcl_and_move_base.launch"/-->
+		<!--include file="$(find my_2d_nav)/move_base_config/amcl_diff.launch"/-->
 
 		<!--rosparam file="$(find my_2d_nav)/launch/amcl_and_move_base.launch" commands="load" ns="robot1"/-->  
 </group>
@@ -33,7 +33,7 @@
       <arg name="robot_name"  value="Robot2" />
     </include>
 		<!--rosparam file="$(find my_2d_nav)/launch/amcl_and_move_base.launch" commands="load" ns="robot2"/-->  
-		<include file="$(find my_2d_nav)/launch/amcl_and_move_base2.launch"/>
-		<include file="$(find my_2d_nav)/move_base_config/amcl_diff2.launch"/>
+		<!--include file="$(find my_2d_nav)/launch/amcl_and_move_base2.launch"/-->
+		<!--include file="$(find my_2d_nav)/move_base_config/amcl_diff2.launch"/-->
   </group>
 </launch>
