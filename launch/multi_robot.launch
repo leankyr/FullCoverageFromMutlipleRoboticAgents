@@ -3,12 +3,6 @@
   <arg name="stacks" value="hexagons"/>  <!-- used to be stacks -->
   <arg name="3d_sensor" value="hokuyo"/> <!-- used to be 3d_sensor -->
 
-<!-- Run the map server-->
-<!--
-	<node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/map_25_11_time_01_30_willow.yaml">
-      <param name="frame_id" value="/map" />
-	</node>
--->
 
   <arg name="urdf_file" default="$(find xacro)/xacro.py 
 	'$(find turtlebot_description)/robots/$(arg base)_$(arg stacks)_$(arg 3d_sensor).urdf.xacro'" />
@@ -20,11 +14,7 @@
       <arg name="init_pose" value="-x -1 -y -1 -z 0" />
       <arg name="robot_name"  value="Robot1" />
     </include>
-		<!--include file="$(find my_2d_nav)/launch/amcl_and_move_base.launch"/-->
-		<!--include file="$(find my_2d_nav)/move_base_config/amcl_diff.launch"/-->
-
-		<!--rosparam file="$(find my_2d_nav)/launch/amcl_and_move_base.launch" commands="load" ns="robot1"/-->  
-</group>
+	</group>
 
   <group ns="robot2">
     <param name="tf_prefix" value="robot2_tf" />
@@ -32,8 +22,5 @@
       <arg name="init_pose" value="-x -3 -y -1 -z 0 -Y 3.14" />
       <arg name="robot_name"  value="Robot2" />
     </include>
-		<!--rosparam file="$(find my_2d_nav)/launch/amcl_and_move_base.launch" commands="load" ns="robot2"/-->  
-		<!--include file="$(find my_2d_nav)/launch/amcl_and_move_base2.launch"/-->
-		<!--include file="$(find my_2d_nav)/move_base_config/amcl_diff2.launch"/-->
-  </group>
+	</group>
 </launch>

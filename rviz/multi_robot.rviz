@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Status1
         - /Robot1 Footprint1
+        - "/Robot2: Laser1"
         - /PoseArray2
       Splitter Ratio: 0.5
     Tree Height: 775
@@ -200,11 +201,7 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        base_footprint:
-          Value: true
         map:
-          Value: true
-        odom:
           Value: true
         robot1_tf/base_footprint:
           Value: true
@@ -472,9 +469,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 0; 0; 255
-      Max Intensity: 1.27934193e-35
+      Max Intensity: 999999
       Min Color: 0; 0; 255
-      Min Intensity: 1.27934193e-35
+      Min Intensity: 999999
       Name: "Robot1: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -501,10 +498,10 @@ Visualization Manager:
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
-      Max Color: 255; 255; 0
-      Max Intensity: 1.27934193e-35
-      Min Color: 255; 255; 0
-      Min Intensity: 1.27934193e-35
+      Max Color: 255; 170; 0
+      Max Intensity: 999999
+      Min Color: 255; 170; 0
+      Min Intensity: 999999
       Name: "Robot2: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -860,7 +857,7 @@ Visualization Manager:
       Axes Length: 0.300000012
       Axes Radius: 0.00999999978
       Class: rviz/PoseArray
-      Color: 255; 25; 0
+      Color: 0; 255; 0
       Enabled: true
       Head Length: 0.0700000003
       Head Radius: 0.0299999993
@@ -905,11 +902,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 59.7275543
+      Scale: 27.7377186
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: -0.0210158899
-      Y: -0.00910433009
+      X: -3.26404715
+      Y: -2.41680932
     Saved: ~
 Window Geometry:
   Displays:
