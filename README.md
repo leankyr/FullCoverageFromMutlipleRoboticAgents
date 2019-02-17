@@ -2,11 +2,12 @@
 
 My thesis repository.
 
-how to execute:
-
 As long as you have the willow garage world on the gazebo resource path and GAZEBO simulator which comes out of the box with ROS, gazebo_ros_pkgs, and the navigation stack you seem to be fine... However there may be some dependencies I have yet to figure out.
 
 A python dependency is bresenham which can be installed through pip
+
+how to execute:
+
 1.0) clone master repo
 
 2.0) open one terminal
