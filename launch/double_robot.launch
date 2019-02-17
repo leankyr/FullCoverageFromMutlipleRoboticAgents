@@ -1,0 +1,21 @@
+<launch>
+
+  <!-- Willow Garage Launch -->
+  <include file="$(find my_2d_nav)/launch/turtlebot_world2.launch"/>
+	
+	<!-- set Tf Tree -->
+	<!--include file="$(find my_2d_nav)/launch/set_tf.launch"/-->
+  
+  <!-- Rviz  -->
+  <node name="rviz" type="rviz" pkg="rviz" args="-d $(find my_2d_nav)/rviz/multi_robot.rviz"/>
+  
+  <!-- launch nav file -->
+  <include file="$(find my_2d_nav)/launch/nav_file.launch"/>
+
+  <!-- include Move Base-->
+  <!--include file="$(find my_2d_nav)/launch/start_move_base.launch"/-->
+
+	<!-- include Coverage Node Publisher-->
+	<!--include file="$(find my_2d_nav)/launch/coverage_node.launch"/-->
+
+</launch>

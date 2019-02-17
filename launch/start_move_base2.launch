@@ -2,7 +2,7 @@
 
   <!--node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/playground.pgm"/-->
   <!--- Run AMCL --> 
-      <!--include file="$(find my_2d_nav)/launch/amcl_diff.launch"/-->
+      <include file="$(find my_2d_nav)/move_base_config/amcl_diff2.xml"/>
       
 
 
@@ -17,7 +17,7 @@
     <rosparam file="$(find my_2d_nav)/move_base_config/move_base_params.yaml" command="load" />
     <!--rosparam file="$(find my_2d_nav)/move_base_config/dwa_local_planner_params.yaml" command="load"/-->
     <rosparam file="$(find my_2d_nav)/move_base_config/teb_local_planner_params.yaml" command="load"/>
-
+		<remap from="map" to="/map" />
   </node>
 
 

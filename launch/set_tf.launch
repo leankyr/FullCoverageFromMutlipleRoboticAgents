@@ -1,0 +1,5 @@
+<launch>
+	<!-- Setting Tf Tree -->
+	<node pkg="tf" type="static_transform_publisher" name="map2odom1" args="-1 -1 0 0 0 0  map robot1_tf/odom 100" />
+	<node pkg="tf" type="static_transform_publisher" name="map2odom2" args="-3 -1 0 3.14 0 0  map robot2_tf/odom 100" />
+</launch>

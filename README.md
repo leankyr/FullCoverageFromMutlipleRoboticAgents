@@ -6,6 +6,10 @@ how to execute:
 
 As long as you have the willow garage world on the gazebo resource path and GAZEBO simulator and gazebo_ros_pkgs,
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> d846ca27b1e9b41eaebd0ec274404148a0d3ad34
 1.0) clone master repo
 
 2.0) open one terminal
