@@ -4,7 +4,7 @@ My thesis repository.
 
 how to execute:
 
-As long as you have the willow garage world on the gazebo resource path and GAZEBO simulator and gazebo_ros_pkgs,
+As long as you have the willow garage world on the gazebo resource path and GAZEBO simulator which comes out of the box with ROS, gazebo_ros_pkgs, and the navigation stack! However there may be some dependencies I have yet to figure out.
 
 1.0) clone master repo
 
