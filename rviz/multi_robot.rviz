@@ -918,6 +918,8 @@ Visualization Manager:
       Topic: /clicked_point
     - Class: rviz/SetGoal
       Topic: robot1/move_base_simple/goal
+    - Class: rviz/SetGoal
+      Topic: robot2/move_base_simple/goal
   Value: true
   Views:
     Current:
