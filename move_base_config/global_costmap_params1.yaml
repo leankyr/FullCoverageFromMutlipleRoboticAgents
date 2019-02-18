@@ -1,0 +1,26 @@
+global_costmap:
+  global_frame: map
+  robot_base_frame: robot1_tf/base_link
+  update_frequency: 5.0 # Used to be 5
+  publish_frequency: 2.0 # Used to be 2.5 
+  static_map: true
+  width: 0.0
+  height: 0.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
