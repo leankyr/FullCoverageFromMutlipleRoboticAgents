@@ -100,7 +100,7 @@ class Brushfires:
                                 float(j) * resolution + origin['y']\
                                 ))
         return limits
-        
+
     def coverageLimitsBrushfire2(self, ogm, coverage, robot_pose, origin, resolution):
 
         limits = Set()

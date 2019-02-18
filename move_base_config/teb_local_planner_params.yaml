@@ -6,7 +6,7 @@
 ### global_plan_viapoint_sep: keep positive, although, experimentally, it seems
 ## to be unaffecting the robot's behaviour
 ##
-### min_obstacle_dist:
+##min_obstacle_dist:
 ##
 ### inflation_dist:
 ##
@@ -36,6 +36,7 @@ TebLocalPlannerROS:
 # temporal resolution (dt): usually 10% of dt_ref
   dt_hysteresis: 0.1
 
+  min_obstacle_dist: 0.5
 # Some global planners are not considering the orientation at local subgoals
 # between start and global goal, therefore determine it automatically
   global_plan_overwrite_orientation: True
