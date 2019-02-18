@@ -8,7 +8,6 @@ A python dependency is bresenham which can be installed through pip
 
 how to execute:
 
->>>>>>> d846ca27b1e9b41eaebd0ec274404148a0d3ad34
 1.0) clone master repo
 
 2.0) open one terminal
