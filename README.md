@@ -19,4 +19,8 @@ how to execute:
 3.1) type: `roslaunch my_2d_nav target_select.launch`
 
 you will se the turtlebot trying to cover the whole map and setting goals on its own.
-Soon more features to come.
+Soon more features to come...
+
+
+
+
