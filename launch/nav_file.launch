@@ -20,7 +20,9 @@
     <param name="global_frame" value="map"/>
     <remap from="/scan" to="/robot1/scan"/>
     <remap from="static_map" to="/static_map"/>
-    <include file="$(find my_2d_nav)/launch/start_move_base2.launch" />
+    <remap from="robot1/coverage_map" to="coverage_map"/>
+    <include file="$(find my_2d_nav)/launch/start_move_base2.launch"/>
+    <include file="$(find my_2d_nav)/launch/coverage_node2.launch"/>
   </group>
 
   <group ns="robot2">
@@ -37,7 +39,9 @@
     <param name="global_frame" value="map"/>
     <remap from="/scan" to="/robot2/scan"/>
     <remap from="static_map" to="/static_map"/>
-    <include file="$(find my_2d_nav)/launch/start_move_base3.launch" />
+    <remap from="robot2/coverage_map" to="coverage_map"/>
+    <include file="$(find my_2d_nav)/launch/start_move_base3.launch"/>
+    <include file="$(find my_2d_nav)/launch/coverage_node3.launch"/>
   </group>
 
 </launch>

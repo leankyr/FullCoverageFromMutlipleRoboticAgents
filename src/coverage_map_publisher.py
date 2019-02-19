@@ -214,7 +214,7 @@ class CoverageMapPublisher:
 
 
 if __name__ == '__main__':
-    rospy.init_node('coverage_map_publisher2')
+    rospy.init_node('coverage_map_publisher')
     CoverageMapPublisher()
     rospy.spin()
 
