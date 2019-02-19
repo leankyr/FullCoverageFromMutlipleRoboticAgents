@@ -3,11 +3,11 @@ obstacle_range: 9.0 # used to be 3.5
 raytrace_range: 9.0 # used to be 4.5
 #footprint: [[-0.20, -0.20], [-0.20, 0.20], [0.20, 0.20], [0.25, 0.0], [0.20, -0.20]] #this one for dwa
 #footprint: [[-0.0, -0.0], [-0.0, 0.0], [0.0, 0.0], [0.0, 0.0], [0.0, -0.0]]
-footprint: [[-0.1, -0.1], [-0.1, 0.1], [0.1, 0.1], [0.125, 0.0], [0.1, -0.1]]
+footprint: [[-0.1, -0.1], [-0.1, 0.1], [0.1, 0.1], [0.1, 0.0], [0.1, -0.1]]
 #robot radius: 0.2
 #footprint_padding: 0.1
-inflation_radius: 0.3 #0.3 for dwa planner
-cost_scaling_factor: 10 #10 for dwa planner
+inflation_radius: 0.10 #0.3 for dwa planner
+cost_scaling_factor: 17 #10 for dwa planner
 
 observation_sources: laser_scan_sensor
 

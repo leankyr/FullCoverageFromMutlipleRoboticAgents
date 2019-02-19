@@ -1,0 +1,6 @@
+<!--Coverage Node launch file-->
+<launch>
+	<!-- init coverage node-->
+	<node name="coverage_map_node" type="coverage_map_publisher1.py" pkg="my_2d_nav" output="screen"/>
+	<rosparam file="$(find my_2d_nav)/config/params1.yaml" command="load"/>
+</launch>
