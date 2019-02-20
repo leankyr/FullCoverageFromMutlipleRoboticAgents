@@ -21,6 +21,7 @@ how to execute:
 you will se the turtlebot trying to cover the whole map and setting goals on its own.
 Soon more features to come...
 
-
+I use base_local_planner with default parameters as it is the lightest and can be easily used on a real robot.
+I may however use a different in the future.
 
 
