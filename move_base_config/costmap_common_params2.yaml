@@ -7,7 +7,7 @@ footprint: [[-0.1, -0.1], [-0.1, 0.1], [0.1, 0.1], [0.1, 0.0], [0.1, -0.1]]
 #robot radius: 0.2
 #footprint_padding: 0.1
 inflation_radius: 0.10 #0.3 for dwa planner
-cost_scaling_factor: 16 #10 for dwa planner
+cost_scaling_factor: 16 # 10for dwa planner
 
 observation_sources: laser_scan_sensor
 

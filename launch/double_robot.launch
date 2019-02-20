@@ -2,7 +2,7 @@
 
   <!-- Willow Garage Launch -->
   <include file="$(find my_2d_nav)/launch/turtlebot_world2.launch"/>
-	
+  
 	<!-- set Tf Tree -->
 	<!--include file="$(find my_2d_nav)/launch/set_tf.launch"/-->
   
