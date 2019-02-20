@@ -5,6 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Status1
+        - "/Robot1: Local Path1"
+        - "/Robot2: Local Path1"
       Splitter Ratio: 0.5
     Tree Height: 747
   - Class: rviz/Selection
@@ -108,7 +110,7 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 25; 255; 0
+      Color: 255; 0; 0
       Enabled: true
       Head Diameter: 0.300000012
       Head Length: 0.200000003
@@ -125,13 +127,13 @@ Visualization Manager:
       Radius: 0.0299999993
       Shaft Diameter: 0.100000001
       Shaft Length: 0.100000001
-      Topic: /robot1/move_base/TrajectoryPlannerROS/local_plan
+      Topic: /robot1/move_base/DWAPlannerROS/local_plan
       Unreliable: false
       Value: true
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 25; 255; 0
+      Color: 255; 0; 0
       Enabled: true
       Head Diameter: 0.300000012
       Head Length: 0.200000003
@@ -148,7 +150,7 @@ Visualization Manager:
       Radius: 0.0299999993
       Shaft Diameter: 0.100000001
       Shaft Length: 0.100000001
-      Topic: /robot2/move_base/TrajectoryPlannerROS/local_plan
+      Topic: /robot1/move_base/DWAPlannerROS/local_plan
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -486,9 +488,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 0; 0; 255
-      Max Intensity: 6.96734098e-36
+      Max Intensity: 3.40074734e-37
       Min Color: 0; 0; 255
-      Min Intensity: 6.96734098e-36
+      Min Intensity: 3.40074734e-37
       Name: "Robot1: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -516,9 +518,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 170; 0
-      Max Intensity: 6.96734098e-36
+      Max Intensity: 3.40074734e-37
       Min Color: 255; 170; 0
-      Min Intensity: 6.96734098e-36
+      Min Intensity: 3.40074734e-37
       Name: "Robot2: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -951,11 +953,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 61.3192558
+      Scale: 44.259697
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: -3.26404715
-      Y: -2.41680932
+      X: 6.06958055
+      Y: 0.265504092
     Saved: ~
 Window Geometry:
   Displays:
