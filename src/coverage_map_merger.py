@@ -48,7 +48,7 @@ class CoverageMerger:
                                 dtype = numpy.int)
 
         # resolution of our coverage map
-        self.coverageAll.info.resolution = 0.1
+        self.coverageAll.info.resolution = rospy.get_param('resolution')
         
         #if numpy.size(self.coverage1) != 0:
         rospy.Timer(rospy.Duration(1.0), self.mergeMaps)
