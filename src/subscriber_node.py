@@ -15,6 +15,8 @@ class SubscriberNode:
         # Parameters from the .yaml file
         slamMapTopic = rospy.get_param('slam_map')
         coverageMapTopic = rospy.get_param('coverage_map')
+        coverageMapTopic1 = '/robot1/coverage_map'
+        coverageMapTopic2 = '/robot2/coverage_map'
         self.resolution = rospy.get_param('resolution')
         self.mapFrame = rospy.get_param('map_frame')
         self.baseFootprintFrame = rospy.get_param('base_footprint_frame')
@@ -22,6 +24,8 @@ class SubscriberNode:
         # Useful variables
         self.ogm = [] # list
         self.coverage = []
+#        self.coverage1 = []
+#        self.coverage2 = []
         self.previousOgmWidth = 0
         self.previousOgmHeight = 0
         self.previousCovWidth = 0
@@ -58,6 +62,12 @@ class SubscriberNode:
                             buff_size=2**24)
         rospy.Subscriber(coverageMapTopic, OccupancyGrid, self.coverageCallback, \
                             queue_size=1, buff_size=2**24)
+#        rospy.Subscriber(coverageMapTopic1, OccupancyGrid, self.coverage1Callback, \
+#                            queue_size=1, buff_size=2**24)
+#        rospy.Subscriber(coverageMapTopic2, OccupancyGrid, self.coverage2Callback, \
+#                            queue_size=1, buff_size=2**24)
+
+
 
     def ogmCallback(self, data):
         # Map origin data to struct
@@ -84,30 +94,6 @@ class SubscriberNode:
 
         self.mapDataReady = True
 
-#    def costmapCallback(self, data):
-#        # Map origin data to struct
-#        self.costorigin['x'] = data.info.origin.position.x
-#        self.costorigin['y'] = data.info.origin.position.y
-#        self.costorigin['x_px'] = int(data.info.origin.position.x / self.resolution)
-#        self.costorigin['y_px'] = int(data.info.origin.position.y / self.resolution)
-#
-#        # Resize SLAM and Coverage OGMs when the SLAM map expands
-#        if data.info.width != self.previousCostMapWidth or \
-#                data.info.height != self.previousCostMapHeight:
-#            rospy.logwarn("[Main Node] Resizing SLAM OGM! New size: [%u, %u]", \
-#                            data.info.width, data.info.height)
-#            self.costmap = numpy.zeros((data.info.width, data.info.height), dtype = numpy.int)
-#
-#            # Update previous SLAM OGM width and height
-#            self.previousCostMapWidth = data.info.width
-#            self.previousCostMapHeight = data.info.height
-#
-#        # Construct 2-D OGM matrix
-#        for i in range(0, data.info.width):
-#            for j in range(0, data.info.height):
-#                self.costmap[i][j] = data.data[i + data.info.width * j]
-#
-#        self.CostMapDataReady = True
 
     def coverageCallback(self, data):
         # Map origin data to struct
@@ -120,14 +106,72 @@ class SubscriberNode:
                 self.previousCovHeight != data.info.height:
             rospy.logwarn("[Main Node] Resizing Coverage OGM! New size: [%u, %u]", \
                             data.info.width, data.info.height)
+
             self.coverage = numpy.zeros((data.info.width, data.info.height), \
                                 dtype = numpy.int)
+
             self.previousCovWidth = data.info.width
             self.previousCovHeight = data.info.height
 
         for i in range(0, data.info.width):
             for j in range(0, data.info.height):
                 self.coverage[i][j] = data.data[i + data.info.width * j]
+
+#    def coverage1Callback(self, data):
+#        # Map origin data to struct
+#        self.origin['x'] = data.info.origin.position.x
+#        self.origin['y'] = data.info.origin.position.y
+#        self.origin['x_px'] = int(data.info.origin.position.x / self.resolution)
+#        self.origin['y_px'] = int(data.info.origin.position.y / self.resolution)
+#
+#        if self.previousCovWidth != data.info.width or \
+#                self.previousCovHeight != data.info.height:
+#            rospy.logwarn("I am in cov1Callback!!!!!!!")
+#            rospy.logwarn("[Main Node] Resizing Coverage1 OGM! New size: [%u, %u]", \
+#                            data.info.width, data.info.height)
+#            print "data info width1 is: "
+#            print data.info.width
+#            print "data info height2 is: "
+#            print data.info.height
+#
+#            self.coverage1 = numpy.zeros((data.info.width, data.info.height), \
+#                                dtype = numpy.int)
+#            self.previousCovWidth = data.info.width
+#            self.previousCovHeight = data.info.height
+#
+#        for i in range(0, 704):
+#            for j in range(0, 576):
+#                self.coverage1[i][j] = data.data[i + data.info.width * j]
+#
+#        print "got Through Coverage 1 ogm!!"
+#
+#    def coverage2Callback(self, data):
+#        # Map origin data to struct
+#        self.origin['x'] = data.info.origin.position.x
+#        self.origin['y'] = data.info.origin.position.y
+#        self.origin['x_px'] = int(data.info.origin.position.x / self.resolution)
+#        self.origin['y_px'] = int(data.info.origin.position.y / self.resolution)
+#
+#        if self.previousCovWidth != data.info.width or \
+#                self.previousCovHeight != data.info.height:
+#            rospy.logwarn("I am in cov2Callback!!!!!!!")
+#            rospy.logwarn("[Main Node] Resizing Coverage2 OGM! New size: [%u, %u]", \
+#                            data.info.width, data.info.height)
+#            print "data info width2 is: "
+#            print data.info.width
+#            print "data info height2 is: "
+#            print data.info.height
+#
+#            self.coverage2 = numpy.zeros((data.info.width, data.info.height), \
+#                                dtype = numpy.int)
+#            self.previousCovWidth = data.info.width
+#            self.previousCovHeight = data.info.height
+#
+#        for i in range(0, 704):
+#            for j in range(0, 576):
+#                
+#                self.coverage2[i][j] = data.data[i + data.info.width * j]
+#        print "got Through Coverage 2 ogm!!!!"
 
 
     def readRobotPose(self, event):
@@ -156,9 +200,15 @@ class SubscriberNode:
     def getCoverage(self):
         return numpy.copy(self.coverage)
 
+#    def getCoverage1(self):
+#        return numpy.copy(self.coverage1)
+#
+#    def getCoverage2(self):
+#        return numpy.copy(self.coverage2)
+
 
     def getSlamMap(self):
         return numpy.copy(self.ogm)
-
+#
 #    def getCostMap(self):
 #        return numpy.copy(self.costmap)

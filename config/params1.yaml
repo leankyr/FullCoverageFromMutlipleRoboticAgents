@@ -2,7 +2,7 @@
 
 #~ General Parameters
 slam_map: /map                              # SLAM map topic
-coverage_map: coverage_map                 # Coverage map topic
+coverage_map: coverage_map                  # Coverage map topic
 map_frame: map                              # Map frame
 base_footprint_frame: robot1_tf/base_footprint        # Base footprint frame
 # velocity pub topic
