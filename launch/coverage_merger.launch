@@ -1,0 +1,6 @@
+<launch>
+  <node name="coverage_map_merger" type="coverage_map_merger.py" pkg="my_2d_nav" output="screen"/>
+  <rosparam file="$(find my_2d_nav)/config/params.yaml" command="load"/>
+</launch>
+
+
