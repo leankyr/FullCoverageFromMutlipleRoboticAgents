@@ -12,8 +12,8 @@
   <!-- launch nav file -->
   <include file="$(find my_2d_nav)/launch/nav_file.launch"/>
 
-  <!-- include Move Base-->
-  <!--include file="$(find my_2d_nav)/launch/start_move_base.launch"/-->
+  <!-- include the coverage merger -->
+  <include file="$(find my_2d_nav)/launch/coverage_merger.launch"/>
 
 	<!-- include Coverage Node Publisher-->
 	<!--include file="$(find my_2d_nav)/launch/coverage_node.launch"/-->
