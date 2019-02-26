@@ -1,0 +1,28 @@
+#Goal Selection Param File ~#
+
+#~ General Parameters
+slam_map: /map                              # SLAM map topic
+coverage_map: common_coverage_map                 # Coverage map topic
+map_frame: map                              # Map frame
+
+base_footprint_frame1: robot1_tf/base_footprint        # Base footprint frame
+base_footprint_frame2: robot2_tf/base_footprint        # Base footprint frame
+# velocity pub topic
+velocity_pub1: /robot1/mobile_base/commands/velocity
+velocity_pub2: /robot2/mobile_base/commands/velocity
+# resolution used to be 0.05
+# change also delta param according in
+# gmapping.launch.xml in turtlebot
+# navigation package
+resolution: 0.1                 # Map resolution
+
+# Radius around pose
+radius: 2
+
+# Size Of Coverage Map
+width: 704
+height: 576
+
+# Map origin
+origin_x: -29.8
+origin_y: -29.8
