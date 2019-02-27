@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Status1
         - /Coverage_common1
+        - "/Robot1: Global Path1"
         - "/Robot1: Local Path1"
         - "/Robot2: Local Path1"
       Splitter Ratio: 0.478510022
@@ -75,7 +76,7 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 25; 255; 0
+      Color: 0; 85; 255
       Enabled: true
       Head Diameter: 0.300000012
       Head Length: 0.200000003
@@ -499,9 +500,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 0; 0; 255
-      Max Intensity: 8.40779079e-45
+      Max Intensity: 999999
       Min Color: 0; 0; 255
-      Min Intensity: 8.40779079e-45
+      Min Intensity: 2.80259693e-45
       Name: "Robot1: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -529,9 +530,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 170; 0
-      Max Intensity: 8.40779079e-45
+      Max Intensity: 999999
       Min Color: 255; 170; 0
-      Min Intensity: 8.40779079e-45
+      Min Intensity: 2.80259693e-45
       Name: "Robot2: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -964,11 +965,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 36.3814926
+      Scale: 34.4741821
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 5.15938234
-      Y: 1.91516471
+      X: -9.01550388
+      Y: -7.75518513
     Saved: ~
 Window Geometry:
   Displays:

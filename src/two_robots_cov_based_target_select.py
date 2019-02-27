@@ -265,7 +265,7 @@ class TargetSelect:
             if max(distance_map1.values()) - min(distance_map1.values()) == 0:
                 normDist1[(0,0)] = 0
             else:
-                normDist1[goal] = 1 - (distance_map1[goal] - max(distance_map1.values())) \
+                normDist1[goal] = 1 - (distance_map1[goal] - min(distance_map1.values())) \
                             / (max(distance_map1.values()) - min(distance_map1.values()))
 
         # Calculate Priority Weight
@@ -324,7 +324,7 @@ class TargetSelect:
             if max(distance_map2.values()) - min(distance_map2.values()) == 0:
                 normDist2[(0,0)] = 0
             else:
-                normDist2[goal] = 1 - (distance_map2[goal] - max(distance_map2.values())) \
+                normDist2[goal] = 1 - (distance_map2[goal] - min(distance_map2.values())) \
                             / (max(distance_map2.values()) - min(distance_map2.values()))
 
         # Calculate Priority Weight

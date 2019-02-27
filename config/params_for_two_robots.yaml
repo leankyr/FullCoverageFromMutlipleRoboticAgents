@@ -21,8 +21,8 @@ radius: 2
 
 # Size Of Coverage Map
 width: 704
-height: 576
+height: 480
 
 # Map origin
 origin_x: -29.8
-origin_y: -29.8
+origin_y: -20.2
