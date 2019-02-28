@@ -51,7 +51,7 @@ class TargetSelect:
         ogm_limits['min_x'] = 10
         ogm_limits['max_x'] = 650
         ogm_limits['min_y'] = 30
-        ogm_limits['max_y'] = 550
+        ogm_limits['max_y'] = 440
 
         # Find only the useful boundaries of OGM. Only there calculations have meaning
 #        ogm_limits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)

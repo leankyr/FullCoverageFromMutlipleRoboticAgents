@@ -168,7 +168,8 @@ class TargetSelect:
             if max(topo_gain.values()) - min(topo_gain.values()) == 0:
                 normTopo[(0,0)] = 0
             else:
-                normTopo[goal] = 1 - (topo_gain[goal] - min(topo_gain.values())) \
+                # used to be 1 - ...
+                normTopo[goal] = (topo_gain[goal] - min(topo_gain.values())) \
                             / (max(topo_gain.values()) - min(topo_gain.values()))
             if max(distance_map.values()) - min(distance_map.values()) == 0:
                 normDist[(0,0)] = 0
@@ -186,7 +187,8 @@ class TargetSelect:
         # Calculate smoothing factor
         smoothFactor = dict()
         for goal in brush2:
-            coeff = (2 * (1 - normTopo[goal]) + 1 * (1 - normDist[goal]))  / (2**2 - 1)
+            #1 - ...
+            coeff = (2 * (normTopo[goal]) + 1 * (1 - normDist[goal]))  / (2**2 - 1)
             # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
             #             (1 - wRotNorm[i])) / (2**3 - 1)
             smoothFactor[goal] = coeff

@@ -18,7 +18,7 @@ DWAPlannerROS:
   max_vel_theta: 3.0
   min_vel_theta: -3.0
 
-  sim_time: 2.7 # used to be 1.7
+  sim_time: 3.2 # used to be 1.7
   sim_granularity: 0.025
 
   goal_distance_bias: 24.0
@@ -35,7 +35,7 @@ DWAPlannerROS:
 
   vx_samples: 6
   vy_samples: 0
-  vtheta_samples: 25
+  vtheta_samples: 30
 
   sim_period: 0.1
 
