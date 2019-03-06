@@ -199,11 +199,12 @@ class CoverageMapPublisher:
                         + self.coverage.info.width \
                         * (int(self.pose['y_px'] - self.origin['y_px']) + j)
 
-                if ogm[int(xx + i),int(yy + j)] > 80 or ogm[int(xx + i), int(yy + j)] == -1:
-                    self.coverage.data[index] = 0
-                else:
-                    self.coverage.data[index] = 100
-          
+#                if ogm[int(xx + i),int(yy + j)] > 80 or ogm[int(xx + i), int(yy + j)] == -1:
+#                    self.coverage.data[index] = 0
+#                else:
+#                    self.coverage.data[index] = 100
+
+                self.coverage.data[index] = 100
         self.cov_pub.publish(self.coverage)
         self.radius = numpy.full([4], rospy.get_param('radius'))
         pass

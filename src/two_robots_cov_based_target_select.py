@@ -82,27 +82,22 @@ class TargetSelect:
         print len(brush1)
         print 'size of brush2 after update:'
         print len(brush2)
+        
+        ## Sample randomly the sets ????
+#        brush1 = random.sample(brush1, int(len(brush1)/5))
+#        brush2 = random.sample(brush2, int(len(brush2)/5))
 
-
-        # sampled brush2
-        ########## Here I Sample the Goals for performance ############
-        ########## However I do not feel it's the main set back #######
-#        brush2 = random.sample(brush2, int(len(brush2)/10))
+#        print 'size of brush 1 after sampling... '
+#        print len(brush1)
 #        print 'size of brush 2 after sampling... '
 #        print len(brush2)
-        ###############################################################
-        ###################################################################################
-        ##################### Here I implement Topological Cost ###########################
-        ###################################################################################
 
-        topo_gain1 = dict()
-        topo_gain1 = self.topoGain(brush1, resolution, origin, ogm)
-        ###################################################################################
-        ##################### Here I implement Topological Cost ###########################
-        ###################################################################################
 
-        topo_gain2 = dict()
-        topo_gain2 = self.topoGain(brush2, resolution, origin, ogm)
+#        topo_gain1 = dict()
+#        topo_gain1 = self.topoGain(brush1, resolution, origin, ogm)
+#
+#        topo_gain2 = dict()
+#        topo_gain2 = self.topoGain(brush2, resolution, origin, ogm)
         
         ## Sort Topo Gain goal ##
 
@@ -118,9 +113,11 @@ class TargetSelect:
         distance_map2 = self.calcDist(robotPose2, brush2)
         rospy.loginfo('the length of distance map2 is %d !!', len(distance_map2))
 
-                
-        self.target1 = self.findGoal(brush1, distance_map1, topo_gain1)
-        self.target2 = self.findGoal(brush2, distance_map2, topo_gain2)
+        self.target1 = min(distance_map1, key = distance_map1.get)
+        self.target2 = min(distance_map2, key = distance_map2.get)
+
+        #self.target1 = self.findGoal(brush1, distance_map1, topo_gain1)
+        #self.target2 = self.findGoal(brush2, distance_map2, topo_gain2)
         
         
         return self.target1, self.target2
@@ -153,6 +150,62 @@ class TargetSelect:
                     goal = tuple(goal)
                     throw.add(goal)
                     break
+
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-3,4):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) + i] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) + i] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+#        for goal in brush2:
+#            goal = list(goal)
+#            for i in range(-3,4):
+#                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+#                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+#                    break
+#                if ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
+#                [int(goal[1]/resolution - origin['y']/resolution) - i] > 49 \
+#                or ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
+#                [int(goal[1]/resolution - origin['y']/resolution) - i] == -1:
+#                    goal = tuple(goal)
+#                    throw.add(goal)
+#                    break
+
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-3,4):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) - i] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) - i] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+#        for goal in brush2:
+#            goal = list(goal)
+#            for i in range(-3,4):
+#                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+#                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+#                    break
+#                if ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
+#                [int(goal[1]/resolution - origin['y']/resolution) + i] > 49 \
+#                or ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
+#                [int(goal[1]/resolution - origin['y']/resolution) + i] == -1:
+#                    goal = tuple(goal)
+#                    throw.add(goal)
+#                    break
         return throw
 
     def topoGain(self, brush, resolution, origin, ogm):
@@ -245,14 +298,14 @@ class TargetSelect:
         # Calculate Priority Weight
         priorWeight = dict()
         for goal in brush:
-            pre = 1 * round((normTopo[goal] / 0.5), 0) + \
-                    8 * round((normDist[goal] / 0.5), 0)
+            pre = 2 * round((normTopo[goal] / 0.5), 0) + \
+                    1 * round((normDist[goal] / 0.5), 0)
             priorWeight[goal] = pre
 
         # Calculate smoothing factor
         smoothFactor = dict()
         for goal in brush:
-            coeff = (1 * ( normTopo[goal]) + 8 * (1 - normDist[goal]))  / (2**2 - 1)
+            coeff = (2 * ( normTopo[goal]) + 1 * (1 - normDist[goal]))  / (2**2 - 1)
             # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
             #             (1 - wRotNorm[i])) / (2**3 - 1)
             smoothFactor[goal] = coeff
@@ -268,7 +321,7 @@ class TargetSelect:
             if goalGains[goal] == max(goalGains.values()):
                 store_goal = goal
                 rospy.loginfo("[Main Node] Goal1 at = [%u, %u]!!!", goal[0], goal[1])
-                rospy.loginfo("The Gain1 is = %f!!",goalGains[goal] )
+                rospy.loginfo("The Gain1 is = %f!!", goalGains[goal])
             else:
                 pass
                 #rospy.logwarn("[Main Node] Did not find any goals :( ...")

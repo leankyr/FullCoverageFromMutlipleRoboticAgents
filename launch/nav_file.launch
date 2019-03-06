@@ -2,7 +2,7 @@
   <!--param name="/use_sim_time" value="true"/-->
 
   <!-- Run the map server -->
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/feb_map.yaml">
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/march_map.yaml">
       <param name="frame_id" value="/map"/>
   </node>
 
