@@ -39,7 +39,7 @@ DWAPlannerROS:
 
   sim_period: 0.1
 
-  xy_goal_tolerance: 0.15
+  xy_goal_tolerance: 0.10 #used to be 0.15
   yaw_goal_tolerance: 0.3
 
   theta_stopped_vel: 0.1
