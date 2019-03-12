@@ -8,6 +8,7 @@
 
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <remap from="cmd_vel" to="mobile_base/commands/velocity"/>
+    <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
     <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
     <!--param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS"/-->
     <rosparam file="$(find my_2d_nav)/move_base_config/costmap_common_params.yaml" command="load" ns="global_costmap" />
@@ -15,6 +16,7 @@
     <rosparam file="$(find my_2d_nav)/move_base_config/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find my_2d_nav)/move_base_config/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find my_2d_nav)/move_base_config/move_base_params.yaml" command="load" />
+    <rosparam file="$(find my_2d_nav)/move_base_config/global_planner_params.yaml" command="load"/>
     <rosparam file="$(find my_2d_nav)/move_base_config/dwa_local_planner_params.yaml" command="load"/>
     <!--rosparam file="$(find my_2d_nav)/move_base_config/teb_local_planner_params.yaml" command="load"/-->
 

@@ -63,8 +63,8 @@ class TargetSelect:
                             ogmLimits['min_y'], ogmLimits['max_y'])
 
         # Blur the OGM to erase discontinuities due to laser rays
-        ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogmLimits)
-
+        #ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogmLimits)
+        ogm = initOgm
 #        for i in range(len(ogm)):
 #            for j in range(len(ogm)):
 #                if ogm[i][j] == 100:
@@ -78,7 +78,7 @@ class TargetSelect:
         #obst = self.brush.coverageLimitsBrushfire2(initOgm,ogm,robotPose,origin, resolution )
         rospy.loginfo("Calculating brush2....")
         # brush = self.brush.obstaclesBrushfireCffi(ogm,ogmLimits)
-        brush2 = self.brush.coverageLimitsBrushfire(ogm,ogm,robotPose,origin, resolution )
+        brush2 = self.brush.coverageLimitsBrushfire2(ogm,ogm,robotPose,origin, resolution )
 
 
         #goals = self.brush.closestUncoveredBrushfire(ogm, ogm, brush, robotPose, origin, resolution  )
@@ -130,22 +130,42 @@ class TargetSelect:
             distance_map[goal] = dist
 
 
-        #sorted_dist_map = sorted(distance_map.items(), key=operator.itemgetter(1))
+        sorted_dist_map = sorted(distance_map.items(), key=operator.itemgetter(1))
 
-        #for key, value in sorted(distance_map.iteritems(), key=lambda (k,v): (v,k)):
-        #    pass
+        sorted_goal_list = list()
+        for key, value in sorted(distance_map.iteritems(), key=lambda (k,v): (v,k)):
+            sorted_goal_list.append(key)
+            pass
             #print "%s: %s" % (key, value)
 
-        #for key in distance_map:
-        #    if distance_map[key] > random.randrange(1,5):
-        #        goal = key
-        #        break
+#        for key in distance_map:
+#            if distance_map[key] > random.randrange(1,5):
+#                goal = key
+#                break
+#        sorted_goal_list_sampled = sorted_goal_list[0:len(sorted_goal_list):10]
+        #print sorted_goal_list_top_10
 
-        rand_target = random.choice(distance_map.keys())
-
-        goal = rand_target
+#        stored_goal = list()
+#        dist = 1000
+#        for goal in distance_map:
+#            if distance_map[goal] < dist:
+#                dist = distance_map[goal]
+#                stored_goal = goal
+#
+#        rospy.loginfo('The stored goal is = [%f,%f]!!' ,stored_goal[0], stored_goal[1])
+#        rospy.loginfo('The distance is %f!!', distance_map[stored_goal])
+#        rospy.loginfo('The gain is %f!!', topo_gain[stored_goal])
+#        #rand_target = random.choice(distance_map.keys())
+#        #goal = rand_target
+        ind = random.randrange(0,min(4,len(sorted_goal_list)))
+        print 'ind is'
+        print ind
+        goal = sorted_goal_list[ind]
+        print 'the dist is'
+        print distance_map[goal]
 
         goal = list(goal)
+
         goal[0] = goal[0] + random.uniform(-0.5,0.5)
         goal[1] = goal[1] + random.uniform(-0.5,0.5)
         print goal
