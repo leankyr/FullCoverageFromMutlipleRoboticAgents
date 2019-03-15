@@ -45,26 +45,37 @@ class TargetSelect:
         #ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogmLimits)
         ogm = initOgm
 
-        rospy.loginfo("Calculating brush2....")
+        rospy.loginfo("Calculating brush....")
 
-        brush2 = self.brush.coverageLimitsBrushfire(initOgm, coverage, robotPose, origin, resolution )
+        brush = self.brush.coverageLimitsBrushfire(initOgm, coverage, robotPose, origin, resolution )
 
-        print 'size of brush2:'
-        print len(brush2)
+        print 'size of brush:'
+        print len(brush)
         min_dist = 10**24
         store_goal = ()
         throw = set()
 
-        throw = self.filterGoal(brush2, ogm, resolution, origin)
+        throw = self.filterGoal(brush, ogm, resolution, origin)
 
         print 'size of throw:'
         print len(throw)
 
-        brush2.difference_update(throw)
+        brush.difference_update(throw)
 
-        print 'size of brush2 after update:'
-        print len(brush2)
+        print 'size of brush after update:'
+        print len(brush)
 
+        distance_map = dict()
+        distance_map = self.calcDist(robotPose, brush)
+        rospy.loginfo('the length of distance map is %d !!', len(distance_map))
+
+        self.target = min(distance_map, key = distance_map.get)
+#        topo_gain = dict()
+#        topo_gain = self.topoGain(brush, resolution, origin, ogm)
+
+        #self.target1 = self.findGoal(brush1, distance_map1, topo_gain1)
+
+        return self.target
         # sampled brush2
         ########## Here I Sample the Goals for performance ############
         ########## However I do not feel it's the main set back #######
@@ -73,143 +84,6 @@ class TargetSelect:
 #        print len(brush2)
         ###############################################################
 
-        ###################################################################################
-        ##################### Here I implement Topological Cost ###########################
-        ###################################################################################
-
-        half_side = rospy.get_param('radius')
-        topo_gain = dict()
-        for goal in brush2:
-            xx = goal[0]/resolution
-            yy = goal[1]/resolution
-            rays_len = numpy.full([8], rospy.get_param('radius'))
-
-            line = list(bresenham(int(xx), int(yy), int(xx), int(yy + half_side/resolution)))
-            for idx,coord in enumerate(line):
-                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
-                    rays_len[0] = len(line[0: idx]) * resolution
-                    break
-
-            line = list(bresenham(int(xx),int(yy),int(xx),int(yy - half_side/resolution)))
-            for idx,coord in enumerate(line):
-                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
-                    rays_len[1] = len(line[0: idx]) * resolution
-                    break
-
-            line = list(bresenham(int(xx),int(yy),int(xx + half_side/resolution),int(yy)))
-            for idx,coord in enumerate(line):
-                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
-                    rays_len[2] = len(line[0: idx]) * resolution
-                    break
-
-            line = list(bresenham(int(xx),int(yy),int(xx - half_side/resolution),int(yy)))
-            for idx,coord in enumerate(line):
-                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
-                    rays_len[3] = len(line[0: idx]) * resolution
-                    break
-
-            line = list(bresenham(int(xx),int(yy),int(xx + half_side/resolution),int(yy + half_side/resolution)))
-            for idx,coord in enumerate(line):
-                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
-                    rays_len[4] = len(line[0: idx]) * resolution
-                    break
-
-            line = list(bresenham(int(xx),int(yy),int(xx + half_side/resolution),int(yy - half_side/resolution)))
-            for idx,coord in enumerate(line):
-                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
-                    rays_len[5] = len(line[0: idx]) * resolution
-                    break
-
-            line = list(bresenham(int(xx),int(yy),int(xx - half_side/resolution),int(yy + half_side/resolution)))
-            for idx,coord in enumerate(line):
-                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
-                    rays_len[6] = len(line[0: idx]) * resolution
-                    break
-
-            line = list(bresenham(int(xx),int(yy),int(xx - half_side/resolution),int(yy - half_side/resolution)))
-            for idx,coord in enumerate(line):
-                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
-                    rays_len[7] = len(line[0: idx]) * resolution
-                    break
-
-            #topo_gain[goal] = sum(rays_len)/len(rays_len)
-            topo_gain[goal] = sum(rays_len) #/len(rays_len)
-            #rospy.loginfo('The topo gain for goal = [%f,%f] is %f', xx, yy, topo_gain[goal])
-
-        ##################################################################################
-        ##################################################################################
-        ##################################################################################
-
-        ## Sort Topo Gain goal ##
-
-        #sorted_topo_gain = sorted(topo_gain.items(), key=operator.itemgetter(1), reverse = True)
-        #rospy.loginfo('the length of sorted_topo_gain is %d !!', len(sorted_topo_gain))
-
-
-        distance_map = dict()
-
-        for goal in brush2:
-            #print goal
-            #goal = list(goal)
-            #rospy.loginfo('goal is = [%f,%f]!!', goal[0], goal[1])
-            dist = math.hypot(goal[0] - robotPose['x'], goal[1] - robotPose['y'])
-            distance_map[goal] = dist
-
-
-        rospy.loginfo('the length of distance map is %d !!', len(distance_map))
-
-
-        ######################################################################################
-        ##################### Here I calculate the gain of my Goals ##########################
-        ######################################################################################
-        normTopo = dict()
-        normDist = dict()
-        for goal in brush2:
-            if max(topo_gain.values()) - min(topo_gain.values()) == 0:
-                normTopo[(0,0)] = 0
-            else:
-                # used to be 1 - ...
-                normTopo[goal] = (topo_gain[goal] - min(topo_gain.values())) \
-                            / (max(topo_gain.values()) - min(topo_gain.values()))
-            if max(distance_map.values()) - min(distance_map.values()) == 0:
-                normDist[(0,0)] = 0
-            else:
-                normDist[goal] = 1 - (distance_map[goal] - min(distance_map.values())) \
-                            / (max(distance_map.values()) - min(distance_map.values()))
-
-        # Calculate Priority Weight
-        priorWeight = dict()
-        for goal in brush2:
-            pre = 2 * round((normTopo[goal] / 0.5), 0) + \
-                    1 * round((normDist[goal] / 0.5), 0)
-            priorWeight[goal] = pre
-
-        # Calculate smoothing factor
-        smoothFactor = dict()
-        for goal in brush2:
-            #1 - ...
-            coeff = (2 * (normTopo[goal]) + 1 * (1 - normDist[goal]))  / (2**2 - 1)
-            # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
-            #             (1 - wRotNorm[i])) / (2**3 - 1)
-            smoothFactor[goal] = coeff
-
-        # Calculate costs
-        goalGains = dict()
-        for goal in brush2:
-            goalGains[goal] = priorWeight[goal] * smoothFactor[goal]
-
-        # Choose goal with max gain 
-        store_goal = set()
-        for goal in brush2:
-            if goalGains[goal] == max(goalGains.values()):
-                store_goal = goal
-                rospy.loginfo("[Main Node] Goal at = [%u, %u]!!!", goal[0], goal[1])
-                rospy.loginfo("The Gain is = %f!!",goalGains[goal] )
-            else:
-                pass
-                #rospy.logwarn("[Main Node] Did not find any goals :( ...")
-                #self.target = self.selectRandomTarget(ogm, coverage, brush2, \
-                #                        origin, ogm_limits, resolution)
 
 
 
@@ -246,12 +120,6 @@ class TargetSelect:
 #        print distance_map[goal]
 #
 #        goal = list(goal)
-        goal = list(store_goal)
-        print 'the ogm value is'
-        print ogm[int(goal[0] - origin['x_px'])][int(goal[1] - origin['y_px'])]
-        print goal
-        self.target = goal
-        return self.target
 
     def selectRandomTarget(self, ogm, brush, origin, ogmLimits, resolution):
         rospy.logwarn("[Main Node] Random Target Selection!")
@@ -328,7 +196,7 @@ class TargetSelect:
 
         marker_pub.publish(msg)
         return
-
+    
     def filterGoal(self, brush2, ogm, resolution, origin):
         throw = set()
         for goal in brush2:
@@ -356,4 +224,187 @@ class TargetSelect:
                     goal = tuple(goal)
                     throw.add(goal)
                     break
+
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-3,4):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) + i] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) + i] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+#        for goal in brush2:
+#            goal = list(goal)
+#            for i in range(-3,4):
+#                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+#                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+#                    break
+#                if ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
+#                [int(goal[1]/resolution - origin['y']/resolution) - i] > 49 \
+#                or ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
+#                [int(goal[1]/resolution - origin['y']/resolution) - i] == -1:
+#                    goal = tuple(goal)
+#                    throw.add(goal)
+#                    break
+
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-3,4):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) - i] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) - i] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+#        for goal in brush2:
+#            goal = list(goal)
+#            for i in range(-3,4):
+#                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+#                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+#                    break
+#                if ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
+#                [int(goal[1]/resolution - origin['y']/resolution) + i] > 49 \
+#                or ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
+#                [int(goal[1]/resolution - origin['y']/resolution) + i] == -1:
+#                    goal = tuple(goal)
+#                    throw.add(goal)
+#                    break
         return throw
+
+    def calcDist(self, robotPose, brush):
+        distance_map = dict()
+        for goal in brush:
+            dist = math.hypot(goal[0] - robotPose['x'], goal[1] - robotPose['y'])
+            distance_map[goal] = dist
+        return distance_map
+
+    def topoGain(self, brush, resolution, origin, ogm):
+        topo_gain = dict()
+        half_side = rospy.get_param('radius')
+        for goal in brush:
+            xx = goal[0]/resolution
+            yy = goal[1]/resolution
+            rays_len = numpy.full([8], rospy.get_param('radius'))
+
+            line = list(bresenham(int(xx), int(yy), int(xx), int(yy + half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[0] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx),int(yy - half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[1] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx + half_side/resolution),int(yy)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[2] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx - half_side/resolution),int(yy)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[3] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx + half_side/resolution),int(yy + half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[4] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx + half_side/resolution),int(yy - half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[5] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx - half_side/resolution),int(yy + half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[6] = len(line[0: idx]) * resolution
+                    break
+
+            line = list(bresenham(int(xx),int(yy),int(xx - half_side/resolution),int(yy - half_side/resolution)))
+            for idx,coord in enumerate(line):
+                if ogm[coord[0] - origin['x_px']][coord[1] - origin['y_px']] > 80:
+                    rays_len[7] = len(line[0: idx]) * resolution
+                    break
+
+            #topo_gain[goal] = sum(rays_len)/len(rays_len)
+            topo_gain[goal] = sum(rays_len) #/len(rays_len)
+            #rospy.loginfo('The topo gain for goal = [%f,%f] is %f', xx, yy, topo_gain[goal])
+        return topo_gain
+
+    def findGoal(self, brush, distance_map, topo_gain):
+        ######################################################################################
+        ##################### Here I calculate the gain of my Goals ##########################
+        ######################################################################################
+        normTopo = dict()
+        normDist = dict()
+        for goal in brush:
+            if max(topo_gain.values()) - min(topo_gain.values()) == 0:
+                normTopo[(0,0)] = 0
+            else:
+                # 1 - ...
+                normTopo[goal] = (topo_gain[goal] - min(topo_gain.values())) \
+                            / (max(topo_gain.values()) - min(topo_gain.values()))
+            if max(distance_map.values()) - min(distance_map.values()) == 0:
+                normDist[(0,0)] = 0
+            else:
+                normDist[goal] = 1 - (distance_map[goal] - min(distance_map.values())) \
+                            / (max(distance_map.values()) - min(distance_map.values()))
+
+        # Calculate Priority Weight
+        priorWeight = dict()
+        for goal in brush:
+            pre = 2 * round((normTopo[goal] / 0.5), 0) + \
+                    1 * round((normDist[goal] / 0.5), 0)
+            priorWeight[goal] = pre
+
+        # Calculate smoothing factor
+        smoothFactor = dict()
+        for goal in brush:
+            coeff = (2 * ( normTopo[goal]) + 1 * (1 - normDist[goal]))  / (2**2 - 1)
+            # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
+            #             (1 - wRotNorm[i])) / (2**3 - 1)
+            smoothFactor[goal] = coeff
+
+        # Calculate costs
+        goalGains = dict()
+        for goal in brush:
+            goalGains[goal] = priorWeight[goal] * smoothFactor[goal]
+
+        # Choose goal with max gain 
+        store_goal1 = set()
+        for goal in brush:
+            if goalGains[goal] == max(goalGains.values()):
+                store_goal = goal
+                rospy.loginfo("[Main Node] Goal1 at = [%u, %u]!!!", goal[0], goal[1])
+                rospy.loginfo("The Gain1 is = %f!!", goalGains[goal])
+            else:
+                pass
+                #rospy.logwarn("[Main Node] Did not find any goals :( ...")
+                #self.target = self.selectRandomTarget(ogm, coverage, brush2, \
+                #                        origin, ogm_limits, resolution)
+#
+#        goal = list(goal)
+        goal = list(store_goal)
+        print 'the ogm value is'
+        #print ogm[int(goal1[0] - origin['x_px'])][int(goal1[1] - origin['y_px'])]
+        print goal
+        return goal
