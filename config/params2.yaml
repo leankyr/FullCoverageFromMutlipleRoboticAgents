@@ -5,6 +5,10 @@ slam_map: /map                              # SLAM map topic
 coverage_map: coverage_map                 # Coverage map topic
 map_frame: map                              # Map frame
 base_footprint_frame: robot2_tf/base_footprint        # Base footprint frame
+sensor_frame: robot2_tf/base_link
+dist_of_use: 4
+field_of_view: 60
+
 # velocity pub topic
 velocity_pub: /robot2/mobile_base/commands/velocity
 # resolution used to be 0.05
