@@ -2,8 +2,10 @@
 
 import rospy
 import time
-
-from send_move_base_goal_two_robots import SendMoveBaseGoalClient
+### Remeber to get it back to original form if it does not work
+#from send_move_base_goal_two_robots import SendMoveBaseGoalClient
+from send_goal_robot1 import SendMoveBaseGoalClient1
+from send_goal_robot2 import SendMoveBaseGoalClient2
 
 # The main function of the program
 if __name__ == '__main__':
@@ -15,6 +17,7 @@ if __name__ == '__main__':
     # Initializes the ROS node
     rospy.init_node('main_node')
     # Creates a RobotController object
-    smbg = SendMoveBaseGoalClient()
+    smbg1 = SendMoveBaseGoalClient1()
+    smbg2 = SendMoveBaseGoalClient2()
     # ROS waits for events
     rospy.spin()
