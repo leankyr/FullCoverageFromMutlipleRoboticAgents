@@ -71,14 +71,7 @@ class SendMoveBaseGoalClient2:
         moveBaseClient2.wait_for_result()
 
 
-
-
-
-
-
-
-
-        # self.rotateRobot()
+#        self.rotateRobot()
 
 #        moveBaseClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)
 #

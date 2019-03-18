@@ -97,12 +97,12 @@ class Topology:
     nodes = []
 
     width = ogm.shape[0]
-    height = ogm.shape[1]
+    height = ogm.shape[1] ### make it ropsy get param
 
     for i in range(1, width - 1):
       for j in range(1, height - 1):
         if ogm[i][j] <= 49 and brush[i][j] > 3 and \
-            skeleton[i][j] == 1 and coverage[i][j] != 100:
+            skeleton[i][j] == 1 and coverage[i][j] == 0:
           c = 0
           for ii in range(-1, 2):
             for jj in range(-1, 2):

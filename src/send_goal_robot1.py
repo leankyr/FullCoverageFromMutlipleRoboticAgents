@@ -69,7 +69,7 @@ class SendMoveBaseGoalClient1:
         moveBaseClient1.send_goal(self.moveBaseGoal1)
         moveBaseClient1.wait_for_result()
 
-        # self.rotateRobot()
+#        self.rotateRobot()
 
 #        moveBaseClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)
 #
@@ -122,6 +122,6 @@ class SendMoveBaseGoalClient1:
 #        velocityMsg.angular.z = 0
 #        self.velocityPub.publish(velocityMsg)
 #        rospy.logwarn(rospy.get_caller_id() + ": Robot Rotation OVER!")
-
+#
 
     

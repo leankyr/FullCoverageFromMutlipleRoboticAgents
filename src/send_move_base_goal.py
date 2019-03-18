@@ -4,14 +4,13 @@ import rospy
 import actionlib
 import time
 import math
-import random
 from geometry_msgs.msg import PoseStamped, Twist
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node import SubscriberNode
 #from target_selection_class import TargetSelect #,selectRandomTarget
-from cov_based_target_select import TargetSelect
-#from topo_graph_target_select import TargetSelect
-#from two_robots_cov_based_target_select import TargetSelect
+# from cov_based_target_select import TargetSelect
+from topo_graph_target_select import TargetSelect
+# from two_robots_cov_based_target_select import TargetSelect
 
 
 class SendMoveBaseGoalClient:
@@ -24,13 +23,12 @@ class SendMoveBaseGoalClient:
         self.moveBaseGoal.target_pose.header.frame_id = "map"
         self.moveBaseGoal.target_pose.header.stamp = rospy.Time.now()
 
-        rospy.loginfo("[Main Node] Wait 5 seconds for the subscribers to be ready!")
-        time.sleep(5)
+        rospy.loginfo("[Main Node] Wait 20 seconds for the subscribers to be ready!")
+        time.sleep(20)
 
         # self.velocityPub = rospy.Publisher("/cmd_vel_mux/input/navi", Twist, queue_size = 1)
 
         rospy.Timer(rospy.Duration(1.0), self.calculateSendGoal)
-
 
     def calculateSendGoal(self, event):
         ogm = self.subNode.getSlamMap()
@@ -40,7 +38,7 @@ class SendMoveBaseGoalClient:
         robotPose = self.subNode.robotPose
         resolution = rospy.get_param('resolution')
 
-        target = self.selectTarget.targetSelection(ogm, coverage, origin, \
+        target = self.selectTarget.targetSelection(ogm, coverage, origin, 
                                     resolution, robotPose)
 
         # self.rotateRobot()
@@ -61,13 +59,12 @@ class SendMoveBaseGoalClient:
 
         moveBaseClient.wait_for_server()
         rospy.loginfo("[Main Node] Sending goal")
-        rospy.loginfo("[Main Node] Goal at [%f, %f, %f]!", \
-                        self.moveBaseGoal.target_pose.pose.position.x, \
-                        self.moveBaseGoal.target_pose.pose.position.y, \
+        rospy.loginfo("[Main Node] Goal at [%f, %f, %f]!", 
+                        self.moveBaseGoal.target_pose.pose.position.x, 
+                        self.moveBaseGoal.target_pose.pose.position.y, 
                          self.moveBaseGoal.target_pose.pose.position.z)
         moveBaseClient.send_goal(self.moveBaseGoal)
         moveBaseClient.wait_for_result()
-
 
     def rotateRobot(self):
         velocityMsg = Twist()

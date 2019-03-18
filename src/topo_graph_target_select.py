@@ -20,7 +20,7 @@ from geometry_msgs.msg import PoseStamped, Twist
 from nav_msgs.msg import OccupancyGrid
 from brushfires import Brushfires
 from topology import Topology
-from visualization_msgs.msg import Marker
+from visualization_msgs.msg import Marker, MarkerArray
 
 from timeit import default_timer as timer
 
@@ -42,36 +42,29 @@ class TargetSelect:
 
     def targetSelection(self, initOgm, coverage, origin, resolution, robotPose):
         rospy.loginfo("-----------------------------------------")
-        rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", \
+        rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", 
                     robotPose['x'], robotPose['y'], robotPose['th'])
         rospy.loginfo("[Target Select Node] OGM_Origin = [%i, %i]", origin['x'], origin['y'])
         rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
         ogm_limits = {}
-        ogm_limits['min_x'] = 10
-        ogm_limits['max_x'] = 650
-        ogm_limits['min_y'] = 30
-        ogm_limits['max_y'] = 440
+        ogm_limits['min_x'] = 200
+        ogm_limits['max_x'] = 800
+        ogm_limits['min_y'] = 200
+        ogm_limits['max_y'] = 800
 
+
+
+        # publisher
+
+        marker_pub = rospy.Publisher("/vis_nodes", MarkerArray, queue_size = 1)
         # Find only the useful boundaries of OGM. Only there calculations have meaning
 #        ogm_limits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
         print ogm_limits
-#        while ogm_limits['min_x'] < 0 or ogm_limits['max_x'] < 0 or \
-#                ogm_limits['min_y'] < 0 or ogm_limits['max_y'] < 0:
-#            rospy.logwarn("[Main Node] Negative OGM limits. Retrying...")
-#            ogm_limits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
-#            ogm_limits['min_x'] = abs(int(ogm_limits['min_x']))
-#            ogm_limits['min_y'] = abs(int(ogm_limits['min_y']))
-#            ogm_limits['max_x'] = abs(int(ogm_limits['max_x']))
-#            ogm_limits['max_y'] = abs(int(ogm_limits['max_y']))
-#        rospy.loginfo("[Target Select] OGM_Limits[x] = [%i, %i]", \
-#                            ogm_limits['min_x'], ogm_limits['max_x'])
-#        rospy.loginfo("[Target Select] OGM_Limits[y] = [%i, %i]", \
-#                            ogm_limits['min_y'], ogm_limits['max_y'])
 
         # Blur the OGM to erase discontinuities due to laser rays
-        ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogm_limits)
-        #ogm = initOgm
+        #ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogm_limits)
+        ogm = initOgm
         # find brushfire field
         brush2 = self.brush.obstaclesBrushfireCffi(ogm, ogm_limits)
 
@@ -109,7 +102,7 @@ class TargetSelect:
                 [0.3, 0.4, 0.7, 0.5], # Color RGBA
                 0.1 # Scale
             )
-
+            self.publish_markers(marker_pub, vis_nodes)
 
 #        print nodes
 #        #print nodes[0]
@@ -123,6 +116,8 @@ class TargetSelect:
 ##
 #        self.target = goal
 
+
+    
         # Calculate topological cost
         rayLength = 20  # in pixels
         obstThres = 49
@@ -228,7 +223,10 @@ class TargetSelect:
             # numpy.var is covariance
             tempX = ((robotPose['x_px'] - nodesX[i])**2) / (2 * numpy.var(nodesX))
             tempY = ((robotPose['y_px'] - nodesY[i])**2) / (2 * numpy.var(nodesY))
-            temp = 1 - math.exp(tempX + tempY)
+            try:
+                temp = 1 - math.exp(tempX + tempY)
+            except OverflowError:
+                temp = -10**30
             gaussCoeff = 1 / temp
             wDist.append(dist * gaussCoeff)
 
@@ -317,35 +315,36 @@ class TargetSelect:
         for i in range(0, len(nodes)):
             self.costs.append(smoothFactor[i] * priorWeight[i])
 
+        print 'len nodes is:'
+        print len(nodes) 
+
         for i in range(0, len(nodes)):
+            tempX = int(nodes[i][0] * resolution + int(origin['x']))
+            tempY = int(nodes[i][1] * resolution + int(origin['y']))
+            for j in range(-8, 9):
+                if ogm[tempX + j][tempY] > 80 or ogm[tempX][tempY + j] > 80 or \
+                ogm[tempX + j][tempY + j] > 80 or ogm[tempX + j][tempY - j] > 80:
+                    nodes.remove(nodes[i])
+                    
+        print 'len nodes after filter:'
+        print len(nodes)
+
+
+
+
+        for i in range(0, len(nodes)):
+            
             if self.costs[i] == max(self.costs):
                 rospy.loginfo("[Main Node] Raw node = [%u, %u]", nodes[i][0], nodes[i][1])
-                tempX = nodes[i][0] * resolution + int(origin['x'])
-                tempY = nodes[i][1] * resolution + int(origin['y'])
+                tempX = nodes[i][0] * resolution + origin['x']
+                tempY = nodes[i][1] * resolution + origin['y']
                 self.target = [tempX, tempY]
-                rospy.loginfo("[Main Node] Eligible node found at [%f, %f]", \
+                rospy.loginfo("[Main Node] Eligible node found at [%f, %f]", 
                                 self.target[0], self.target[1])
                 rospy.loginfo("[Main Node] Node Index: %u", i)
                 rospy.loginfo("[Main Node] Node Cost = %f", self.costs[i])
                 rospy.loginfo("-----------------------------------------")
                 self.previousTarget = [nodes[i][0], nodes[i][1]]
-                #(self.target[0], self.target[1])
-        # while i < len(nodes):
-        #     if self.costs[i] == max(self.costs):
-        #         tempX = nodes[i][0] * resolution + int(origin['x'])
-        #         tempY = nodes[i][1] * resolution + int(origin['y'])
-        #         self.target = [tempX, tempY]
-        #         if self.target[0] == self.previousTarget[0] and \
-        #                 self.target[1] == self.previousTarget[1]:
-        #             self.costs[i] = 0
-        #             i = -1
-        #         else:
-        #             rospy.loginfo("Eligible node found at [%f, %f]", \
-        #                             self.target[0], self.target[1])
-        #             rospy.loginfo("Node Index: %u", i)
-        #             rospy.loginfo("Node Cost = %f", self.costs[i])
-        #             self.previousTarget = self.target
-        #     i = i + 1
             else:
                 pass
                 #rospy.logwarn("[Main Node] Did not find any nodes...")
@@ -353,30 +352,6 @@ class TargetSelect:
                 #                        origin, ogm_limits, resolution)
 
         return self.target
-        #return [-1,-1]
-
-
-
-
-
-    def selectRandomTarget(self, ogm, coverage, brush, origin, ogm_limits, resolution):
-        rospy.logwarn("[Main Node] Random Target Selection!")
-        target = [-2, -2]
-        found = False
-        while not found:
-          x_rand = random.randint(0, int(ogm.shape[0] - 1))
-          y_rand = random.randint(0, int(ogm.shape[1] - 1))
-          if ogm[x_rand][y_rand] <= 49 and brush[x_rand][y_rand] > 3 and coverage[x_rand][y_rand] != 100:
-            tempX = x_rand * resolution + int(origin['x'])
-            tempY = y_rand * resolution + int(origin['y'])
-            target = [tempX, tempY]
-            found = True
-            rospy.loginfo("[Main Node] Random node selected at [%f, %f]", target[0], target[1])
-            rospy.loginfo("-----------------------------------------")
-
-        return self.target
-
-
 
     def rotateRobot(self):
         velocityMsg = Twist()
@@ -406,32 +381,38 @@ class TargetSelect:
 
 
 
-    def publish_markers(self, marker_pub, pose_x, pose_y):
-        msg = Marker()
-        msg.header.frame_id = "base_footprint"
-        msg.header.stamp = rospy.Time(0)
-        msg.ns = "lines"
-        msg.action = msg.ADD
-        msg.type = msg.CUBE
-        msg.id = 0
-        #msg.scale.x = 1.0
-        #msg.scale.y = 1.0
-        #msg.scale.z = 1.0
-        # I guess I have to take into consideration resolution too
-        msg.pose.position.x = pose_x;
-        msg.pose.position.y = pose_y;
-        msg.pose.position.z = 0;
-        msg.pose.orientation.x = 0.0;
-        msg.pose.orientation.y = 0.0;
-        msg.pose.orientation.z = 0.05;
-        msg.pose.orientation.w = 0.05;
-        msg.scale.x = 0.1;
-        msg.scale.y = 0.1;
-        msg.scale.z = 0.1;
-        msg.color.a = 1.0; # Don't forget to set the alpha!
-        msg.color.r = 0.0;
-        msg.color.g = 1.0;
-        msg.color.b = 0.0;
-
-        marker_pub.publish(msg)
+    def publish_markers(self, marker_pub, vis_nodes):
+        markers = MarkerArray()
+        c = 0
+        for n in vis_nodes:
+            c += 1
+            msg = Marker()
+            msg.header.frame_id = "map"
+            msg.ns = "lines"
+            msg.action = msg.ADD
+            msg.type = msg.CUBE
+            msg.id = c
+            #msg.scale.x = 1.0
+            #msg.scale.y = 1.0
+            #msg.scale.z = 1.0
+            # I guess I have to take into consideration resolution too
+            msg.pose.position.x = n[0]
+            msg.pose.position.y = n[1]
+            msg.pose.position.z = 0
+            msg.pose.orientation.x = 0.0
+            msg.pose.orientation.y = 0.0
+            msg.pose.orientation.z = 0.05
+            msg.pose.orientation.w = 0.05
+            msg.scale.x = 0.2
+            msg.scale.y = 0.2
+            msg.scale.z = 0.2
+            msg.color.a = 1.0 # Don't forget to set the alpha!
+            msg.color.r = 0.0
+            msg.color.g = 1.0
+            msg.color.b = 0.0
+    #        print 'I publish msg now!!!'
+            markers.markers.append(msg)
+            
+        marker_pub.publish(markers)
+#
         return
