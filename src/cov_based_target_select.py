@@ -2,23 +2,18 @@
 
 
 import rospy
-import actionlib
-import scipy
-import time
 import math
-import tf
 import numpy
 import random
 from bresenham import bresenham
 
-from utilities import OgmOperations
-from geometry_msgs.msg import PoseStamped, Twist
-from nav_msgs.msg import OccupancyGrid
+from geometry_msgs.msg import Twist
 from brushfires import Brushfires
 from topology import Topology
 from visualization_msgs.msg import Marker
 
-import operator
+
+# import operator
 class TargetSelect:
 
     def __init__(self):
@@ -33,26 +28,26 @@ class TargetSelect:
         self.previousTarget = [-1, -1]
         self.costs = []
 
-
     def targetSelection(self, initOgm, coverage, origin, resolution, robotPose):
         rospy.loginfo("-----------------------------------------")
-        rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", \
-                    robotPose['x'], robotPose['y'], robotPose['th'])
-        rospy.loginfo("[Target Select Node] OGM_Origin = [%i, %i]", origin['x'], origin['y'])
-        rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
+        rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", 
+            robotPose['x'], robotPose['y'], robotPose['th'])
+        rospy.loginfo("[Target Select Node] OGM_Origin = [%i, %i]",
+            origin['x'], origin['y'])
+        rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]",
+            initOgm.shape[0], initOgm.shape[1])
 
         # Blur the OGM to erase discontinuities due to laser rays
-        #ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogmLimits)
+        # ogm = OgmOperations.blurUnoccupiedOgm(initOgm, ogmLimits)
         ogm = initOgm
 
         rospy.loginfo("Calculating brush....")
 
-        brush = self.brush.coverageLimitsBrushfire(initOgm, coverage, robotPose, origin, resolution )
+        brush = self.brush.coverageLimitsBrushfire(initOgm, \
+                coverage, robotPose, origin, resolution)
 
         print 'size of brush:'
         print len(brush)
-        min_dist = 10**24
-        store_goal = ()
         throw = set()
 
         throw = self.filterGoal(brush, ogm, resolution, origin)
@@ -65,6 +60,8 @@ class TargetSelect:
         print 'size of brush after update:'
         print len(brush)
 
+#        brush = random.sample(brush2, int(len(brush)/10))
+
         distance_map = dict()
         distance_map = self.calcDist(robotPose, brush)
         rospy.loginfo('the length of distance map is %d !!', len(distance_map))
@@ -72,8 +69,8 @@ class TargetSelect:
         self.target = min(distance_map, key = distance_map.get)
 #        topo_gain = dict()
 #        topo_gain = self.topoGain(brush, resolution, origin, ogm)
-
-        #self.target1 = self.findGoal(brush1, distance_map1, topo_gain1)
+#
+#        self.target = self.findGoal(brush, distance_map, topo_gain)
 
         return self.target
         # sampled brush2
@@ -122,20 +119,21 @@ class TargetSelect:
 #        goal = list(goal)
 
     def selectRandomTarget(self, ogm, brush, origin, ogmLimits, resolution):
+
         rospy.logwarn("[Main Node] Random Target Selection!")
         target = [-1, -1]
         found = False
         while not found:
-          x_rand = random.randint(0, int(ogm.shape[0] - 1))
-          y_rand = random.randint(0, int(ogm.shape[1] - 1))
-          if ogm[x_rand][y_rand] <= 49 and brush[x_rand][y_rand] > 3:# and \#coverage[x_rand][y_rand] != 100:
-            tempX = x_rand * resolution + int(origin['x'])
-            tempY = y_rand * resolution + int(origin['y'])
-            target = [tempX, tempY]
-            found = True
-            rospy.loginfo("[Main Node] Random node selected at [%f, %f]", target[0], target[1])
-            rospy.loginfo("-----------------------------------------")
-            return self.target
+            x_rand = random.randint(0, int(ogm.shape[0] - 1))
+            y_rand = random.randint(0, int(ogm.shape[1] - 1))
+            if ogm[x_rand][y_rand] <= 49 and brush[x_rand][y_rand] > 3:  # and \#coverage[x_rand][y_rand] != 100:
+                tempX = x_rand * resolution + int(origin['x'])
+                tempY = y_rand * resolution + int(origin['y'])
+                target = [tempX, tempY]
+                found = True
+                rospy.loginfo("[Main Node] Random node selected at [%f, %f]", target[0], target[1])
+                rospy.loginfo("-----------------------------------------")
+                return self.target
 
 
 
@@ -179,20 +177,20 @@ class TargetSelect:
         #msg.scale.y = 1.0
         #msg.scale.z = 1.0
         # I guess I have to take into consideration resolution too
-        msg.pose.position.x = pose_x;
-        msg.pose.position.y = pose_y;
-        msg.pose.position.z = 0;
-        msg.pose.orientation.x = 0.0;
-        msg.pose.orientation.y = 0.0;
-        msg.pose.orientation.z = 0.05;
-        msg.pose.orientation.w = 0.05;
-        msg.scale.x = 0.1;
-        msg.scale.y = 0.1;
-        msg.scale.z = 0.1;
-        msg.color.a = 1.0; # Don't forget to set the alpha!
-        msg.color.r = 0.0;
-        msg.color.g = 1.0;
-        msg.color.b = 0.0;
+        msg.pose.position.x = pose_x
+        msg.pose.position.y = pose_y
+        msg.pose.position.z = 0
+        msg.pose.orientation.x = 0.0
+        msg.pose.orientation.y = 0.0
+        msg.pose.orientation.z = 0.05
+        msg.pose.orientation.w = 0.05
+        msg.scale.x = 0.1
+        msg.scale.y = 0.1
+        msg.scale.z = 0.1
+        msg.color.a = 1.0  # Don't forget to set the alpha!
+        msg.color.r = 0.0
+        msg.color.g = 1.0
+        msg.color.b = 0.0
 
         marker_pub.publish(msg)
         return
@@ -201,33 +199,33 @@ class TargetSelect:
         throw = set()
         for goal in brush2:
             goal = list(goal)
-            for i in range(-3,4):
+            for i in range(-9,10):
                 if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm):
                     break
                 if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
-                [int(goal[1]/resolution - origin['y']/resolution) ] > 49 \
+                [int(goal[1]/resolution - origin['y']/resolution)] > 49 \
                 or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
-                [int(goal[1]/resolution - origin['y']/resolution) ] == -1:
+                [int(goal[1]/resolution - origin['y']/resolution)] == -1:
                     goal = tuple(goal)
                     throw.add(goal)
                     break
 
         for goal in brush2:
             goal = list(goal)
-            for j in range(-3,4):
+            for j in range(-9,10):
                 if int(goal[1]/resolution - origin['y']/resolution) + j >= len(ogm[0]):
                     break
                 if ogm[int(goal[0]/resolution - origin['x']/resolution)]\
                 [int(goal[1]/resolution - origin['y']/resolution) + j] > 49 \
                 or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
-                [int(goal[1]/resolution - origin['y']/resolution) ] == -1:
+                [int(goal[1]/resolution - origin['y']/resolution)] == -1:
                     goal = tuple(goal)
                     throw.add(goal)
                     break
 
         for goal in brush2:
             goal = list(goal)
-            for i in range(-3,4):
+            for i in range(-9,10):
                 if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
                     int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
                     break
@@ -255,7 +253,7 @@ class TargetSelect:
 
         for goal in brush2:
             goal = list(goal)
-            for i in range(-3,4):
+            for i in range(-9, 10):
                 if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
                     int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
                     break
@@ -358,13 +356,13 @@ class TargetSelect:
         normDist = dict()
         for goal in brush:
             if max(topo_gain.values()) - min(topo_gain.values()) == 0:
-                normTopo[(0,0)] = 0
+                normTopo[(0, 0)] = 0
             else:
                 # 1 - ...
                 normTopo[goal] = (topo_gain[goal] - min(topo_gain.values())) \
                             / (max(topo_gain.values()) - min(topo_gain.values()))
             if max(distance_map.values()) - min(distance_map.values()) == 0:
-                normDist[(0,0)] = 0
+                normDist[(0, 0)] = 0
             else:
                 normDist[goal] = 1 - (distance_map[goal] - min(distance_map.values())) \
                             / (max(distance_map.values()) - min(distance_map.values()))
@@ -408,3 +406,4 @@ class TargetSelect:
         #print ogm[int(goal1[0] - origin['x_px'])][int(goal1[1] - origin['y_px'])]
         print goal
         return goal
+    

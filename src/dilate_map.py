@@ -8,6 +8,6 @@ import numpy as np
 
 if __name__ == '__main__':
     print (cv.__version__)
-    img = cv.imread('../maps/march_map.pgm',0)
+    img = cv.imread('../maps/last_map.pgm',0)
     kernel = np.ones((3,3),np.uint8)
     dilation = cv.dilate(img,kernel,iterations = 5)
