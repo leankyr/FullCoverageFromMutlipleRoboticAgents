@@ -292,9 +292,9 @@ class TargetSelect:
         # Calculate Priority Weight
         priorWeight = []
         for i in range(0, len(nodes)):
-            pre = 8 * round((wTopoNorm[i] / 0.5), 0) + \
-                    4 * round((wDistNorm[i] / 0.5), 0) + \
-                    2 * round((wCoveNorm[i] / 0.5), 0) \
+            pre = 2 * round((wTopoNorm[i] / 0.5), 0) + \
+                    8 * round((wDistNorm[i] / 0.5), 0) + \
+                    4 * round((wCoveNorm[i] / 0.5), 0) \
                     + round((wRotNorm[i] / 0.5), 0)
             # pre = 4 * round((wDistNorm[i] / 0.5), 0) + \
             #         2 * round((wCoveNorm[i] / 0.5), 0) \
@@ -304,8 +304,8 @@ class TargetSelect:
         # Calculate smoothing factor
         smoothFactor = []
         for i in range(0, len(nodes)):
-            coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
-                        2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
+            coeff = (2 * (1 - wTopoNorm[i]) + 8 * (1 - wDistNorm[i]) + \
+                        4 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
             # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
             #             (1 - wRotNorm[i])) / (2**3 - 1)
             smoothFactor.append(coeff)

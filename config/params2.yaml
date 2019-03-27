@@ -15,28 +15,25 @@ velocity_pub: /robot2/mobile_base/commands/velocity
 # change also delta param according in
 # gmapping.launch.xml in turtlebot
 # navigation package
-resolution: 0.04          # Map resolution
+resolution: 0.04                # Map resolution
 
 # Radius around pose
 radius: 2
 
 # Size Of Coverage Map
 #width: 704
-#height: 576
 ##height: 480
-#
+#height: 576
+
 width: 864
-height: 896
 #height: 480
+height: 896
 
 # Map origin
 #origin_x: -29.8
+##origin_y: -20.2
 #origin_y: -29.8
-#origin_y: -20.2
+
 origin_x: -16.36
-origin_y: -18.92
 #origin_y: -20.2
-
-
-
-  
+origin_y: -18.92

@@ -7,7 +7,7 @@ import random
 import tf
 import time
 from nav_msgs.msg import OccupancyGrid
-
+from geometry_msgs.msg import PoseStamped
 
 class SubscriberNode:
 
@@ -58,6 +58,19 @@ class SubscriberNode:
         self.robotPose2['x_px'] = 0
         self.robotPose2['y_px'] = 0
         self.robotPose2['z_px'] = 0
+        
+        ## dict that holds the goal1
+        self.goal1 = {}
+        self.goal1['x'] = 0
+        self.goal1['y'] = 0
+
+        ## dict that holds the goal1
+        self.goal2 = {}
+        self.goal2['x'] = 0
+        self.goal2['y'] = 0
+
+
+
 
 #       Robot pose tf listener and read function
         # Robot1
@@ -79,6 +92,13 @@ class SubscriberNode:
                             buff_size=2**24)
         rospy.Subscriber(coverageMapTopic, OccupancyGrid, self.coverageCallback, \
                             queue_size=1, buff_size=2**24)
+
+
+        # Goal Subscirbers 
+        rospy.Subscriber('/robot1/move_base/cuurent_goal', PoseStamped, self.subGoal1, queue_size=20, 
+                            buff_size=20)
+        rospy.Subscriber('/robot2/move_base/cuurent_goal', PoseStamped, self.subGoal2, queue_size=20, 
+                            buff_size=20)
 
 
 
@@ -175,6 +195,15 @@ class SubscriberNode:
         angles = tf.transformations.euler_from_quaternion(rotation)
         self.robotPose2['th'] = angles[2]
 
+
+    def subGoal1(self, data):
+        self.goal1['x'] = data.pose.position.x
+        self.goal1['y'] = data.pose.position.y
+
+    def subGoal2(self, data):
+        self.goal2['x'] = data.pose.position.x
+        self.goal2['y'] = data.pose.position.y
+
     def getCoverage(self):
         return numpy.copy(self.coverage)
 
@@ -190,3 +219,11 @@ class SubscriberNode:
 #
 #    def getCostMap(self):
 #        return numpy.copy(self.costmap)
+
+
+    def getGoal1(self):
+        return self.goal1
+
+    def getGoal2(self):
+        return self.goal2
+

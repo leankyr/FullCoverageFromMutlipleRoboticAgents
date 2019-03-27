@@ -16,6 +16,9 @@ velocity_pub2: /robot2/mobile_base/commands/velocity
 # navigation package
 resolution: 0.04          # Map resolution
 
+dist_of_use: 4
+field_of_view: 60
+
 # Radius around pose
 radius: 2
 
@@ -31,7 +34,7 @@ height: 896
 #origin_x: -29.8
 #origin_y: -29.8
 
-origin_x: -15.08
+origin_x: -16.36
 origin_y: -18.92
 
 
