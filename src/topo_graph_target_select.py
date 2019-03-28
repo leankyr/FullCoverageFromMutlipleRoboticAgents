@@ -23,11 +23,9 @@ from topology import Topology
 from visualization_msgs.msg import Marker, MarkerArray
 
 from timeit import default_timer as timer
-from my_2d_nav.srv import goal
-
-
 
 import operator
+
 class TargetSelect:
 
     def __init__(self):
@@ -43,7 +41,7 @@ class TargetSelect:
         self.costs = []
 
 
-    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose, flag):
+    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose, flag, other_goal):
         rospy.loginfo("-----------------------------------------")
         rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", 
                     robotPose['x'], robotPose['y'], robotPose['th'])
@@ -106,6 +104,21 @@ class TargetSelect:
                 0.1 # Scale
             )
             self.publish_markers(marker_pub, vis_nodes)
+
+
+        # Check distance From Other goal
+
+        for node in nodes:
+            node_x = node[0] * resolution + origin['x']
+            node_y = node[1] * resolution + origin['y']
+            dist = math.hypot(node_x - other_goal['x'], node_y - other_goal['y']) 
+            if dist < 5 and len(nodes) > 4:
+                nodes.remove(node)
+
+
+
+
+
 
     
         # Calculate topological cost

@@ -14,6 +14,8 @@ from topo_graph_target_select import TargetSelect
 #from two_robots_cov_based_target_select import TargetSelect
 
 
+
+
 class SendMoveBaseGoalClient1:
 
     def __init__(self):
@@ -35,6 +37,7 @@ class SendMoveBaseGoalClient1:
     def calculateSendGoal(self, event):
         ogm = self.subNode.getSlamMap()
         #costmap = self.subNode.getCostMap()
+        goal = self.subNode.getGoal2()
         coverage = self.subNode.getCoverage()
         origin = self.subNode.origin
         robotPose1 = self.subNode.robotPose1
@@ -42,8 +45,13 @@ class SendMoveBaseGoalClient1:
 
         flag = 0
 
+
+        rospy.logwarn("Robot2 Goal is: [x, y] = [%f, %f] ", goal['x'], goal['y'])
+
+
+
         target1 = self.selectTarget.targetSelection(ogm, coverage, origin, \
-                                    resolution, robotPose1, flag)
+                                    resolution, robotPose1, flag, goal)
 
 
         rospy.loginfo("target 1 from Send_move_base_goal_two_robots_is:[%f, %f] ", target1[0], target1[1])
