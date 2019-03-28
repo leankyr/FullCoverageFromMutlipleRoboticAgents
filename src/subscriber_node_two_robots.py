@@ -94,14 +94,6 @@ class SubscriberNode:
                             queue_size=1, buff_size=2**24)
 
 
-        # Goal Subscirbers 
-        rospy.Subscriber('/robot1/move_base/cuurent_goal', PoseStamped, self.subGoal1, queue_size=20, 
-                            buff_size=20)
-        rospy.Subscriber('/robot2/move_base/cuurent_goal', PoseStamped, self.subGoal2, queue_size=20, 
-                            buff_size=20)
-
-
-
     def ogmCallback(self, data):
         # Map origin data to struct
         self.origin['x'] = data.info.origin.position.x
@@ -196,14 +188,6 @@ class SubscriberNode:
         self.robotPose2['th'] = angles[2]
 
 
-    def subGoal1(self, data):
-        self.goal1['x'] = data.pose.position.x
-        self.goal1['y'] = data.pose.position.y
-
-    def subGoal2(self, data):
-        self.goal2['x'] = data.pose.position.x
-        self.goal2['y'] = data.pose.position.y
-
     def getCoverage(self):
         return numpy.copy(self.coverage)
 
@@ -220,10 +204,4 @@ class SubscriberNode:
 #    def getCostMap(self):
 #        return numpy.copy(self.costmap)
 
-
-    def getGoal1(self):
-        return self.goal1
-
-    def getGoal2(self):
-        return self.goal2
 

@@ -34,17 +34,15 @@ class SendMoveBaseGoalClient2:
     def calculateSendGoal(self, event):
         ogm = self.subNode.getSlamMap()
         #costmap = self.subNode.getCostMap()
-        goal1 = self.subNode.getGoal1()
         coverage = self.subNode.getCoverage()
         origin = self.subNode.origin
         robotPose2 = self.subNode.robotPose2
         resolution = rospy.get_param('resolution')
 
-
-        rospy.loginfo("goal1 is [x, y] = [%f, %f] ", goal1['x'], goal1['y'])
+        flag = 1
 
         target2 = self.selectTarget.targetSelection(ogm, coverage, origin, \
-                                    resolution, robotPose2)
+                                    resolution, robotPose2, flag)
 
         rospy.loginfo("target 2 from Send_move_base_goal_two_robots_is:[%f, %f] ", target2[0], target2[1])
         

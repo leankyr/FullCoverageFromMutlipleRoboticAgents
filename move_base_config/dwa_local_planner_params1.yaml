@@ -35,7 +35,7 @@ DWAPlannerROS:
 
   vx_samples: 8
   vy_samples: 0
-  vtheta_samples: 35
+  vtheta_samples: 36
 
   sim_period: 0.1
 
@@ -49,9 +49,3 @@ DWAPlannerROS:
   publish_traj_pc : true
   publish_cost_grid_pc: true
   global_frame_id: robot1_tf/odom
-
-
-
-
-
-

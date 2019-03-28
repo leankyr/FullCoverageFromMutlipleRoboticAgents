@@ -23,6 +23,9 @@ from topology import Topology
 from visualization_msgs.msg import Marker, MarkerArray
 
 from timeit import default_timer as timer
+from my_2d_nav.srv import goal
+
+
 
 import operator
 class TargetSelect:
@@ -40,7 +43,7 @@ class TargetSelect:
         self.costs = []
 
 
-    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose):
+    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose, flag):
         rospy.loginfo("-----------------------------------------")
         rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", 
                     robotPose['x'], robotPose['y'], robotPose['th'])
@@ -103,19 +106,6 @@ class TargetSelect:
                 0.1 # Scale
             )
             self.publish_markers(marker_pub, vis_nodes)
-
-#        print nodes
-#        #print nodes[0]
-#        ind = random.randrange(0,len(nodes))
-#        print ind
-##
-#        goal = list()
-#        goal = [nodes[ind][0]*resolution + origin['x'], nodes[ind][1]*resolution + origin['y']]
-#        print 'the goal is:'
-#        print goal
-##
-#        self.target = goal
-
 
     
         # Calculate topological cost
@@ -292,9 +282,9 @@ class TargetSelect:
         # Calculate Priority Weight
         priorWeight = []
         for i in range(0, len(nodes)):
-            pre = 2 * round((wTopoNorm[i] / 0.5), 0) + \
-                    8 * round((wDistNorm[i] / 0.5), 0) + \
-                    4 * round((wCoveNorm[i] / 0.5), 0) \
+            pre = 8 * round((wTopoNorm[i] / 0.5), 0) + \
+                   4 * round((wDistNorm[i] / 0.5), 0) + \
+                    2 * round((wCoveNorm[i] / 0.5), 0) \
                     + round((wRotNorm[i] / 0.5), 0)
             # pre = 4 * round((wDistNorm[i] / 0.5), 0) + \
             #         2 * round((wCoveNorm[i] / 0.5), 0) \
@@ -304,8 +294,8 @@ class TargetSelect:
         # Calculate smoothing factor
         smoothFactor = []
         for i in range(0, len(nodes)):
-            coeff = (2 * (1 - wTopoNorm[i]) + 8 * (1 - wDistNorm[i]) + \
-                        4 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
+            coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
+                        2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
             # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
             #             (1 - wRotNorm[i])) / (2**3 - 1)
             smoothFactor.append(coeff)
@@ -317,39 +307,50 @@ class TargetSelect:
 
         print 'len nodes is:'
         print len(nodes) 
+    
+        goals_and_costs = zip(nodes, self.costs)
+        #print goals_and_costs
 
-        for i in range(0, len(nodes)):
-            tempX = int(nodes[i][0] * resolution + int(origin['x']))
-            tempY = int(nodes[i][1] * resolution + int(origin['y']))
-            for j in range(-8, 9):
-                if ogm[tempX + j][tempY] > 80 or ogm[tempX][tempY + j] > 80 or \
-                ogm[tempX + j][tempY + j] > 80 or ogm[tempX + j][tempY - j] > 80:
-                    nodes.remove(nodes[i])
-                    
-        print 'len nodes after filter:'
-        print len(nodes)
+        goals_and_costs.sort(key = lambda t: t[1], reverse = True)
+        #sorted(goals_and_costs, key=operator.itemgetter(1))
+        #print goals_and_costs 
+#        print goals_and_costs[0] 
+#        print goals_and_costs[0][0] 
+#        print goals_and_costs[0][1] 
+#        print goals_and_costs[0][0][0]
+#        print goals_and_costs[0][0][1]
 
+       # ind = random.randrange(0,min(6, len(nodes)))
+        rospy.loginfo("[Main Node] Raw node = [%u, %u]", goals_and_costs[0 + flag][0][0], goals_and_costs[0 + flag][0][1])
+        tempX = goals_and_costs[0 + flag][0][0] * resolution + origin['x']
+        tempY = goals_and_costs[0 + flag][0][1] * resolution + origin['y']
+        self.target = [tempX, tempY]
+        rospy.loginfo("[Main Node] Eligible node found at [%f, %f]", 
+                        self.target[0], self.target[1])
+        rospy.loginfo("[Main Node] Node Index: %u", i)
+        rospy.loginfo("[Main Node] Node Cost = %f", goals_and_costs[0 + flag][1])
+        rospy.loginfo("-----------------------------------------")
+        self.previousTarget = [goals_and_costs[0 + flag][0][0], goals_and_costs[0 + flag][0][1]]
 
+        
 
-
-        for i in range(0, len(nodes)):
-            
-            if self.costs[i] == max(self.costs):
-                rospy.loginfo("[Main Node] Raw node = [%u, %u]", nodes[i][0], nodes[i][1])
-                tempX = nodes[i][0] * resolution + origin['x']
-                tempY = nodes[i][1] * resolution + origin['y']
-                self.target = [tempX, tempY]
-                rospy.loginfo("[Main Node] Eligible node found at [%f, %f]", 
-                                self.target[0], self.target[1])
-                rospy.loginfo("[Main Node] Node Index: %u", i)
-                rospy.loginfo("[Main Node] Node Cost = %f", self.costs[i])
-                rospy.loginfo("-----------------------------------------")
-                self.previousTarget = [nodes[i][0], nodes[i][1]]
-            else:
-                pass
-                #rospy.logwarn("[Main Node] Did not find any nodes...")
-                #self.target = self.selectRandomTarget(ogm, coverage, brush2, \
-                #                        origin, ogm_limits, resolution)
+#        for i in range(0, len(nodes)):
+#            if self.costs[i] == max(self.costs):
+#                rospy.loginfo("[Main Node] Raw node = [%u, %u]", nodes[i][0], nodes[i][1])
+#                tempX = nodes[i][0] * resolution + origin['x']
+#                tempY = nodes[i][1] * resolution + origin['y']
+#                self.target = [tempX, tempY]
+#                rospy.loginfo("[Main Node] Eligible node found at [%f, %f]", 
+#                                self.target[0], self.target[1])
+#                rospy.loginfo("[Main Node] Node Index: %u", i)
+#                rospy.loginfo("[Main Node] Node Cost = %f", self.costs[i])
+#                rospy.loginfo("-----------------------------------------")
+#                self.previousTarget = [nodes[i][0], nodes[i][1]]
+#            else:
+#                pass
+#                #rospy.logwarn("[Main Node] Did not find any nodes...")
+#                #self.target = self.selectRandomTarget(ogm, coverage, brush2, \
+#                #                        origin, ogm_limits, resolution)
 
         return self.target
 

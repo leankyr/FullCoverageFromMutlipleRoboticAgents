@@ -1,0 +1,4 @@
+int16 flag
+---
+int16 node_x
+int16 node_y 
