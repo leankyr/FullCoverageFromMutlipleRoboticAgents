@@ -28,7 +28,7 @@ class TargetSelect:
         self.previousTarget = [-1, -1]
         self.costs = []
 
-    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose):
+    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose, flag):
         rospy.loginfo("-----------------------------------------")
         rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", 
             robotPose['x'], robotPose['y'], robotPose['th'])

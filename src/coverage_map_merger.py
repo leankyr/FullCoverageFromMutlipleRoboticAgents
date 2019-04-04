@@ -57,11 +57,6 @@ class CoverageMerger:
 
         cov1 = self.coverage1
         cov2 = self.coverage2
-#        print "cov1 shape is:"
-#        print numpy.shape(cov1)
-#        print "cov2 shape is:"
-#        print numpy.shape(cov2)
-#        #print numpy.shape(self.coverageAll.data)
 
         for i in range(0, self.Width):
             for j in range(0, self.Height):
@@ -70,9 +65,7 @@ class CoverageMerger:
                 else:
                     self.coverageAll.data[i + self.Width * j] = 0
         
-#        print 'publishing to topic.....' 
         self.cov_pub.publish(self.coverageAll)
-#        print 'published to topic.....'
         pass
 
 
@@ -82,7 +75,6 @@ class CoverageMerger:
         for i in range(0, self.Width):
             for j in range(0, self.Height):
                 self.coverage1[i][j] = data.data[i + self.Width * j]
-#        print "got Through Coverage 1 ogm!!"
         return
 
     def coverage2Callback(self, data):
@@ -91,20 +83,9 @@ class CoverageMerger:
         for i in range(0, self.Width):
             for j in range(0, self.Height):
                 self.coverage2[i][j] = data.data[i + self.Width * j]
-#        print "got Through Coverage 2 ogm!!!!"
         return
-
-
-#    def getCoverage1(self):
-#        return numpy.copy(self.coverage1)
-#
-#    def getCoverage2(self):
-#        return numpy.copy(self.coverage2)
 
 if __name__ == '__main__':
     rospy.init_node('coverage_map_merger')
     CoverageMerger()
     rospy.spin()
-
-
-

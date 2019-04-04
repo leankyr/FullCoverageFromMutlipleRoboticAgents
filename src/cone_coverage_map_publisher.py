@@ -73,10 +73,10 @@ class CoverageMapPublisher:
 
         # Summon method
         # We need the event for the same reason 
-        rospy.Timer(rospy.Duration(1.0), self.calcSquare)
+        rospy.Timer(rospy.Duration(1.0), self.calcCone)
         
     # Class Methods 
-    def calcSquare(self,event):
+    def calcCone(self,event):
         
         ogm = self.subNode.getSlamMap()
         xx = self.pose['x_px'] - self.origin['x_px']
@@ -85,52 +85,28 @@ class CoverageMapPublisher:
         for th in range(0, 360):
             thRad = th * math.pi / 180
             for cc in range(0, 5):
-                x = ( self.pose['x_px']+ \
-                            cc * math.cos(thRad)) - \
-                            self.origin['x_px'] 
-                y = (self.pose['y_px'] + \
-                            cc * math.sin(thRad)) - \
-                            self.origin['y_px']
+                x = xx + cc * math.cos(thRad) 
+                y = yy + cc * math.sin(thRad) 
                 index = int(x) + self.coverage.info.width * int(y)
                 self.coverage.data[index] = 100
                 
                 
-                
-                
             for i in range(1, 2):
-                
                 minDepth = int(0.2 / self.resolution)
                 maxDepth = int(self.distance_of_use / self.resolution)
                 theta = int(self.hfov / 2)
-
-#                try:
-#                    (translation, rotation) = self.listener.lookupTransform\
-#                        (self.map_frame, self.sensor_frame, rospy.Time(0))
-#                except (tf.LookupException, tf.ConnectivityException, \
-#                        tf.ExtrapolationException):
-#                    rospy.logerr("[Coverage Node] Error in tf: sensor_%u", i)
-#                    return
                 angles = self.pose['th']
 
                 for th in range(-theta, theta + 1):
                     thRad = angles + th * math.pi / 180
                     for crosscut in range(minDepth, maxDepth + 1):
-                        x = (self.pose['x'] / self.resolution + \
-                                crosscut * math.cos(thRad)) - \
-                                self.origin['x']/ \
-                                self.resolution
-                        y = (self.pose['y'] / self.resolution + \
-                                crosscut * math.sin(thRad)) - \
-                                self.origin['y'] / \
-                                self.resolution
+                        x = xx + crosscut * math.cos(thRad)
+                        y = yy + crosscut * math.sin(thRad) 
                         index = int(x) + self.coverage.info.width * int(y)
                         if ogm[int(x)][int(y)] > 49:
                             break
                         self.coverage.data[index] = 100
         self.cov_pub.publish(self.coverage)               
-
-
-    
 
 if __name__ == '__main__':
     rospy.init_node('coverage_map_publisher')

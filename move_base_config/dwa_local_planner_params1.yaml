@@ -13,7 +13,7 @@ DWAPlannerROS:
   min_vel_y: 0.0
 
   max_vel_trans: 0.5
-  min_vel_trans: -0.3
+  min_vel_trans: -0.5
 
   max_vel_theta: 3.0
   min_vel_theta: -3.0
@@ -33,9 +33,9 @@ DWAPlannerROS:
   scaling_speed: 0.25
   max_scaling_factor: 0.2
 
-  vx_samples: 8
+  vx_samples: 10 # used to be 8
   vy_samples: 0
-  vtheta_samples: 36
+  vtheta_samples: 35 # used to be 36
 
   sim_period: 0.1
 

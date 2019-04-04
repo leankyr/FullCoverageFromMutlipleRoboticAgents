@@ -5,8 +5,8 @@ raytrace_range: 9.0 # used to be 4.5
 footprint: [[-0.1, -0.1], [-0.1, 0.1], [0.1, 0.1], [0.125, 0.0], [0.1, -0.1]]
 #robot radius: 0.2
 #footprint_padding: 0.1
-inflation_radius: 0.3 #0.3 for dwa planner
-cost_scaling_factor: 13  # 13 for dwa planner
+inflation_radius: 0.3 #0.3 for dwa planner then 0.2
+cost_scaling_factor: 13  # 13 for dwa planner then 15
 
 observation_sources: laser_scan_sensor
 

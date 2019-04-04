@@ -10,7 +10,7 @@ from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node_two_robots import SubscriberNode
 #from target_selection_class import TargetSelect #,selectRandomTarget
 #from cov_based_target_select import TargetSelect
-from topo_graph_target_select import TargetSelect
+from topo_graph_target_select2 import TargetSelect
 #from two_robots_cov_based_target_select import TargetSelect
 
 
