@@ -8,8 +8,8 @@ from geometry_msgs.msg import PoseStamped, Twist
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node import SubscriberNode
 #from target_selection_class import TargetSelect #,selectRandomTarget
-from cov_based_target_select import TargetSelect
-#from topo_graph_target_select import TargetSelect
+#from cov_based_target_select import TargetSelect
+from topo_graph_target_select import TargetSelect
 # from two_robots_cov_based_target_select import TargetSelect
 
 
@@ -26,9 +26,12 @@ class SendMoveBaseGoalClient:
         rospy.loginfo("[Main Node] Wait 20 seconds for the subscribers to be ready!")
         time.sleep(20)
 
-        # self.velocityPub = rospy.Publisher("/cmd_vel_mux/input/navi", Twist, queue_size = 1)
+        #velocity_topic = 'rospy.get_param('velocity_pub')'
+        self.velocityPub = rospy.Publisher(rospy.get_param('velocity_pub'), Twist, queue_size = 1)
 
         rospy.Timer(rospy.Duration(1.0), self.calculateSendGoal)
+
+        
 
     def calculateSendGoal(self, event):
         ogm = self.subNode.getSlamMap()
@@ -37,11 +40,13 @@ class SendMoveBaseGoalClient:
         origin = self.subNode.origin
         robotPose = self.subNode.robotPose
         resolution = rospy.get_param('resolution')
-        flag = 0
-        target = self.selectTarget.targetSelection(ogm, coverage, origin, 
-                                    resolution, robotPose, flag)
+
+        force_random = False
 
         # self.rotateRobot()
+        target = self.selectTarget.targetSelection(ogm, coverage, origin, 
+                                    resolution, robotPose, force_random)
+
 
         moveBaseClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)
 

@@ -9,7 +9,7 @@ sensor_frame: base_link
 dist_of_use: 4
 field_of_view: 60
 # velocity pub topic
-velocity_pub: /mobile_base/commands/velocity
+velocity_pub: '/mobile_base/commands/velocity'
 # resolution used to be 0.05
 # change also delta param according in
 # gmapping.launch.xml in turtlebot

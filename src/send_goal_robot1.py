@@ -29,7 +29,8 @@ class SendMoveBaseGoalClient1:
         rospy.loginfo("[Main Node] Wait 20 seconds for the subscribers to be ready!")
         time.sleep(20)
 
-        # self.velocityPub = rospy.Publisher("/cmd_vel_mux/input/navi", Twist, queue_size = 1)
+#        self.velocityPub = rospy.Publisher(rospy.get_param('velocity_pub1'), Twist, queue_size = 1)
+#        self.rotateRobot()
 
         rospy.Timer(rospy.Duration(1.0), self.calculateSendGoal)
 
@@ -44,14 +45,14 @@ class SendMoveBaseGoalClient1:
         resolution = rospy.get_param('resolution')
 
         flag = 0
-
+        force_random = True
 
         rospy.logwarn("Robot2 Goal is: [x, y] = [%f, %f] ", goal['x'], goal['y'])
 
 
 
         target1 = self.selectTarget.targetSelection(ogm, coverage, origin, \
-                                    resolution, robotPose1, flag, goal)
+                                    resolution, robotPose1, flag, goal, force_random)
 
 
         rospy.loginfo("target 1 from Send_move_base_goal_two_robots_is:[%f, %f] ", target1[0], target1[1])
@@ -79,7 +80,6 @@ class SendMoveBaseGoalClient1:
         moveBaseClient1.send_goal(self.moveBaseGoal1)
         moveBaseClient1.wait_for_result()
 
-#        self.rotateRobot()
 
 #        moveBaseClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)
 #

@@ -41,7 +41,7 @@ class TargetSelect:
         self.costs = []
 
 
-    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose, flag, other_goal):
+    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose, flag, other_goal, force_random):
         rospy.loginfo("-----------------------------------------")
         rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", 
                     robotPose['x'], robotPose['y'], robotPose['th'])
@@ -105,6 +105,17 @@ class TargetSelect:
             )
             self.publish_markers(marker_pub, vis_nodes)
 
+        if force_random:
+            ind = random.randrange(0,len(nodes))
+            rospy.loginfo('index is: %d', ind)
+            rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
+            tempX = nodes[ind][0] * resolution + origin['x']
+            tempY = nodes[ind][1] * resolution + origin['y']
+            self.target = [tempX, tempY]
+            rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
+                            self.target[0], self.target[1])
+            rospy.loginfo("-----------------------------------------")
+            return self.target
 
         # Check distance From Other goal
 
@@ -117,7 +128,7 @@ class TargetSelect:
 
     
         # Calculate topological cost
-        rayLength = 20  # in pixels
+        rayLength = 50  # in pixels
         obstThres = 49
         wTopo = []
         dRad = []
