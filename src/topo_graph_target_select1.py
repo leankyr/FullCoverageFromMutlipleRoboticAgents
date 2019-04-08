@@ -128,7 +128,7 @@ class TargetSelect:
 
     
         # Calculate topological cost
-        rayLength = 50  # in pixels
+        rayLength = 800  # in pixels
         obstThres = 49
         wTopo = []
         dRad = []
@@ -227,17 +227,16 @@ class TargetSelect:
             nodesX.append(nodes[i][0])
             nodesY.append(nodes[i][1])
         for i in range(0, len(nodes)):
-            dist = math.sqrt((nodes[i][0] - robotPose['x_px'])**2 + \
-                        (nodes[i][1] - robotPose['y_px'])**2)
+            dist = math.sqrt((nodes[i][0] * resolution + origin['x'] - robotPose['x'])**2 + \
+                        (nodes[i][1] * resolution + origin['y'] - robotPose['y'])**2)
             # numpy.var is covariance
-            tempX = ((robotPose['x_px'] - nodesX[i])**2) / (2 * numpy.var(nodesX))
-            tempY = ((robotPose['y_px'] - nodesY[i])**2) / (2 * numpy.var(nodesY))
+            tempX = ((robotPose['x'] - nodesX[i] * resolution + origin['x'])**2) / (2 * numpy.var(nodesX))
+            tempY = ((robotPose['y'] - nodesY[i] * resolution + origin['y'])**2) / (2 * numpy.var(nodesY))
             try:
-                temp = 1 - math.exp(tempX + tempY)
+                temp = 1 - math.exp(tempX + tempY) + 0.001 # \epsilon << 1
             except OverflowError:
-                temp = -10**30
+                temp = 1
             gaussCoeff = 1 / temp
-            wDist.append(dist * gaussCoeff)
 
 #        for i in range(len(nodes)):
 #            rospy.logwarn("Distance Cost is: %f ",wDist[i])

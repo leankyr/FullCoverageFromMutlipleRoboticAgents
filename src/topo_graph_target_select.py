@@ -48,6 +48,7 @@ class TargetSelect:
         rospy.loginfo("[Target Select Node] OGM_Origin = [%i, %i]", origin['x'], origin['y'])
         rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
+        # willow stuff
         ogm_limits = {}
         ogm_limits['min_x'] = 150  # used to be 200
         ogm_limits['max_x'] = 800  # used to be 800
@@ -55,6 +56,12 @@ class TargetSelect:
         ogm_limits['max_y'] = 800
 
 
+#        # corridor
+#        ogm_limits = {}
+#        ogm_limits['min_x'] = 100  # used to be 200
+#        ogm_limits['max_x'] = 500  # used to be 800
+#        ogm_limits['min_y'] = 100
+#        ogm_limits['max_y'] = 500
 
         # publisher
 
@@ -132,7 +139,7 @@ class TargetSelect:
 
     
         # Calculate topological cost
-        rayLength = 50  # in pixels
+        rayLength = 800  # in pixels
         obstThres = 49
         wTopo = []
         dRad = []
@@ -231,20 +238,20 @@ class TargetSelect:
             nodesX.append(nodes[i][0])
             nodesY.append(nodes[i][1])
         for i in range(0, len(nodes)):
-            dist = math.sqrt((nodes[i][0] - robotPose['x_px'])**2 + \
-                        (nodes[i][1] - robotPose['y_px'])**2)
+            dist = math.sqrt((nodes[i][0] * resolution + origin['x'] - robotPose['x'])**2 + \
+                        (nodes[i][1] * resolution + origin['y'] - robotPose['y'])**2)
             # numpy.var is covariance
-            tempX = ((robotPose['x_px'] - nodesX[i])**2) / (2 * numpy.var(nodesX))
-            tempY = ((robotPose['y_px'] - nodesY[i])**2) / (2 * numpy.var(nodesY))
-            #try:
-            temp = 1 - math.exp(tempX + tempY)
-            #except OverflowError:
-            #temp = -10**30
-            #gaussCoeff = 1 / temp
+            tempX = ((robotPose['x'] - nodesX[i] * resolution + origin['x'])**2) / (2 * numpy.var(nodesX))
+            tempY = ((robotPose['y'] - nodesY[i] * resolution + origin['y'])**2) / (2 * numpy.var(nodesY))
+            try:
+                temp = 1 - math.exp(tempX + tempY) + 0.001 # \epsilon << 1
+            except OverflowError:
+                temp = 1
+            gaussCoeff = 1 / temp
             ########################################################################
             ############# DON'T FORGET TO MAKE IT AS BEFORE!!!! ####################
             ########################################################################
-            gaussCoeff = 1               
+            #gaussCoeff = 1               
             wDist.append(dist * gaussCoeff)
 
 #        for i in range(len(nodes)):
@@ -323,8 +330,8 @@ class TargetSelect:
         smoothFactor = []
         for i in range(0, len(nodes)):
             coeff = 1 - wDistNorm[i]           
-            #coeff = # (8 * (1 - wTopoNorm[i]) #+ 4 * (1 - wDistNorm[i]) + \
-                        #2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
+            #coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
+            #            2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
             # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
             #             (1 - wRotNorm[i])) / (2**3 - 1)
             smoothFactor.append(coeff)
