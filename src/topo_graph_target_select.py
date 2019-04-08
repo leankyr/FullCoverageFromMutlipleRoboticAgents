@@ -240,9 +240,15 @@ class TargetSelect:
         for i in range(0, len(nodes)):
             dist = math.sqrt((nodes[i][0] * resolution + origin['x'] - robotPose['x'])**2 + \
                         (nodes[i][1] * resolution + origin['y'] - robotPose['y'])**2)
+#            dist = math.sqrt((nodes[i][0] + origin['x_px'] - robotPose['x_px'])**2 + \
+#                        (nodes[i][1]  + origin['y_px'] - robotPose['y_px'])**2)
+
             # numpy.var is covariance
             tempX = ((robotPose['x'] - nodesX[i] * resolution + origin['x'])**2) / (2 * numpy.var(nodesX))
             tempY = ((robotPose['y'] - nodesY[i] * resolution + origin['y'])**2) / (2 * numpy.var(nodesY))
+#            tempX = ((robotPose['x_px'] - nodesX[i] + origin['x_px'])**2) / (2 * numpy.var(nodesX))
+#            tempY = ((robotPose['y_px'] - nodesY[i] + origin['y_px'])**2) / (2 * numpy.var(nodesY))
+
             try:
                 temp = 1 - math.exp(tempX + tempY) + 0.001 # \epsilon << 1
             except OverflowError:
