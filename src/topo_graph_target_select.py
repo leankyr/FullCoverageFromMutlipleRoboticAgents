@@ -260,8 +260,8 @@ class TargetSelect:
             #gaussCoeff = 1               
             wDist.append(dist * gaussCoeff)
 
-#        for i in range(len(nodes)):
-#            rospy.logwarn("Distance Cost is: %f ",wDist[i])
+        #for i in range(len(nodes)):
+        #    rospy.logwarn("Distance Cost is: %f ",wDist[i])
 
         #return self.target
 
@@ -322,24 +322,23 @@ class TargetSelect:
         # Calculate Priority Weight
         priorWeight = []
         for i in range(0, len(nodes)):
-            pre = round((wDistNorm[i] / 0.5), 0)
-            #pre = #8 * round((wTopoNorm[i] / 0.5), 0) + \
-                   # 4 * round((wDistNorm[i] / 0.5), 0) + \
-                   # 2 * round((wCoveNorm[i] / 0.5), 0) \
-                   # + round((wRotNorm[i] / 0.5), 0)
-            # pre = 4 * round((wDistNorm[i] / 0.5), 0) + \
-            #         2 * round((wCoveNorm[i] / 0.5), 0) \
+            #pre = round((wDistNorm[i] / 0.5), 0)
+            #pre = 8 * round((wTopoNorm[i] / 0.5), 0) + \
+            #        4 * round((wDistNorm[i] / 0.5), 0) + \
+            #        2 * round((wCoveNorm[i] / 0.5), 0) \
+            #          + round((wRotNorm[i] / 0.5), 0)
+            pre = 1 * round((wDistNorm[i] / 0.5), 0) + \
+                     2 * round((wTopoNorm[i] / 0.5), 0) 
             #         + round((wRotNorm[i] / 0.5), 0)
             priorWeight.append(pre)
 
         # Calculate smoothing factor
         smoothFactor = []
         for i in range(0, len(nodes)):
-            coeff = 1 - wDistNorm[i]           
+            #coeff = 1 - wDistNorm[i]           
             #coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
             #            2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
-            # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
-            #             (1 - wRotNorm[i])) / (2**3 - 1)
+            coeff = ((1 - wDistNorm[i]) + 2 * (1 - wTopoNorm[i])) / (2**2 - 1)
             smoothFactor.append(coeff)
 
         # Calculate costs
