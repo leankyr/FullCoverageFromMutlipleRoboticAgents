@@ -18,8 +18,8 @@
 ##
 TebLocalPlannerROS:
 
-  odom_topic: odom
-  map_frame: /map
+  odom_topic: robot2_tf/odom
+  map_frame: map
 
 
 ## Trajectory ##################################################################

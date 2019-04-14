@@ -238,10 +238,13 @@ class TargetSelect:
             nodesX.append(nodes[i][0])
             nodesY.append(nodes[i][1])
         for i in range(0, len(nodes)):
-            dist = math.sqrt((nodes[i][0] * resolution + origin['x'] - robotPose['x'])**2 + \
-                        (nodes[i][1] * resolution + origin['y'] - robotPose['y'])**2)
+#            dist = math.sqrt((nodes[i][0] * resolution + origin['x'] - robotPose['x'])**2 + \
+#                        (nodes[i][1] * resolution + origin['y'] - robotPose['y'])**2)
 #            dist = math.sqrt((nodes[i][0] + origin['x_px'] - robotPose['x_px'])**2 + \
 #                        (nodes[i][1]  + origin['y_px'] - robotPose['y_px'])**2)
+            # Manhattan Dist
+            dist = abs(nodes[i][0] * resolution + origin['x'] - robotPose['x']) + \
+                   abs(nodes[i][1] * resolution + origin['y'] - robotPose['y'])
 
             # numpy.var is covariance
             tempX = ((robotPose['x'] - nodesX[i] * resolution + origin['x'])**2) / (2 * numpy.var(nodesX))
@@ -254,9 +257,6 @@ class TargetSelect:
             except OverflowError:
                 temp = 1
             gaussCoeff = 1 / temp
-            ########################################################################
-            ############# DON'T FORGET TO MAKE IT AS BEFORE!!!! ####################
-            ########################################################################
             #gaussCoeff = 1               
             wDist.append(dist * gaussCoeff)
 
@@ -319,6 +319,21 @@ class TargetSelect:
             wCoveNorm.append(normCove)
             wRotNorm.append(normRot)
 
+#        rospy.logwarn("Printing TopoNorm....\n")
+#        print wTopoNorm
+
+#        rospy.logwarn("Printing DistNorm....\n")
+#        print wDistNorm
+
+#        rospy.logwarn("Printing CoveNorm....\n")
+#        print wCoveNorm
+
+        rospy.logwarn("Printing RotNorm....\n")
+        print wRotNorm
+
+
+
+
         # Calculate Priority Weight
         priorWeight = []
         for i in range(0, len(nodes)):
@@ -346,15 +361,15 @@ class TargetSelect:
         for i in range(0, len(nodes)):
             self.costs.append(smoothFactor[i] * priorWeight[i])
 
-        print 'len nodes is:'
-        print len(nodes) 
+#        print 'len nodes is:'
+#        print len(nodes) 
     
         goals_and_costs = zip(nodes, self.costs)
         #print goals_and_costs
 
         goals_and_costs.sort(key = lambda t: t[1], reverse = True)
         #sorted(goals_and_costs, key=operator.itemgetter(1))
-        print goals_and_costs
+#        print goals_and_costs
        # ind = random.randrange(0,min(6, len(nodes)))
         rospy.loginfo("[Main Node] Raw node = [%u, %u]", goals_and_costs[0][0][0], goals_and_costs[0][0][1])
         tempX = goals_and_costs[0][0][0] * resolution + origin['x']

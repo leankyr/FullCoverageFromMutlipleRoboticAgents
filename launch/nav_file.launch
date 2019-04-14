@@ -3,44 +3,39 @@
 
   <!-- Run the map server --> <!-- used to be march map-->
   <node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/last_map.yaml">
-      <param name="frame_id" value="/map"/>
+    <!--param name="frame_id" value="/map"/-->
   </node>
 
   <group ns="robot1">
-    <param name="tf_prefix" value="robot1_tf" />
+    <!--param name="tf_prefix" value="robot1_tf" /-->
     <param name="amcl/initial_pose_x" value="-1.0" />
     <param name="amcl/initial_pose_y" value="-1.0" />
     <param name="amcl/initial_pose_a" value="0.0" />
-    <param name="global_frame_id" value="/map" />
+    <!--param name="global_frame_id" value="/map" /-->
     <param name="amcl/odom_frame_id" value="robot1_tf/odom"/>
     <param name="amcl/base_frame_id" value="robot1_tf/base_link"/>
-    <param name="map_topic" value="/map" />
-    <param name="sensor_frame" value="robot1_tf/base_link"/>
-    <param name="robot_base_frame" value="robot1_tf/base_link"/>
-    <param name="global_frame" value="map"/>
-    <remap from="/scan" to="/robot1/scan"/>
+    <!--param name="map_topic" value="/map" /-->
+    <!--param name="robot_base_frame" value="robot1_tf/base_link"/-->
+    <!--param name="global_frame" value="map"/-->
+    <!--remap from="/scan" to="/robot1/scan"/-->
     <remap from="static_map" to="/static_map"/>
-    <remap from="robot1/coverage_map" to="coverage_map"/>
-    <include file="$(find my_2d_nav)/launch/start_move_base2.launch"/>
+    <include file="$(find my_2d_nav)/launch/start_move_base3.launch"/>
     <include file="$(find my_2d_nav)/launch/coverage_node2.launch"/>
   </group>
 
   <group ns="robot2">
-    <param name="tf_prefix" value="robot2_tf" />
+    <!--param name="tf_prefix" value="robot2_tf" /-->
     <param name="amcl/initial_pose_x" value="-3.0" />
     <param name="amcl/initial_pose_y" value="-1.0" />
     <param name="amcl/initial_pose_a" value="3.14" />
-    <param name="global_frame_id" value="/map" />
+    <!--param name="global_frame_id" value="/map" /-->
     <param name="amcl/odom_frame_id" value="robot2_tf/odom"/>
     <param name="amcl/base_frame_id" value="robot2_tf/base_link"/>
-    <param name="map_topic" value="/map" />
-    <param name="sensor_frame" value="robot2_tf/base_link"/>
-    <param name="robot_base_frame" value="robotr2_tf/base_link"/>
-    <param name="global_frame" value="map"/>
-    <remap from="/scan" to="/robot2/scan"/>
+    <!--param name="map_topic" value="/map"/-->
+    <!--param name="robot_base_frame" value="robot2_tf/base_link"/-->
+    <!--param name="global_frame" value="map"/-->
+    <!--remap from="/scan" to="/robot2/scan"/-->
     <remap from="static_map" to="/static_map"/>
-    <remap from="robot2/coverage_map" to="coverage_map"/>
-    <rosparam file="$(find my_2d_nav)/config/params2.yaml"/>
     <include file="$(find my_2d_nav)/launch/start_move_base3.launch"/>
     <include file="$(find my_2d_nav)/launch/coverage_node3.launch"/>
   </group>

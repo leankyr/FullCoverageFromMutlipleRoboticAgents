@@ -18,7 +18,7 @@
 ##
 TebLocalPlannerROS:
 
-  odom_topic: odom
+  odom_topic: robot1_tf/odom
   map_frame: /map
 
 

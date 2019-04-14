@@ -49,7 +49,7 @@ class TargetSelect:
         rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
         ogm_limits = {}
-        ogm_limits['min_x'] = 375  # used to be 200
+        ogm_limits['min_x'] = 350  # used to be 200
         ogm_limits['max_x'] = 800  # used to be 800
         ogm_limits['min_y'] = 200
         ogm_limits['max_y'] = 800
@@ -78,6 +78,18 @@ class TargetSelect:
                                     resolution, brush2, ogm_limits)
         # print took to calculate....
         rospy.loginfo("Calculation time: %s",str(time.time() - tinit))
+        
+        if len(nodes) == 0:
+            brush = self.brush.coverageLimitsBrushfire(initOgm, 
+                      coverage, robotPose, origin, resolution)
+            throw = set()
+            throw = self.filterGoal(brush, initOgm, resolution, origin)
+            brush.difference_update(throw)
+            distance_map = dict()
+            distance_map = self.calcDist(robotPose, brush)
+            self.target = min(distance_map, key = distance_map.get)
+            return self.target
+
 
         if len(nodes) > 0:
             rospy.loginfo("[Main Node] Nodes ready! Elapsed time = %fsec", time.time() - tinit)
@@ -435,3 +447,69 @@ class TargetSelect:
         marker_pub.publish(markers)
 #
         return
+
+    def calcDist(self, robotPose, brush):
+        distance_map = dict()
+        for goal in brush:
+            dist = math.hypot(goal[0] - robotPose['x'], goal[1] - robotPose['y'])
+            distance_map[goal] = dist
+        return distance_map
+
+    def filterGoal(self, brush2, ogm, resolution, origin):
+        throw = set()
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-9,10):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution)] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution)] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+        for goal in brush2:
+            goal = list(goal)
+            for j in range(-9,10):
+                if int(goal[1]/resolution - origin['y']/resolution) + j >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution)]\
+                [int(goal[1]/resolution - origin['y']/resolution) + j] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution)] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-9,10):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) + i] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) + i] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-9, 10):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) - i] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) - i] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+        return throw

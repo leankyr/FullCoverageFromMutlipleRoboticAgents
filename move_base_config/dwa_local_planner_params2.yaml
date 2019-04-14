@@ -50,4 +50,4 @@ DWAPlannerROS:
   # Debugging
   publish_traj_pc : true
   publish_cost_grid_pc: true
-  global_frame_id: robot2_tf/odom
+  global_frame_id: odom
