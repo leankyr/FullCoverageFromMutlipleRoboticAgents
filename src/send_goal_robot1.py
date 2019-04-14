@@ -9,9 +9,11 @@ from geometry_msgs.msg import PoseStamped, Twist
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node_two_robots import SubscriberNode
 #from target_selection_class import TargetSelect #,selectRandomTarget
-from cov_based_target_select import TargetSelect
-#from topo_graph_target_select import TargetSelect
+#from cov_based_target_select import TargetSelect
+from topo_graph_target_select1 import TargetSelect
 #from two_robots_cov_based_target_select import TargetSelect
+
+
 
 
 class SendMoveBaseGoalClient1:
@@ -24,10 +26,11 @@ class SendMoveBaseGoalClient1:
         self.moveBaseGoal1.target_pose.header.frame_id = "map"
         self.moveBaseGoal1.target_pose.header.stamp = rospy.Time.now()
 
-        rospy.loginfo("[Main Node] Wait 5 seconds for the subscribers to be ready!")
-        time.sleep(5)
+        rospy.loginfo("[Main Node] Wait 20 seconds for the subscribers to be ready!")
+        time.sleep(20)
 
-        # self.velocityPub = rospy.Publisher("/cmd_vel_mux/input/navi", Twist, queue_size = 1)
+#        self.velocityPub = rospy.Publisher(rospy.get_param('velocity_pub1'), Twist, queue_size = 1)
+#        self.rotateRobot()
 
         rospy.Timer(rospy.Duration(1.0), self.calculateSendGoal)
 
@@ -35,13 +38,21 @@ class SendMoveBaseGoalClient1:
     def calculateSendGoal(self, event):
         ogm = self.subNode.getSlamMap()
         #costmap = self.subNode.getCostMap()
+        goal = self.subNode.getGoal2()
         coverage = self.subNode.getCoverage()
         origin = self.subNode.origin
         robotPose1 = self.subNode.robotPose1
         resolution = rospy.get_param('resolution')
 
+        flag = 0
+        force_random = True
+
+        rospy.logwarn("Robot2 Goal is: [x, y] = [%f, %f] ", goal['x'], goal['y'])
+
+
+
         target1 = self.selectTarget.targetSelection(ogm, coverage, origin, \
-                                    resolution, robotPose1)
+                                    resolution, robotPose1, flag, goal, force_random)
 
 
         rospy.loginfo("target 1 from Send_move_base_goal_two_robots_is:[%f, %f] ", target1[0], target1[1])
@@ -69,7 +80,6 @@ class SendMoveBaseGoalClient1:
         moveBaseClient1.send_goal(self.moveBaseGoal1)
         moveBaseClient1.wait_for_result()
 
-#        self.rotateRobot()
 
 #        moveBaseClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)
 #

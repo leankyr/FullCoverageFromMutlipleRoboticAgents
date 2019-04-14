@@ -28,7 +28,7 @@ class TargetSelect:
         self.previousTarget = [-1, -1]
         self.costs = []
 
-    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose):
+    def targetSelection(self, initOgm, coverage, origin, resolution, robotPose, flag):
         rospy.loginfo("-----------------------------------------")
         rospy.loginfo("[Target Select Node] Robot_Pose[x, y, th] = [%f, %f, %f]", 
             robotPose['x'], robotPose['y'], robotPose['th'])
@@ -237,19 +237,6 @@ class TargetSelect:
                     throw.add(goal)
                     break
 
-#        for goal in brush2:
-#            goal = list(goal)
-#            for i in range(-3,4):
-#                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
-#                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
-#                    break
-#                if ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
-#                [int(goal[1]/resolution - origin['y']/resolution) - i] > 49 \
-#                or ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
-#                [int(goal[1]/resolution - origin['y']/resolution) - i] == -1:
-#                    goal = tuple(goal)
-#                    throw.add(goal)
-#                    break
 
         for goal in brush2:
             goal = list(goal)
@@ -265,19 +252,6 @@ class TargetSelect:
                     throw.add(goal)
                     break
 
-#        for goal in brush2:
-#            goal = list(goal)
-#            for i in range(-3,4):
-#                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
-#                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
-#                    break
-#                if ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
-#                [int(goal[1]/resolution - origin['y']/resolution) + i] > 49 \
-#                or ogm[int(goal[0]/resolution - origin['x']/resolution) - i]\
-#                [int(goal[1]/resolution - origin['y']/resolution) + i] == -1:
-#                    goal = tuple(goal)
-#                    throw.add(goal)
-#                    break
         return throw
 
     def calcDist(self, robotPose, brush):

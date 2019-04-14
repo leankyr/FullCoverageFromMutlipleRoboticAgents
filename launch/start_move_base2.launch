@@ -5,7 +5,6 @@
       <include file="$(find my_2d_nav)/move_base_config/amcl_diff2.xml"/>
       
 
-
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <remap from="cmd_vel" to="mobile_base/commands/velocity"/>
     <param name="base_global_planner" value="global_planner/GlobalPlanner"/>
@@ -19,8 +18,8 @@
     <rosparam file="$(find my_2d_nav)/move_base_config/global_planner_params.yaml" command="load"/>
     <rosparam file="$(find my_2d_nav)/move_base_config/dwa_local_planner_params1.yaml" command="load"/>
     <!--rosparam file="$(find my_2d_nav)/move_base_config/teb_local_planner_params.yaml" command="load"/-->
-		<remap from="map" to="/map" />
+    
+    <remap from="map" to="/map"/>
   </node>
-
 
 </launch>

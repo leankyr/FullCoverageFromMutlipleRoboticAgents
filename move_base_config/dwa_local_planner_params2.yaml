@@ -13,7 +13,7 @@ DWAPlannerROS:
   min_vel_y: 0.0
 
   max_vel_trans: 0.5
-  min_vel_trans: -0.3
+  min_vel_trans: -0.5
 
   max_vel_theta: 3.0
   min_vel_theta: -3.0
@@ -22,7 +22,7 @@ DWAPlannerROS:
   sim_granularity: 0.025
 
   goal_distance_bias: 24.0
-  path_distance_bias: 34.0 # used to be 64
+  path_distance_bias: 64.0 # used to be 64
   occdist_scale: 0.4 # I tried 0.3 too 0.1 tho seems small 
 
   stop_time_buffer: 0.2
@@ -35,9 +35,9 @@ DWAPlannerROS:
   scaling_speed: 0.25
   max_scaling_factor: 0.2
 
-  vx_samples: 8
+  vx_samples: 10 # used to be 8
   vy_samples: 0
-  vtheta_samples: 35
+  vtheta_samples: 35 # used to be 36
 
   sim_period: 0.1
 
@@ -50,10 +50,4 @@ DWAPlannerROS:
   # Debugging
   publish_traj_pc : true
   publish_cost_grid_pc: true
-  global_frame_id: robot2_tf/odom
-
-
-
-
-
-
+  global_frame_id: odom

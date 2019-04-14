@@ -1,0 +1,714 @@
+gazebo: {auto_disable_bodies: false, cfm: 0.0, contact_max_correcting_vel: 100.0,
+  contact_surface_layer: 0.001, erp: 0.2, gravity_x: 0.0, gravity_y: 0.0, gravity_z: -9.8,
+  max_contacts: 20, max_update_rate: 1000.0, sor_pgs_iters: 50, sor_pgs_precon_iters: 0,
+  sor_pgs_rms_error_tol: 0.0, sor_pgs_w: 1.3, time_step: 0.001}
+gazebo_gui: {auto_disable_bodies: false, cfm: 0.0, contact_max_correcting_vel: 100.0,
+  contact_surface_layer: 0.001, erp: 0.2, gravity_x: 0.0, gravity_y: 0.0, gravity_z: -9.8,
+  max_contacts: 20, max_update_rate: 1000.0, sor_pgs_iters: 50, sor_pgs_precon_iters: 0,
+  sor_pgs_rms_error_tol: 0.0, sor_pgs_w: 1.3, time_step: 0.001}
+robot1:
+  amcl: {base_frame_id: robot1_tf/base_link, beam_skip_distance: 0.5, beam_skip_threshold: 0.3,
+    do_beamskip: false, first_map_only: false, global_frame_id: /map, gui_publish_rate: 50.0,
+    initial_cov_aa: 0.05668381898202329, initial_cov_xx: 0.22137073767526827, initial_cov_yy: 0.19520543747325358,
+    initial_pose_a: -0.00907471834940737, initial_pose_x: -0.9948846366209618, initial_pose_y: -0.9950186364201525,
+    kld_err: 0.05, kld_z: 0.99, laser_lambda_short: 0.1, laser_likelihood_max_dist: 2.0,
+    laser_max_beams: 60, laser_max_range: -1.0, laser_min_range: -1.0, laser_model_type: likelihood_field,
+    laser_sigma_hit: 0.2, laser_z_hit: 0.5, laser_z_max: 0.05, laser_z_rand: 0.5,
+    laser_z_short: 0.05, max_particles: 5000, min_particles: 500, odom_alpha1: 0.2,
+    odom_alpha2: 0.2, odom_alpha3: 0.8, odom_alpha4: 0.2, odom_alpha5: 0.1, odom_frame_id: robot1_tf/odom,
+    odom_model_type: diff, recovery_alpha_fast: 0.0, recovery_alpha_slow: 0.0, resample_interval: 1,
+    restore_defaults: false, save_pose_rate: 0.5, tf_broadcast: true, transform_tolerance: 0.6,
+    update_min_a: 0.5, update_min_d: 0.2, use_map_topic: false}
+  map_topic: /map
+  move_base:
+    GlobalPlanner: {cost_factor: 0.55, lethal_cost: 253, neutral_cost: 66}
+    TebLocalPlannerROS:
+      acc_lim_theta: 0.5
+      acc_lim_x: 0.5
+      acc_lim_y: 0.0
+      allow_init_with_backwards_motion: false
+      cmd_angle_instead_rotvel: false
+      costmap_converter_plugin: ''
+      costmap_converter_rate: 5
+      costmap_converter_spin_thread: true
+      costmap_obstacles_behind_robot_dist: 1.0
+      dt_hysteresis: 0.1
+      dt_ref: 0.3
+      dynamic_obstacle_inflation_dist: 0.4
+      enable_homotopy_class_planning: false
+      enable_multithreading: true
+      exact_arc_length: false
+      feasibility_check_no_poses: 5
+      footprint_model: {radius: 0.1, type: circular}
+      force_reinit_new_goal_dist: 1.0
+      free_goal_vel: false
+      global_plan_overwrite_orientation: true
+      global_plan_viapoint_sep: 0.5
+      h_signature_prescaler: 0.5
+      h_signature_threshold: 0.1
+      include_costmap_obstacles: true
+      include_dynamic_obstacles: false
+      inflation_dist: 0.11
+      is_footprint_dynamic: true
+      legacy_obstacle_association: false
+      map_frame: /map
+      max_global_plan_lookahead_dist: 3.0
+      max_number_classes: 2
+      max_vel_theta: 1.5
+      max_vel_x: 0.3
+      max_vel_x_backwards: 0.3
+      max_vel_y: 0.0
+      min_obstacle_dist: 0.1
+      min_turning_radius: 0.0
+      no_inner_iterations: 5
+      no_outer_iterations: 4
+      obstacle_association_cutoff_factor: 5.0
+      obstacle_association_force_inclusion_factor: 1.5
+      obstacle_heading_threshold: 0.45
+      obstacle_keypoint_offset: 0.1
+      obstacle_poses_affected: 30
+      odom_topic: robot1_tf/odom
+      optimization_activate: true
+      optimization_verbose: false
+      oscillation_recovery: true
+      penalty_epsilon: 0.1
+      publish_feedback: false
+      roadmap_graph_area_length_scale: 1.0
+      roadmap_graph_area_width: 5
+      roadmap_graph_no_samples: 15
+      selection_alternative_time_cost: false
+      selection_cost_hysteresis: 1.0
+      selection_obst_cost_scale: 100.0
+      selection_prefer_initial_plan: 0.95
+      selection_viapoint_cost_scale: 1.0
+      shrink_horizon_backup: true
+      simple_exploration: false
+      switching_blocking_period: 0.0
+      teb_autosize: true
+      via_points_ordered: false
+      viapoints_all_candidates: true
+      visualize_hc_graph: false
+      visualize_with_time_as_z_axis_scale: 0
+      weight_acc_lim_theta: 1
+      weight_acc_lim_x: 1
+      weight_acc_lim_y: 1
+      weight_adapt_factor: 2
+      weight_dynamic_obstacle: 50
+      weight_dynamic_obstacle_inflation: 0.1
+      weight_inflation: 0.1
+      weight_kinematics_forward_drive: 1
+      weight_kinematics_nh: 1000
+      weight_kinematics_turning_radius: 1
+      weight_max_vel_theta: 1
+      weight_max_vel_x: 2
+      weight_max_vel_y: 2
+      weight_obstacle: 50
+      weight_optimaltime: 1
+      weight_viapoint: 1
+      xy_goal_tolerance: 0.1
+      yaw_goal_tolerance: 0.1
+    base_local_planner: teb_local_planner/TebLocalPlannerROS
+    controller_frequency: 5
+    controller_patience: 15.0
+    global_costmap:
+      cost_scaling_factor: 13
+      footprint:
+      - [-0.1, -0.1]
+      - [-0.1, 0.1]
+      - [0.1, 0.1]
+      - [0.1, 0.0]
+      - [0.1, -0.1]
+      global_frame: /map
+      height: 0.0
+      inflation_radius: 0.3
+      laser_scan_sensor: {clearing: true, data_type: LaserScan, expected_update_rate: 15.0,
+        marking: true, sensor_frame: robot1_tf/base_link, topic: scan}
+      observation_sources: laser_scan_sensor
+      obstacle_range: 9.0
+      publish_frequency: 2.0
+      raytrace_range: 9.0
+      robot_base_frame: robot1_tf/base_link
+      static_map: true
+      transform_tolerance: 0.2
+      update_frequency: 5.0
+      width: 0.0
+    local_costmap:
+      cost_scaling_factor: 13
+      footprint:
+      - [-0.1, -0.1]
+      - [-0.1, 0.1]
+      - [0.1, 0.1]
+      - [0.1, 0.0]
+      - [0.1, -0.1]
+      global_frame: robot1_tf/odom
+      height: 8.0
+      inflation_radius: 0.3
+      laser_scan_sensor: {clearing: true, data_type: LaserScan, expected_update_rate: 15.0,
+        marking: true, sensor_frame: robot1_tf/base_link, topic: scan}
+      observation_sources: laser_scan_sensor
+      obstacle_range: 9.0
+      publish_frequency: 2.0
+      raytrace_range: 9.0
+      resolution: 0.04
+      robot_base_frame: robot1_tf/base_link
+      rolling_window: true
+      static_map: false
+      update_frequency: 5.0
+      width: 8.0
+    oscillation_distance: 0.5
+    oscillation_timeout: 10.0
+  tf_prefix: robot1_tf
+robot2:
+  amcl: {base_frame_id: robot2_tf/base_link, beam_skip_distance: 0.5, beam_skip_threshold: 0.3,
+    do_beamskip: false, first_map_only: false, global_frame_id: /map, gui_publish_rate: 50.0,
+    initial_cov_aa: 0.059059520937872596, initial_cov_xx: 0.18574075862863815, initial_cov_yy: 0.19092979097130613,
+    initial_pose_a: -3.1395307477665484, initial_pose_x: -3.0020844447766346, initial_pose_y: -1.0056814482621816,
+    kld_err: 0.05, kld_z: 0.99, laser_lambda_short: 0.1, laser_likelihood_max_dist: 2.0,
+    laser_max_beams: 60, laser_max_range: -1.0, laser_min_range: -1.0, laser_model_type: likelihood_field,
+    laser_sigma_hit: 0.2, laser_z_hit: 0.5, laser_z_max: 0.05, laser_z_rand: 0.5,
+    laser_z_short: 0.05, max_particles: 5000, min_particles: 500, odom_alpha1: 0.2,
+    odom_alpha2: 0.2, odom_alpha3: 0.8, odom_alpha4: 0.2, odom_alpha5: 0.1, odom_frame_id: robot2_tf/odom,
+    odom_model_type: diff, recovery_alpha_fast: 0.0, recovery_alpha_slow: 0.0, resample_interval: 1,
+    restore_defaults: false, save_pose_rate: 0.5, tf_broadcast: true, transform_tolerance: 0.6,
+    update_min_a: 0.5, update_min_d: 0.2, use_map_topic: false}
+  map_topic: /map
+  move_base:
+    GlobalPlanner: {cost_factor: 0.55, lethal_cost: 253, neutral_cost: 66}
+    TebLocalPlannerROS:
+      acc_lim_theta: 0.5
+      acc_lim_x: 0.5
+      acc_lim_y: 0.0
+      allow_init_with_backwards_motion: false
+      cmd_angle_instead_rotvel: false
+      costmap_converter_plugin: ''
+      costmap_converter_rate: 5
+      costmap_converter_spin_thread: true
+      costmap_obstacles_behind_robot_dist: 1.0
+      dt_hysteresis: 0.1
+      dt_ref: 0.3
+      dynamic_obstacle_inflation_dist: 0.4
+      enable_homotopy_class_planning: false
+      enable_multithreading: true
+      exact_arc_length: false
+      feasibility_check_no_poses: 5
+      footprint_model: {radius: 0.1, type: circular}
+      force_reinit_new_goal_dist: 1.0
+      free_goal_vel: false
+      global_plan_overwrite_orientation: true
+      global_plan_viapoint_sep: 0.5
+      h_signature_prescaler: 0.5
+      h_signature_threshold: 0.1
+      include_costmap_obstacles: true
+      include_dynamic_obstacles: false
+      inflation_dist: 0.11
+      is_footprint_dynamic: true
+      legacy_obstacle_association: false
+      map_frame: map
+      max_global_plan_lookahead_dist: 3.0
+      max_number_classes: 2
+      max_vel_theta: 1.5
+      max_vel_x: 0.3
+      max_vel_x_backwards: 0.3
+      max_vel_y: 0.0
+      min_obstacle_dist: 0.1
+      min_turning_radius: 0.0
+      no_inner_iterations: 5
+      no_outer_iterations: 4
+      obstacle_association_cutoff_factor: 5.0
+      obstacle_association_force_inclusion_factor: 1.5
+      obstacle_heading_threshold: 0.45
+      obstacle_keypoint_offset: 0.1
+      obstacle_poses_affected: 30
+      odom_topic: robot2_tf/odom
+      optimization_activate: true
+      optimization_verbose: false
+      oscillation_recovery: true
+      penalty_epsilon: 0.1
+      publish_feedback: false
+      roadmap_graph_area_length_scale: 1.0
+      roadmap_graph_area_width: 5
+      roadmap_graph_no_samples: 15
+      selection_alternative_time_cost: false
+      selection_cost_hysteresis: 1.0
+      selection_obst_cost_scale: 100.0
+      selection_prefer_initial_plan: 0.95
+      selection_viapoint_cost_scale: 1.0
+      shrink_horizon_backup: true
+      simple_exploration: false
+      switching_blocking_period: 0.0
+      teb_autosize: true
+      via_points_ordered: false
+      viapoints_all_candidates: true
+      visualize_hc_graph: false
+      visualize_with_time_as_z_axis_scale: 0
+      weight_acc_lim_theta: 1
+      weight_acc_lim_x: 1
+      weight_acc_lim_y: 1
+      weight_adapt_factor: 2
+      weight_dynamic_obstacle: 50
+      weight_dynamic_obstacle_inflation: 0.1
+      weight_inflation: 0.1
+      weight_kinematics_forward_drive: 1
+      weight_kinematics_nh: 1000
+      weight_kinematics_turning_radius: 1
+      weight_max_vel_theta: 1
+      weight_max_vel_x: 2
+      weight_max_vel_y: 2
+      weight_obstacle: 50
+      weight_optimaltime: 1
+      weight_viapoint: 1
+      xy_goal_tolerance: 0.1
+      yaw_goal_tolerance: 0.1
+    base_local_planner: teb_local_planner/TebLocalPlannerROS
+    controller_frequency: 5
+    controller_patience: 15.0
+    global_costmap:
+      cost_scaling_factor: 13
+      footprint:
+      - [-0.1, -0.1]
+      - [-0.1, 0.1]
+      - [0.1, 0.1]
+      - [0.125, 0.0]
+      - [0.1, -0.1]
+      global_frame: /map
+      height: 0.0
+      inflation_radius: 0.3
+      laser_scan_sensor: {clearing: true, data_type: LaserScan, expected_update_rate: 15.0,
+        marking: true, sensor_frame: robot2_tf/base_link, topic: scan}
+      observation_sources: laser_scan_sensor
+      obstacle_range: 9.0
+      publish_frequency: 2.0
+      raytrace_range: 9.0
+      robot_base_frame: robot2_tf/base_link
+      static_map: true
+      transform_tolerance: 0.2
+      update_frequency: 5.0
+      width: 0.0
+    local_costmap:
+      cost_scaling_factor: 13
+      footprint:
+      - [-0.1, -0.1]
+      - [-0.1, 0.1]
+      - [0.1, 0.1]
+      - [0.125, 0.0]
+      - [0.1, -0.1]
+      global_frame: robot2_tf/odom
+      height: 8.0
+      inflation_radius: 0.3
+      laser_scan_sensor: {clearing: true, data_type: LaserScan, expected_update_rate: 15.0,
+        marking: true, sensor_frame: robot2_tf/base_link, topic: scan}
+      observation_sources: laser_scan_sensor
+      obstacle_range: 9.0
+      publish_frequency: 2.0
+      raytrace_range: 9.0
+      resolution: 0.04
+      robot_base_frame: robot2_tf/base_link
+      rolling_window: true
+      static_map: false
+      update_frequency: 5.0
+      width: 8.0
+    oscillation_distance: 0.5
+    oscillation_timeout: 10.0
+  tf_prefix: robot2_tf
+robot_description: "<?xml version=\"1.0\" ?>\n<!-- ===================================================================================\
+  \ -->\n<!-- |    This document was autogenerated by xacro from /opt/ros/kinetic/share/turtlebot_description/robots/kobuki_hexagons_hokuyo.urdf.xacro\
+  \ | -->\n<!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                \
+  \                 | -->\n<!-- ===================================================================================\
+  \ -->\n<!--\n    - Base      : kobuki\n    - Stacks    : hexagons\n    - 2d Sensor\
+  \ : hokuyo\n-->\n<robot name=\"turtlebot\" xmlns:xacro=\"http://ros.org/wiki/xacro\"\
+  >\n  <!-- \n    These properties must be observed by any machine\n    that wants\
+  \ to be defined as a turtlebot. Refer\n    to the REP for more details.\n    \n\
+  \    http://www.ros.org/reps/rep-0119.html\n   -->\n  <!-- \n    These properties\
+  \ must be observed by any machine\n    that wants to be defined as a turtlebot.\
+  \ Refer\n    to the REP for more details.\n    \n    http://www.ros.org/reps/rep-0119.html\n\
+  \   -->\n  <!-- \n    These properties must be observed by any machine\n    that\
+  \ wants to be defined as a turtlebot. Refer\n    to the REP for more details.\n\
+  \    \n    http://www.ros.org/reps/rep-0119.html\n   -->\n  <!-- \n    These properties\
+  \ must be observed by any machine\n    that wants to be defined as a turtlebot.\
+  \ Refer\n    to the REP for more details.\n    \n    http://www.ros.org/reps/rep-0119.html\n\
+  \   -->\n  <!-- \n    These properties must be observed by any machine\n    that\
+  \ wants to be defined as a turtlebot. Refer\n    to the REP for more details.\n\
+  \    \n    http://www.ros.org/reps/rep-0119.html\n   -->\n  <!-- \n    These properties\
+  \ must be observed by any machine\n    that wants to be defined as a turtlebot.\
+  \ Refer\n    to the REP for more details.\n    \n    http://www.ros.org/reps/rep-0119.html\n\
+  \   -->\n  <!-- \n    These properties must be observed by any machine\n    that\
+  \ wants to be defined as a turtlebot. Refer\n    to the REP for more details.\n\
+  \    \n    http://www.ros.org/reps/rep-0119.html\n   -->\n  <!-- \n    These properties\
+  \ must be observed by any machine\n    that wants to be defined as a turtlebot.\
+  \ Refer\n    to the REP for more details.\n    \n    http://www.ros.org/reps/rep-0119.html\n\
+  \   -->\n  <link name=\"base_footprint\"/>\n  <!--\n       Base link is set at the\
+  \ bottom of the base mould.\n       This is done to be compatible with the way base\
+  \ link\n       was configured for turtlebot 1. Refer to\n\n       https://github.com/turtlebot/turtlebot/issues/40\n\
+  \n       To put the base link at the more oft used wheel\n       axis, set the z-distance\
+  \ from the base_footprint\n       to 0.352.\n      -->\n  <joint name=\"base_joint\"\
+  \ type=\"fixed\">\n    <origin rpy=\"0 0 0\" xyz=\"0 0 0.0102\"/>\n    <parent link=\"\
+  base_footprint\"/>\n    <child link=\"base_link\"/>\n  </joint>\n  <link name=\"\
+  base_link\">\n    <visual>\n      <geometry>\n        <!-- new mesh -->\n      \
+  \  <mesh filename=\"package://kobuki_description/meshes/main_body.dae\"/>\n    \
+  \  </geometry>\n      <origin rpy=\"0 0 0\" xyz=\"0.001 0 0.05199\"/>\n    </visual>\n\
+  \    <collision name=\"base\">\n      <geometry>\n        <cylinder length=\"0.10938\"\
+  \ radius=\"0.178\"/>\n      </geometry>\n      <origin rpy=\"0 0 0\" xyz=\"0.0 0\
+  \ 0.05949\"/>\n    </collision>\n    <inertial>\n      <!-- COM experimentally determined\
+  \ -->\n      <origin xyz=\"0.01 0 0\"/>\n      <mass value=\"2.4\"/>\n      <!--\
+  \ 2.4/2.6 kg for small/big battery pack -->\n      <!-- Kobuki's inertia tensor\
+  \ is approximated by a cylinder with homogeneous mass distribution\n           \
+  \  More details: http://en.wikipedia.org/wiki/List_of_moment_of_inertia_tensors\n\
+  \             m = 2.4 kg; h = 0.09 m; r = 0.175 m\n             ixx = 1/12 * m *\
+  \ (3 * r^2 + h^2)\n             iyy = 1/12 * m * (3 * r^2 + h^2)\n             izz\
+  \ = 1/2 * m * r^2\n          -->\n      <inertia ixx=\"0.019995\" ixy=\"0.0\" ixz=\"\
+  0.0\" iyy=\"0.019995\" iyz=\"0.0\" izz=\"0.03675\"/>\n    </inertial>\n  </link>\n\
+  \  <joint name=\"wheel_left_joint\" type=\"continuous\">\n    <parent link=\"base_link\"\
+  />\n    <child link=\"wheel_left_link\"/>\n    <origin rpy=\"-1.57079632679 0 0\"\
+  \ xyz=\"0.00 0.115 0.0250\"/>\n    <axis xyz=\"0 0 1\"/>\n  </joint>\n  <link name=\"\
+  wheel_left_link\">\n    <visual>\n      <geometry>\n        <mesh filename=\"package://kobuki_description/meshes/wheel.dae\"\
+  />\n      </geometry>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n    </visual>\n\
+  \    <collision>\n      <geometry>\n        <cylinder length=\"0.0206\" radius=\"\
+  0.0352\"/>\n      </geometry>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n   \
+  \ </collision>\n    <inertial>\n      <mass value=\"0.01\"/>\n      <origin xyz=\"\
+  0 0 0\"/>\n      <inertia ixx=\"0.001\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.001\" iyz=\"\
+  0.0\" izz=\"0.001\"/>\n    </inertial>\n  </link>\n  <joint name=\"wheel_right_joint\"\
+  \ type=\"continuous\">\n    <parent link=\"base_link\"/>\n    <child link=\"wheel_right_link\"\
+  />\n    <origin rpy=\"-1.57079632679 0 0\" xyz=\"0.00 -0.115 0.0250\"/>\n    <axis\
+  \ xyz=\"0 0 1\"/>\n  </joint>\n  <link name=\"wheel_right_link\">\n    <visual>\n\
+  \      <geometry>\n        <mesh filename=\"package://kobuki_description/meshes/wheel.dae\"\
+  />\n      </geometry>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n    </visual>\n\
+  \    <collision>\n      <geometry>\n        <cylinder length=\"0.0206\" radius=\"\
+  0.0350\"/>\n      </geometry>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n   \
+  \ </collision>\n    <inertial>\n      <mass value=\"0.01\"/>\n      <origin xyz=\"\
+  0 0 0\"/>\n      <inertia ixx=\"0.001\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.001\" iyz=\"\
+  0.0\" izz=\"0.001\"/>\n    </inertial>\n  </link>\n  <joint name=\"caster_front_joint\"\
+  \ type=\"fixed\">\n    <parent link=\"base_link\"/>\n    <child link=\"caster_front_link\"\
+  />\n    <origin rpy=\"-1.57079632679 0 0\" xyz=\"0.115 0.0 0.007\"/>\n  </joint>\n\
+  \  <link name=\"caster_front_link\">\n    <collision>\n      <geometry>\n      \
+  \  <cylinder length=\"0.0176\" radius=\"0.017\"/>\n      </geometry>\n      <origin\
+  \ rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.01\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.001\" ixy=\"0.0\"\
+  \ ixz=\"0.0\" iyy=\"0.001\" iyz=\"0.0\" izz=\"0.001\"/>\n    </inertial>\n  </link>\n\
+  \  <joint name=\"caster_back_joint\" type=\"fixed\">\n    <parent link=\"base_link\"\
+  />\n    <child link=\"caster_back_link\"/>\n    <origin rpy=\"-1.57079632679 0 0\"\
+  \ xyz=\"-0.135 0.0 0.009\"/>\n  </joint>\n  <link name=\"caster_back_link\">\n \
+  \   <collision>\n      <geometry>\n        <cylinder length=\"0.0176\" radius=\"\
+  0.017\"/>\n      </geometry>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n    </collision>\n\
+  \    <inertial>\n      <mass value=\"0.01\"/>\n      <origin xyz=\"0 0 0\"/>\n \
+  \     <inertia ixx=\"0.001\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.001\" iyz=\"0.0\" izz=\"\
+  0.001\"/>\n    </inertial>\n  </link>\n  <!-- Kobuki's sensors -->\n  <joint name=\"\
+  gyro_joint\" type=\"fixed\">\n    <axis xyz=\"0 1 0\"/>\n    <origin rpy=\"0 0 0\"\
+  \ xyz=\"0.056 0.062 0.0202\"/>\n    <parent link=\"base_link\"/>\n    <child link=\"\
+  gyro_link\"/>\n  </joint>\n  <link name=\"gyro_link\">\n    <inertial>\n      <mass\
+  \ value=\"0.001\"/>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <inertia\
+  \ ixx=\"0.0001\" ixy=\"0\" ixz=\"0\" iyy=\"0.000001\" iyz=\"0\" izz=\"0.0001\"/>\n\
+  \    </inertial>\n  </link>\n  <joint name=\"cliff_sensor_left_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 1.57079632679 0\" xyz=\"0.08734 0.13601 0.0214\"/>\n    <parent\
+  \ link=\"base_link\"/>\n    <child link=\"cliff_sensor_left_link\"/>\n  </joint>\n\
+  \  <link name=\"cliff_sensor_left_link\">\n    <inertial>\n      <mass value=\"\
+  0.0001\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.0001\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.0001\" iyz=\"0.0\" izz=\"0.0001\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"cliff_sensor_right_joint\" type=\"fixed\">\n    <origin\
+  \ rpy=\"0 1.57079632679 0\" xyz=\"0.085 -0.13601 0.0214\"/>\n    <parent link=\"\
+  base_link\"/>\n    <child link=\"cliff_sensor_right_link\"/>\n  </joint>\n  <link\
+  \ name=\"cliff_sensor_right_link\">\n    <inertial>\n      <mass value=\"0.0001\"\
+  />\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.0001\" ixy=\"0.0\" ixz=\"\
+  0.0\" iyy=\"0.0001\" iyz=\"0.0\" izz=\"0.0001\"/>\n    </inertial>\n  </link>\n\
+  \  <joint name=\"cliff_sensor_front_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 1.57079632679 0\" xyz=\"0.156 0.00 0.0214\"/>\n    <parent link=\"base_link\"\
+  />\n    <child link=\"cliff_sensor_front_link\"/>\n  </joint>\n  <link name=\"cliff_sensor_front_link\"\
+  >\n    <inertial>\n      <mass value=\"0.0001\"/>\n      <origin xyz=\"0 0 0\"/>\n\
+  \      <inertia ixx=\"0.0001\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.0001\" iyz=\"0.0\"\
+  \ izz=\"0.0001\"/>\n    </inertial>\n  </link>\n  <gazebo reference=\"wheel_left_link\"\
+  >\n    <mu1>1.0</mu1>\n    <mu2>1.0</mu2>\n    <kp>1000000.0</kp>\n    <kd>100.0</kd>\n\
+  \    <minDepth>0.001</minDepth>\n    <maxVel>1.0</maxVel>\n  </gazebo>\n  <gazebo\
+  \ reference=\"wheel_right_link\">\n    <mu1>1.0</mu1>\n    <mu2>1.0</mu2>\n    <kp>1000000.0</kp>\n\
+  \    <kd>100.0</kd>\n    <minDepth>0.001</minDepth>\n    <maxVel>1.0</maxVel>\n\
+  \  </gazebo>\n  <gazebo reference=\"caster_front_link\">\n    <mu1>0.0</mu1>\n \
+  \   <mu2>0.0</mu2>\n    <kp>1000000.0</kp>\n    <kd>100.0</kd>\n    <minDepth>0.001</minDepth>\n\
+  \    <maxVel>1.0</maxVel>\n  </gazebo>\n  <gazebo reference=\"caster_back_link\"\
+  >\n    <mu1>0.0</mu1>\n    <mu2>0.0</mu2>\n    <kp>1000000.0</kp>\n    <kd>100.0</kd>\n\
+  \    <minDepth>0.001</minDepth>\n    <maxVel>1.0</maxVel>\n  </gazebo>\n  <gazebo\
+  \ reference=\"base_link\">\n    <mu1>0.3</mu1>\n    <mu2>0.3</mu2>\n    <sensor\
+  \ name=\"bumpers\" type=\"contact\">\n      <always_on>1</always_on>\n      <update_rate>50.0</update_rate>\n\
+  \      <visualize>true</visualize>\n      <contact>\n        <collision>base_footprint_fixed_joint_lump__base_collision</collision>\n\
+  \      </contact>\n    </sensor>\n  </gazebo>\n  <gazebo reference=\"cliff_sensor_left_link\"\
+  >\n    <sensor name=\"cliff_sensor_left\" type=\"ray\">\n      <always_on>true</always_on>\n\
+  \      <update_rate>50</update_rate>\n      <visualize>true</visualize>\n      <ray>\n\
+  \        <scan>\n          <horizontal>\n            <samples>50</samples>\n   \
+  \         <resolution>1.0</resolution>\n            <min_angle>-0.0436</min_angle>\n\
+  \            <!-- -2.5 degree -->\n            <max_angle>0.0436</max_angle>\n \
+  \           <!-- 2.5 degree -->\n          </horizontal>\n          <!--       \
+  \     Can't use vertical rays until this bug is resolved: -->\n          <!--  \
+  \          https://bitbucket.org/osrf/gazebo/issue/509/vertical-sensor-doesnt-works\
+  \ -->\n          <!-- \t          <vertical> -->\n          <!-- \t            <samples>50</samples>\
+  \ -->\n          <!-- \t            <resolution>1.0</resolution> -->\n         \
+  \ <!-- \t            <min_angle>-0.0436</min_angle>  -2.5 degree -->\n         \
+  \ <!-- \t            <max_angle>0.0436</max_angle> 2.5 degree -->\n          <!--\
+  \ \t          </vertical> -->\n        </scan>\n        <range>\n          <min>0.01</min>\n\
+  \          <max>0.15</max>\n          <resolution>1.0</resolution>\n        </range>\n\
+  \      </ray>\n    </sensor>\n  </gazebo>\n  <gazebo reference=\"cliff_sensor_right_link\"\
+  >\n    <sensor name=\"cliff_sensor_right\" type=\"ray\">\n      <always_on>true</always_on>\n\
+  \      <update_rate>50</update_rate>\n      <visualize>true</visualize>\n      <ray>\n\
+  \        <scan>\n          <horizontal>\n            <samples>50</samples>\n   \
+  \         <resolution>1.0</resolution>\n            <min_angle>-0.0436</min_angle>\n\
+  \            <!-- -2.5 degree -->\n            <max_angle>0.0436</max_angle>\n \
+  \           <!-- 2.5 degree -->\n          </horizontal>\n          <!--       \
+  \     Can't use vertical rays until this bug is resolved: -->\n          <!--  \
+  \          https://bitbucket.org/osrf/gazebo/issue/509/vertical-sensor-doesnt-works\
+  \ -->\n          <!-- \t          <vertical> -->\n          <!-- \t            <samples>50</samples>\
+  \ -->\n          <!-- \t            <resolution>1.0</resolution> -->\n         \
+  \ <!-- \t            <min_angle>-0.0436</min_angle>  -2.5 degree -->\n         \
+  \ <!-- \t            <max_angle>0.0436</max_angle> 2.5 degree -->\n          <!--\
+  \ \t          </vertical> -->\n        </scan>\n        <range>\n          <min>0.01</min>\n\
+  \          <max>0.15</max>\n          <resolution>1.0</resolution>\n        </range>\n\
+  \      </ray>\n    </sensor>\n  </gazebo>\n  <gazebo reference=\"cliff_sensor_front_link\"\
+  >\n    <sensor name=\"cliff_sensor_front\" type=\"ray\">\n      <always_on>true</always_on>\n\
+  \      <update_rate>50</update_rate>\n      <visualize>true</visualize>\n      <ray>\n\
+  \        <scan>\n          <horizontal>\n            <samples>50</samples>\n   \
+  \         <resolution>1.0</resolution>\n            <min_angle>-0.0436</min_angle>\n\
+  \            <!-- -2.5 degree -->\n            <max_angle>0.0436</max_angle>\n \
+  \           <!-- 2.5 degree -->\n          </horizontal>\n          <!-- \t    \
+  \      Can't use vertical rays until this bug is resolved: -->\n          <!-- \
+  \           https://bitbucket.org/osrf/gazebo/issue/509/vertical-sensor-doesnt-works\
+  \ -->\n          <!-- \t          <vertical> -->\n          <!-- \t            <samples>50</samples>\
+  \ -->\n          <!-- \t            <resolution>1.0</resolution> -->\n         \
+  \ <!-- \t            <min_angle>-0.0436</min_angle>  -2.5 degree -->\n         \
+  \ <!-- \t            <max_angle>0.0436</max_angle> 2.5 degree -->\n          <!--\
+  \ \t          </vertical> -->\n        </scan>\n        <range>\n          <min>0.01</min>\n\
+  \          <max>0.15</max>\n          <resolution>1.0</resolution>\n        </range>\n\
+  \      </ray>\n    </sensor>\n  </gazebo>\n  <gazebo reference=\"gyro_link\">\n\
+  \    <sensor name=\"imu\" type=\"imu\">\n      <always_on>true</always_on>\n   \
+  \   <update_rate>50</update_rate>\n      <visualize>false</visualize>\n      <imu>\n\
+  \        <noise>\n          <type>gaussian</type>\n          <rate>\n          \
+  \  <mean>0.0</mean>\n            <stddev>1.96e-06</stddev>\n            <!-- 0.25\
+  \ x 0.25 (deg/s) -->\n            <bias_mean>0.0</bias_mean>\n            <bias_stddev>0.0</bias_stddev>\n\
+  \          </rate>\n          <accel>\n            <!-- not used in the plugin and\
+  \ real robot, hence using tutorial values -->\n            <mean>0.0</mean>\n  \
+  \          <stddev>1.7e-2</stddev>\n            <bias_mean>0.1</bias_mean>\n   \
+  \         <bias_stddev>0.001</bias_stddev>\n          </accel>\n        </noise>\n\
+  \      </imu>\n    </sensor>\n  </gazebo>\n  <gazebo>\n    <plugin filename=\"libgazebo_ros_kobuki.so\"\
+  \ name=\"kobuki_controller\">\n      <publish_tf>1</publish_tf>\n      <left_wheel_joint_name>wheel_left_joint</left_wheel_joint_name>\n\
+  \      <right_wheel_joint_name>wheel_right_joint</right_wheel_joint_name>\n    \
+  \  <wheel_separation>.230</wheel_separation>\n      <wheel_diameter>0.070</wheel_diameter>\n\
+  \      <torque>1.0</torque>\n      <velocity_command_timeout>0.6</velocity_command_timeout>\n\
+  \      <cliff_sensor_left_name>cliff_sensor_left</cliff_sensor_left_name>\n    \
+  \  <cliff_sensor_center_name>cliff_sensor_front</cliff_sensor_center_name>\n   \
+  \   <cliff_sensor_right_name>cliff_sensor_right</cliff_sensor_right_name>\n    \
+  \  <cliff_detection_threshold>0.04</cliff_detection_threshold>\n      <bumper_name>bumpers</bumper_name>\n\
+  \      <imu_name>imu</imu_name>\n    </plugin>\n  </gazebo>\n  <joint name=\"pole_bottom_0_joint\"\
+  \ type=\"fixed\">\n    <origin rpy=\"0 0 0\" xyz=\"0.12 0.082 0.1028\"/>\n    <parent\
+  \ link=\"base_link\"/>\n    <child link=\"pole_bottom_0_link\"/>\n  </joint>\n \
+  \ <link name=\"pole_bottom_0_link\">\n    <visual>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_bottom.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0492\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.008\"/>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000001686\"\
+  \ ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.000001686\" iyz=\"0.0\" izz=\"0.000000144\"/>\n\
+  \    </inertial>\n  </link>\n  <joint name=\"pole_bottom_1_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 0 0\" xyz=\"0.055 0.12 0.1028\"/>\n    <parent link=\"base_link\"\
+  />\n    <child link=\"pole_bottom_1_link\"/>\n  </joint>\n  <link name=\"pole_bottom_1_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n\
+  \        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_bottom.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0492\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.008\"/>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000001686\"\
+  \ ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.000001686\" iyz=\"0.0\" izz=\"0.000000144\"/>\n\
+  \    </inertial>\n  </link>\n  <joint name=\"pole_bottom_2_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 0 0\" xyz=\"-0.055 0.12 0.1028\"/>\n    <parent link=\"base_link\"\
+  />\n    <child link=\"pole_bottom_2_link\"/>\n  </joint>\n  <link name=\"pole_bottom_2_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n\
+  \        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_bottom.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0492\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.008\"/>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000001686\"\
+  \ ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.000001686\" iyz=\"0.0\" izz=\"0.000000144\"/>\n\
+  \    </inertial>\n  </link>\n  <joint name=\"pole_bottom_3_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 0 0\" xyz=\"0.12 -0.082 0.1028\"/>\n    <parent link=\"base_link\"\
+  />\n    <child link=\"pole_bottom_3_link\"/>\n  </joint>\n  <link name=\"pole_bottom_3_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n\
+  \        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_bottom.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0492\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.008\"/>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000001686\"\
+  \ ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.000001686\" iyz=\"0.0\" izz=\"0.000000144\"/>\n\
+  \    </inertial>\n  </link>\n  <joint name=\"pole_bottom_4_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 0 0\" xyz=\"0.055 -0.12 0.1028\"/>\n    <parent link=\"base_link\"\
+  />\n    <child link=\"pole_bottom_4_link\"/>\n  </joint>\n  <link name=\"pole_bottom_4_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n\
+  \        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_bottom.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0492\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.008\"/>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000001686\"\
+  \ ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.000001686\" iyz=\"0.0\" izz=\"0.000000144\"/>\n\
+  \    </inertial>\n  </link>\n  <joint name=\"pole_bottom_5_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 0 0\" xyz=\"-0.055 -0.12 0.1028\"/>\n    <parent link=\"\
+  base_link\"/>\n    <child link=\"pole_bottom_5_link\"/>\n  </joint>\n  <link name=\"\
+  pole_bottom_5_link\">\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n\
+  \      <geometry>\n        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_bottom.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0492\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.008\"/>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000001686\"\
+  \ ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.000001686\" iyz=\"0.0\" izz=\"0.000000144\"/>\n\
+  \    </inertial>\n  </link>\n  <joint name=\"plate_bottom_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 0 0\" xyz=\"0.02364 0.0 0.1306\"/>\n    <parent link=\"base_link\"\
+  />\n    <child link=\"plate_bottom_link\"/>\n  </joint>\n  <link name=\"plate_bottom_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n\
+  \        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/plate_bottom.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"-0.02364 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.006\" radius=\"\
+  0.170\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.520\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.003328\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.003328\" iyz=\"0.0\" izz=\"0.006656\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"pole_middle_0_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"0.0381 0.1505 0.164\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"pole_middle_0_link\"/>\n  </joint>\n  <link name=\"pole_middle_0_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 3.14159265359 0\" xyz=\"0 0 0\"/>\n     \
+  \ <geometry>\n        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_middle.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0608\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.012\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000003805\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000003805\" iyz=\"0.0\" izz=\"0.000000216\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"pole_middle_1_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"0.0381 -0.1505 0.164\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"pole_middle_1_link\"/>\n  </joint>\n  <link name=\"pole_middle_1_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 3.14159265359 0\" xyz=\"0 0 0\"/>\n     \
+  \ <geometry>\n        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_middle.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0608\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.012\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000003805\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000003805\" iyz=\"0.0\" izz=\"0.000000216\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"pole_middle_2_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"-0.0381 0.1505 0.164\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"pole_middle_2_link\"/>\n  </joint>\n  <link name=\"pole_middle_2_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 3.14159265359 0\" xyz=\"0 0 0\"/>\n     \
+  \ <geometry>\n        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_middle.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0608\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.012\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000003805\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000003805\" iyz=\"0.0\" izz=\"0.000000216\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"pole_middle_3_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"-0.0381 -0.1505 0.164\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"pole_middle_3_link\"/>\n  </joint>\n  <link name=\"pole_middle_3_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 3.14159265359 0\" xyz=\"0 0 0\"/>\n     \
+  \ <geometry>\n        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_middle.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0608\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.012\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000003805\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000003805\" iyz=\"0.0\" izz=\"0.000000216\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"plate_middle_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"-0.01364 0.0 0.1874\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"plate_middle_link\"/>\n  </joint>\n  <link name=\"plate_middle_link\">\n\
+  \    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n \
+  \       <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/plate_middle.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0.01364 0.0 0.0\"/>\n      <geometry>\n        <cylinder length=\"0.006\"\
+  \ radius=\"0.170\"/>\n      </geometry>\n    </collision>\n    <inertial>\n    \
+  \  <mass value=\"0.520\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"\
+  0.003328\" ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.003328\" iyz=\"0.0\" izz=\"0.006656\"\
+  />\n    </inertial>\n  </link>\n  <joint name=\"pole_top_0_joint\" type=\"fixed\"\
+  >\n    <origin rpy=\"0 0 0\" xyz=\"0.0381 0.1505 0.292\"/>\n    <parent link=\"\
+  base_link\"/>\n    <child link=\"pole_top_0_link\"/>\n  </joint>\n  <link name=\"\
+  pole_top_0_link\">\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\" 0 0 0\"/>\n\
+  \      <geometry>\n        <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_top.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.2032\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.060\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000206991\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000206991\" iyz=\"0.0\" izz=\"0.000001080\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"pole_top_1_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"0.0381 -0.1505 0.292\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"pole_top_1_link\"/>\n  </joint>\n  <link name=\"pole_top_1_link\">\n  \
+  \  <visual>\n      <origin rpy=\"0 0 0\" xyz=\" 0 0 0\"/>\n      <geometry>\n  \
+  \      <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_top.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.2032\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.060\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000206991\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000206991\" iyz=\"0.0\" izz=\"0.000001080\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"pole_top_2_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"-0.0381 0.1505 0.292\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"pole_top_2_link\"/>\n  </joint>\n  <link name=\"pole_top_2_link\">\n  \
+  \  <visual>\n      <origin rpy=\"0 0 0\" xyz=\" 0 0 0\"/>\n      <geometry>\n  \
+  \      <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_top.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.2032\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.060\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000206991\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000206991\" iyz=\"0.0\" izz=\"0.000001080\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"pole_top_3_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"-0.0381 -0.1505 0.292\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"pole_top_3_link\"/>\n  </joint>\n  <link name=\"pole_top_3_link\">\n  \
+  \  <visual>\n      <origin rpy=\"0 0 0\" xyz=\" 0 0 0\"/>\n      <geometry>\n  \
+  \      <mesh filename=\"package://turtlebot_description/meshes/stacks/hexagons/pole_top.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.2032\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.060\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000206991\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000206991\" iyz=\"0.0\" izz=\"0.000001080\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"pole_kinect_0_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"-0.1024 0.098 0.2372\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"pole_kinect_0_link\"/>\n  </joint>\n  <link name=\"pole_kinect_0_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 -0.01\"/>\n      <geometry>\n\
+  \        <mesh filename=\"package://turtlebot_description/meshes/sensors/sensor_pole.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0936\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.020\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000014782\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000014782\" iyz=\"0.0\" izz=\"0.000000360\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"pole_kinect_1_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"-0.1024 -0.098 0.2372\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"pole_kinect_1_link\"/>\n  </joint>\n  <link name=\"pole_kinect_1_link\"\
+  >\n    <visual>\n      <origin rpy=\"0 0 0\" xyz=\"0 0 -0.01\"/>\n      <geometry>\n\
+  \        <mesh filename=\"package://turtlebot_description/meshes/sensors/sensor_pole.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.0936\" radius=\"\
+  0.006\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.020\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.000014782\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.000014782\" iyz=\"0.0\" izz=\"0.000000360\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"plate_top_joint\" type=\"fixed\">\n    <origin rpy=\"\
+  0 0 0\" xyz=\"-0.01364 0.0  0.3966\"/>\n    <parent link=\"base_link\"/>\n    <child\
+  \ link=\"plate_top_link\"/>\n  </joint>\n  <link name=\"plate_top_link\">\n    <visual>\n\
+  \      <origin rpy=\"0 0 0\" xyz=\"0 0 0\"/>\n      <geometry>\n        <mesh filename=\"\
+  package://turtlebot_description/meshes/stacks/hexagons/plate_top.dae\"/>\n     \
+  \ </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\" xyz=\"\
+  0.01364 0 0\"/>\n      <geometry>\n        <cylinder length=\"0.006\" radius=\"\
+  0.170\"/>\n      </geometry>\n    </collision>\n    <inertial>\n      <mass value=\"\
+  0.520\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.003328\" ixy=\"\
+  0.0\" ixz=\"0.0\" iyy=\"0.003328\" iyz=\"0.0\" izz=\"0.006656\"/>\n    </inertial>\n\
+  \  </link>\n  <joint name=\"laser\" type=\"fixed\">\n    <origin rpy=\"0 0 0\" xyz=\"\
+  0.1 0.0 0.43\"/>\n    <parent link=\"base_link\"/>\n    <child link=\"base_laser_link\"\
+  />\n  </joint>\n  <link name=\"base_laser_link\">\n    <visual>\n      <geometry>\n\
+  \        <mesh filename=\"package://turtlebot_description/meshes/sensors/hokuyo.dae\"\
+  />\n      </geometry>\n    </visual>\n    <collision>\n      <origin rpy=\"0 0 0\"\
+  \ xyz=\"0 0 -0.0145\"/>\n      <geometry>\n        <box size=\"0.05 0.05 0.041\"\
+  />\n      </geometry>\n    </collision>\n    <collision>\n      <origin rpy=\"0\
+  \ 0 0\" xyz=\"0 0 0.0205\"/>\n      <geometry>\n        <cylinder length=\"0.029\"\
+  \ radius=\"0.021\"/>\n      </geometry>\n    </collision>\n    <inertial>\n    \
+  \  <mass value=\"0.1\"/>\n      <origin xyz=\"0 0 0\"/>\n      <inertia ixx=\"0.0001\"\
+  \ ixy=\"0.0\" ixz=\"0.0\" iyy=\"0.0001\" iyz=\"0.0\" izz=\"0.0001\"/>\n    </inertial>\n\
+  \  </link>\n  <gazebo reference=\"base_laser_link\">\n    <sensor name=\"laser\"\
+  \ type=\"ray\">\n      <pose>0.01 0 0.0175 0 -0 0</pose>\n      <ray>\n        <scan>\n\
+  \          <horizontal>\n            <samples>640</samples>\n            <resolution>1</resolution>\n\
+  \            <min_angle>-2.26889</min_angle>\n            <max_angle>2.26889</max_angle>\n\
+  \          </horizontal>\n        </scan>\n        <range>\n          <min>0.08</min>\n\
+  \          <max>10</max>\n          <resolution>0.01</resolution>\n        </range>\n\
+  \      </ray>\n      <plugin filename=\"libgazebo_ros_laser.so\" name=\"hokuyo_node\"\
+  >\n        <topicName>scan</topicName>\n        <frameName>base_laser_link</frameName>\n\
+  \      </plugin>\n      <always_on>1</always_on>\n      <update_rate>30</update_rate>\n\
+  \      <visualize>true</visualize>\n    </sensor>\n  </gazebo>\n</robot>\n\n"
+rosdistro: 'kinetic
+
+  '
+roslaunch:
+  uris: {host_leankyr_swift_sf314_51__34741: 'http://leankyr-Swift-SF314-51:34741/'}
+rosversion: '1.12.14
+
+  '
+run_id: 812de0ec-5ed0-11e9-9da0-94e979ed5cdb
+use_sim_time: true

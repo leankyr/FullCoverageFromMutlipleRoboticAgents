@@ -9,7 +9,7 @@ sensor_frame: base_link
 dist_of_use: 4
 field_of_view: 60
 # velocity pub topic
-velocity_pub: /mobile_base/commands/velocity
+velocity_pub: '/mobile_base/commands/velocity'
 # resolution used to be 0.05
 # change also delta param according in
 # gmapping.launch.xml in turtlebot
@@ -19,20 +19,17 @@ resolution: 0.04                # Map resolution
 # Radius around pose
 radius: 2
 
-# Size Of Coverage Map
-#width: 704
-##height: 480
-#height: 576
-
+# Willow params
 width: 864
-#height: 480
 height: 896
 
-# Map origin
-#origin_x: -29.8
-##origin_y: -20.2
-#origin_y: -29.8
-
 origin_x: -16.36
-#origin_y: -20.2
 origin_y: -18.92
+
+
+## corridor params
+#width: 608
+#height: 672
+#
+#origin_x: -12.52
+#origin_y: -13.80
