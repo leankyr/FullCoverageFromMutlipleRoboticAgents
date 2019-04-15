@@ -14,9 +14,13 @@ how to execute:
 
 2.1) type: `roslaunch my_2d_nav amcl_one_to_rule_them_all.launch`
 
+2.2) press Enter
+
 3.0) open another terminal(second different from the one above)
 
 3.1) type: `roslaunch my_2d_nav target_select.launch`
+
+3.2) press Enter
 
 you will se the turtlebot trying to cover the whole map and setting goals on its own.
 Soon more features to come...
