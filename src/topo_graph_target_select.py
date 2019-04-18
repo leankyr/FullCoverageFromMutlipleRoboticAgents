@@ -238,13 +238,13 @@ class TargetSelect:
             nodesX.append(nodes[i][0])
             nodesY.append(nodes[i][1])
         for i in range(0, len(nodes)):
-#            dist = math.sqrt((nodes[i][0] * resolution + origin['x'] - robotPose['x'])**2 + \
-#                        (nodes[i][1] * resolution + origin['y'] - robotPose['y'])**2)
+            dist = math.sqrt((nodes[i][0] * resolution + origin['x'] - robotPose['x'])**2 + \
+                        (nodes[i][1] * resolution + origin['y'] - robotPose['y'])**2)
 #            dist = math.sqrt((nodes[i][0] + origin['x_px'] - robotPose['x_px'])**2 + \
 #                        (nodes[i][1]  + origin['y_px'] - robotPose['y_px'])**2)
             # Manhattan Dist
-            dist = abs(nodes[i][0] * resolution + origin['x'] - robotPose['x']) + \
-                   abs(nodes[i][1] * resolution + origin['y'] - robotPose['y'])
+#            dist = abs(nodes[i][0] * resolution + origin['x'] - robotPose['x']) + \
+#                   abs(nodes[i][1] * resolution + origin['y'] - robotPose['y'])
 
             # numpy.var is covariance
             tempX = ((robotPose['x'] - nodesX[i] * resolution + origin['x'])**2) / (2 * numpy.var(nodesX))
@@ -328,8 +328,8 @@ class TargetSelect:
 #        rospy.logwarn("Printing CoveNorm....\n")
 #        print wCoveNorm
 
-        rospy.logwarn("Printing RotNorm....\n")
-        print wRotNorm
+#        rospy.logwarn("Printing RotNorm....\n")
+#        print wRotNorm
 
 
 
