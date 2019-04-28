@@ -42,7 +42,7 @@ class CoverageCounterPublisher:
         self.origin_y = rospy.get_param('origin_y')
 
         # define the timer
-        rospy.Timer(rospy.Duration(5.0), self.countCoverage)
+        rospy.Timer(rospy.Duration(15.0), self.countCoverage)
 
 
     def countCoverage(self, event):
@@ -76,7 +76,8 @@ class CoverageCounterPublisher:
         now = time.ctime()
         print ('%.3f' %(num_of_hundred_boxes_cov/num_of_zero_boxes_ogm), now)
 
-
+        if num_of_hundred_boxes_cov/num_of_zero_boxes_ogm > 0.95: 
+            rospy.signal_shutdown('Coverage limit reached!!!!')
 
 
 if __name__ == '__main__':
