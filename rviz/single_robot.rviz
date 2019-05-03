@@ -6,7 +6,6 @@ Panels:
       Expanded:
         - /NavFn Plan1
         - /TF1/Frames1
-        - /MarkerArray1
       Splitter Ratio: 0.5
     Tree Height: 843
   - Class: rviz/Selection
@@ -27,7 +26,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -142,12 +141,12 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Local Costmap
       Topic: /move_base/local_costmap/costmap
       Unreliable: true
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: map
@@ -170,7 +169,7 @@ Visualization Manager:
       Color: 255; 255; 0
       Color Transformer: FlatColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 1
@@ -187,7 +186,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -463,7 +462,7 @@ Visualization Manager:
       Marker Topic: /vis_nodes
       Name: MarkerArray
       Namespaces:
-        lines: true
+        {}
       Queue Size: 1
       Value: true
   Enabled: true
@@ -500,7 +499,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 44.1713943
+      Scale: 26.4177208
       Target Frame: map
       Value: TopDownOrtho (rviz)
       X: -1.65423679

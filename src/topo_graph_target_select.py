@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+#/usr/bin/env python
 
 import rospy
 import actionlib
@@ -48,12 +47,12 @@ class TargetSelect:
         rospy.loginfo("[Target Select Node] OGM_Origin = [%i, %i]", origin['x'], origin['y'])
         rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
-        # willow stuff
-        ogm_limits = {}
-        ogm_limits['min_x'] = 150  # used to be 200
-        ogm_limits['max_x'] = 800  # used to be 800
-        ogm_limits['min_y'] = 200
-        ogm_limits['max_y'] = 800
+##        # willow stuff
+#        ogm_limits = {}
+#        ogm_limits['min_x'] = 150  # used to be 200
+#        ogm_limits['max_x'] = 800  # used to be 800
+#        ogm_limits['min_y'] = 200
+#        ogm_limits['max_y'] = 800
 
 
 #        # corridor
@@ -63,8 +62,17 @@ class TargetSelect:
 #        ogm_limits['min_y'] = 100
 #        ogm_limits['max_y'] = 500
 
-        # publisher
+##        # Big Map
+        ogm_limits = {}
+        ogm_limits['min_x'] = 200  # used to be 200
+        ogm_limits['max_x'] = 800  # used to be 800
+        ogm_limits['min_y'] = 300
+        ogm_limits['max_y'] = 1080
+#        ogm_limits['max_y'] = 1080
 
+
+
+        # publisher
         marker_pub = rospy.Publisher("/vis_nodes", MarkerArray, queue_size = 1)
         # Find only the useful boundaries of OGM. Only there calculations have meaning
 #        ogm_limits = OgmOperations.findUsefulBoundaries(initOgm, origin, resolution)
@@ -85,6 +93,38 @@ class TargetSelect:
                                     resolution, brush2, ogm_limits)
         # print took to calculate....
         rospy.loginfo("Calculation time: %s",str(time.time() - tinit))
+        
+        if len(nodes) == 0 and force_random: 
+            brush = self.brush.coverageLimitsBrushfire(initOgm, 
+                      coverage, robotPose, origin, resolution)
+            throw = set()
+            throw = self.filterGoal(brush, initOgm, resolution, origin)
+            brush.difference_update(throw)
+            goal = random.sample(brush, 1)
+            
+            rospy.loginfo("nodes are zero and random node chosen!!!!")
+            th_rg = math.atan2(goal[0][1] - robotPose['y'], \
+                    goal[0][0] - robotPose['x'])
+
+            self.target = [goal[0][0], goal[0][1], th_rg]
+            return self.target
+
+
+        if len(nodes) == 0:
+            brush = self.brush.coverageLimitsBrushfire(initOgm, 
+                      coverage, robotPose, origin, resolution)
+            throw = set()
+            throw = self.filterGoal(brush, initOgm, resolution, origin)
+            brush.difference_update(throw)
+            distance_map = dict()
+            distance_map = self.calcDist(robotPose, brush)
+            self.target = min(distance_map, key = distance_map.get)
+            
+            th_rg = math.atan2(self.target[1] - robotPose['y'], \
+                    self.target[0] - robotPose['x'])
+            self.target = list(self.target)
+            self.target.append(th_rg)
+            return self.target
 
         if len(nodes) > 0:
             rospy.loginfo("[Main Node] Nodes ready! Elapsed time = %fsec", time.time() - tinit)
@@ -92,8 +132,9 @@ class TargetSelect:
 
             # Remove previous targets from the list of nodes
             rospy.loginfo("[Main Node] Prev. target = [%u, %u]", self.previousTarget[0], \
-                            self.previousTarget[1])
-            nodes = [i for i in nodes if i != self.previousTarget]
+                self.previousTarget[1])
+            if len(nodes) > 1:
+                nodes = [i for i in nodes if i != self.previousTarget]
 
             vis_nodes = []
             for n in nodes:
@@ -128,7 +169,7 @@ class TargetSelect:
         obstThres = 49
         wTopo = []
         dRad = []
-        for i in range(0, 8):
+        for i in range(8):
             dRad.append(rayLength)
         for k in range(0, len(nodes)):
             # Determine whether the ray length passes the OGM limits
@@ -219,10 +260,10 @@ class TargetSelect:
         wDist = []
         nodesX = []
         nodesY = []
-        for i in range(0, len(nodes)):
+        for i in range(len(nodes)):
             nodesX.append(nodes[i][0])
             nodesY.append(nodes[i][1])
-        for i in range(0, len(nodes)):
+        for i in range(len(nodes)):
             #dist = math.sqrt((nodes[i][0] * resolution + origin['x'] - robotPose['x'])**2 + \
              #           (nodes[i][1] * resolution + origin['y'] - robotPose['y'])**2)
 #            dist = math.sqrt((nodes[i][0] + origin['x_px'] - robotPose['x_px'])**2 + \
@@ -254,7 +295,7 @@ class TargetSelect:
         # Calculate coverage cost
         dSamp = 1 / resolution
         wCove = []
-        for k in range(0, len(nodes)):
+        for k in range(len(nodes)):
             athr = 0
             for i in range(-1, 1):
                 indexX = int(nodes[k][0] + i * dSamp)
@@ -270,7 +311,7 @@ class TargetSelect:
 
         # Calculate rotational cost
         wRot = []
-        for i in range(0, len(nodes)):
+        for i in range(len(nodes)):
             dTh = math.atan2(nodes[i][1] - robotPose['y_px'], \
                         nodes[i][0] - robotPose['x_px']) - robotPose['th']
             wRot.append(dTh)
@@ -283,7 +324,7 @@ class TargetSelect:
         wDistNorm = []
         wCoveNorm = []
         wRotNorm = []
-        for i in range(0, len(nodes)):
+        for i in range(len(nodes)):
             if max(wTopo) - min(wTopo) == 0:
                 normTopo = 0
             else:
@@ -322,7 +363,7 @@ class TargetSelect:
 
         # Calculate Priority Weight
         priorWeight = []
-        for i in range(0, len(nodes)):
+        for i in range(len(nodes)):
             #pre = round((wDistNorm[i] / 0.5), 0)
             pre = 1 * round((wTopoNorm[i] / 0.5), 0) + \
                     8 * round((wDistNorm[i] / 0.5), 0) + \
@@ -335,7 +376,7 @@ class TargetSelect:
 
         # Calculate smoothing factor
         smoothFactor = []
-        for i in range(0, len(nodes)):
+        for i in range(len(nodes)):
             #coeff = 1 - wDistNorm[i]           
             coeff = (1 * (1 - wTopoNorm[i]) + 8 * (1 - wDistNorm[i]) + \
                         4 * (1 - wCoveNorm[i]) + 2 * (1 - wRotNorm[i])) / (2**4 - 1)
@@ -344,7 +385,7 @@ class TargetSelect:
 
         # Calculate costs
         self.costs = []
-        for i in range(0, len(nodes)):
+        for i in range(len(nodes)):
             self.costs.append(smoothFactor[i] * priorWeight[i])
 
 #        print 'len nodes is:'
@@ -360,7 +401,9 @@ class TargetSelect:
         rospy.loginfo("[Main Node] Raw node = [%u, %u]", goals_and_costs[0][0][0], goals_and_costs[0][0][1])
         tempX = goals_and_costs[0][0][0] * resolution + origin['x']
         tempY = goals_and_costs[0][0][1] * resolution + origin['y']
-        self.target = [tempX, tempY]
+        th_rg = math.atan2(tempY - robotPose['y'], \
+                    tempX - robotPose['x'])
+        self.target = [tempX, tempY, th_rg]
         rospy.loginfo("[Main Node] Eligible node found at [%f, %f]", 
                         self.target[0], self.target[1])
         rospy.loginfo("[Main Node] Node Index: %u", i)
@@ -375,7 +418,9 @@ class TargetSelect:
             rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
             tempX = nodes[ind][0] * resolution + origin['x']
             tempY = nodes[ind][1] * resolution + origin['y']
-            self.target = [tempX, tempY]
+            th_rg = math.atan2(tempY - robotPose['y'], \
+                    tempX - robotPose['x'])
+            self.target = [tempX, tempY, th_rg]
             rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
                             self.target[0], self.target[1])
             rospy.loginfo("-----------------------------------------")
@@ -454,7 +499,7 @@ class TargetSelect:
         while not found:
           x_rand = random.randint(0, int(ogm.shape[0] - 1))
           y_rand = random.randint(0, int(ogm.shape[1] - 1))
-          if ogm[x_rand][y_rand] <= 49 and brush[x_rand][y_rand] > 3:# and \#coverage[x_rand][y_rand] != 100:
+          if ogm[x_rand][y_rand] <= 49 and brush[x_rand][y_rand] != -1:# and \#coverage[x_rand][y_rand] != 100:
             tempX = x_rand * resolution + int(origin['x'])
             tempY = y_rand * resolution + int(origin['y'])
             target = [tempX, tempY]
@@ -463,3 +508,69 @@ class TargetSelect:
             rospy.loginfo("-----------------------------------------")
             return self.target
 
+
+    def calcDist(self, robotPose, brush):
+        distance_map = dict()
+        for goal in brush:
+            dist = math.hypot(goal[0] - robotPose['x'], goal[1] - robotPose['y'])
+            distance_map[goal] = dist
+        return distance_map
+
+    def filterGoal(self, brush2, ogm, resolution, origin):
+        throw = set()
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-9,10):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution)] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution)] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+        for goal in brush2:
+            goal = list(goal)
+            for j in range(-9,10):
+                if int(goal[1]/resolution - origin['y']/resolution) + j >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution)]\
+                [int(goal[1]/resolution - origin['y']/resolution) + j] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution)] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-9,10):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) + i] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) + i] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+
+        for goal in brush2:
+            goal = list(goal)
+            for i in range(-9, 10):
+                if int(goal[0]/resolution - origin['x']/resolution) + i >= len(ogm) or \
+                    int(goal[1]/resolution - origin['y']/resolution) + i >= len(ogm[0]):
+                    break
+                if ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) - i] > 49 \
+                or ogm[int(goal[0]/resolution - origin['x']/resolution) + i]\
+                [int(goal[1]/resolution - origin['y']/resolution) - i] == -1:
+                    goal = tuple(goal)
+                    throw.add(goal)
+                    break
+
+        return throw

@@ -42,7 +42,7 @@ class CoverageCounterPublisher:
         self.origin_y = rospy.get_param('origin_y')
 
         # define the timer
-        rospy.Timer(rospy.Duration(15.0), self.countCoverage)
+        rospy.Timer(rospy.Duration(60.0), self.countCoverage)
 
 
     def countCoverage(self, event):

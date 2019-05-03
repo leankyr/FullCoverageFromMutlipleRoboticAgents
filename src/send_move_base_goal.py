@@ -4,7 +4,9 @@ import rospy
 import actionlib
 import time
 import math
-from geometry_msgs.msg import PoseStamped, Twist
+import tf
+
+from geometry_msgs.msg import PoseStamped, Twist, Quaternion
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node import SubscriberNode
 #from target_selection_class import TargetSelect #,selectRandomTarget
@@ -52,15 +54,12 @@ class SendMoveBaseGoalClient:
 
         self.moveBaseGoal.target_pose.pose.position.x = float(target[0])
         self.moveBaseGoal.target_pose.pose.position.y = float(target[1])
-
-#        self.moveBaseGoal.target_pose.pose.position.x = 1.0
-#        self.moveBaseGoal.target_pose.pose.position.y = 1.0
-
         self.moveBaseGoal.target_pose.pose.position.z = 0.0
-        self.moveBaseGoal.target_pose.pose.orientation.x = 0.0
-        self.moveBaseGoal.target_pose.pose.orientation.y = 0.0
-        self.moveBaseGoal.target_pose.pose.orientation.z = 0.0
-        self.moveBaseGoal.target_pose.pose.orientation.w = 1.0
+        
+        q_angle = tf.transformations.quaternion_from_euler(0, 0, target[2], axes='sxyz')
+        q = Quaternion(*q_angle)
+        
+        self.moveBaseGoal.target_pose.pose.orientation = q
 
         moveBaseClient.wait_for_server()
         rospy.loginfo("[Main Node] Sending goal")
