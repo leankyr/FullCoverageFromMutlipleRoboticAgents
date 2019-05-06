@@ -405,7 +405,7 @@ class TargetSelect:
         goals_and_costs.sort(key = lambda t: t[1], reverse = False)
 
         #sorted(goals_and_costs, key=operator.itemgetter(1))
-        #print goals_and_costs
+        print goals_and_costs
        # ind = random.randrange(0,min(6, len(nodes)))
         rospy.loginfo("[Main Node] Raw node = [%u, %u]", goals_and_costs[0][0][0], goals_and_costs[0][0][1])
         tempX = goals_and_costs[0][0][0] * resolution + origin['x']

@@ -43,7 +43,7 @@ class SendMoveBaseGoalClient:
         robotPose = self.subNode.robotPose
         resolution = rospy.get_param('resolution')
 
-        force_random = True
+        force_random = False
 
         # self.rotateRobot()
         target = self.selectTarget.targetSelection(ogm, coverage, origin, 
