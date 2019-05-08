@@ -3,5 +3,3 @@
   <rosparam file="$(find my_2d_nav)/config/params.yaml" command="load"/>
   <!--rosparam file="$(find my_2d_nav)/config/params_for_two_robots.yaml" command="load"/-->
 </launch>
-
-

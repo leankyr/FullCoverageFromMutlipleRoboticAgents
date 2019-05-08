@@ -55,6 +55,14 @@ class TargetSelect:
         ogm_limits['max_y'] = 800
 
 
+        # Big Map
+#        ogm_limits = {}
+#        ogm_limits['min_x'] = 200  # used to be 200
+#        ogm_limits['max_x'] = 800  # used to be 800
+#        ogm_limits['max_x'] = 850
+#        ogm_limits['min_y'] = 300
+#        ogm_limits['max_y'] = 1080
+#        ogm_limits['max_y'] = 1100
 
         # publisher
 
@@ -79,6 +87,37 @@ class TargetSelect:
         # print took to calculate....
         rospy.loginfo("Calculation time: %s",str(time.time() - tinit))
         
+        if len(nodes) == 0 and force_random: 
+            brush = self.brush.coverageLimitsBrushfire(initOgm, 
+                      coverage, robotPose, origin, resolution)
+            throw = set()
+            throw = self.filterGoal(brush, initOgm, resolution, origin)
+            brush.difference_update(throw)
+            goal = random.sample(brush, 1)
+            
+            rospy.loginfo("nodes are zero and random node chosen!!!!")
+            th_rg = math.atan2(goal[0][1] - robotPose['y'], \
+                    goal[0][0] - robotPose['x'])
+
+            self.target = [goal[0][0], goal[0][1], th_rg]
+            return self.target
+        
+        if len(nodes) == 0:
+            brush = self.brush.coverageLimitsBrushfire(initOgm, 
+                      coverage, robotPose, origin, resolution)
+            throw = set()
+            throw = self.filterGoal(brush, initOgm, resolution, origin)
+            brush.difference_update(throw)
+            distance_map = dict()
+            distance_map = self.calcDist(robotPose, brush)
+            self.target = min(distance_map, key = distance_map.get)
+            
+            th_rg = math.atan2(self.target[1] - robotPose['y'], \
+                    self.target[0] - robotPose['x'])
+            self.target = list(self.target)
+            self.target.append(th_rg)
+            return self.target
+       
         if len(nodes) == 0:
             brush = self.brush.coverageLimitsBrushfire(initOgm, 
                       coverage, robotPose, origin, resolution)
@@ -116,17 +155,6 @@ class TargetSelect:
             )
             self.publish_markers(marker_pub, vis_nodes)
 
-        if force_random:
-            ind = random.randrange(0,len(nodes))
-            rospy.loginfo('index is: %d', ind)
-            rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
-            tempX = nodes[ind][0] * resolution + origin['x']
-            tempY = nodes[ind][1] * resolution + origin['y']
-            self.target = [tempX, tempY]
-            rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
-                            self.target[0], self.target[1])
-            rospy.loginfo("-----------------------------------------")
-            return self.target
 
 
         # Check distance From Other goal
@@ -139,97 +167,103 @@ class TargetSelect:
                 nodes.remove(node)
 
     
-        # Calculate topological cost
-        rayLength = 800  # in pixels
-        obstThres = 49
-        wTopo = []
-        dRad = []
-        for i in range(0, 8):
-            dRad.append(rayLength)
-        for k in range(0, len(nodes)):
-            # Determine whether the ray length passes the OGM limits
-            if nodes[k][0] + rayLength > ogm.shape[0]:
-                self.xLimitUp = ogm.shape[0] - 1
-            else:
-                self.xLimitUp = nodes[k][0] + rayLength
-            if nodes[k][0] - rayLength < 0:
-                self.xLimitDown = 0
-            else:
-                self.xLimitDown = nodes[k][0] - rayLength
-            if nodes[k][1] + rayLength > ogm.shape[1]:
-                self.yLimitUp = ogm.shape[1] - 1
-            else:
-                self.yLimitUp = nodes[k][1] + rayLength
-            if nodes[k][1] - rayLength < 0:
-                self.yLimitDown = 0
-            else:
-                self.yLimitDown = nodes[k][1] - rayLength
-            #### Here We Do the Ray Casting ####  
-            # Find the distance between the node and obstacles
-            for i in range(nodes[k][0], self.xLimitUp):
-                if ogm[i][nodes[k][1]] > obstThres:
-                    dRad[0] = i - nodes[k][0]
-                    break
-            for i in range(self.xLimitDown, nodes[k][0]):
-                if ogm[i][nodes[k][1]] > obstThres:
-                    dRad[1] = nodes[k][0] - i
-                    break
-            for i in range(nodes[k][1], self.yLimitUp):
-                if ogm[nodes[k][0]][i] > obstThres:
-                    dRad[2] = i - nodes[k][1]
-                    break
-            for i in range(self.yLimitDown, nodes[k][1]):
-                if ogm[nodes[k][0]][i] > obstThres:
-                    dRad[3] = nodes[k][1] - i
-                    break
-            for i in range(nodes[k][0], self.xLimitUp):
-                for j in range(nodes[k][1], self.yLimitUp):
-                    if ogm[i][j] > obstThres:
-                        crosscut = \
-                            math.sqrt((i - nodes[k][0])**2 + (j - nodes[k][1])**2)
-                        dRad[4] = crosscut
-                        break
-                    else:
-                        break
-                if ogm[i][j] > obstThres:
-                    break
-            for i in range(self.xLimitDown, nodes[k][0]):
-                for j in range(self.yLimitDown, nodes[k][1]):
-                    if ogm[i][j] > obstThres:
-                        crosscut = \
-                            math.sqrt((nodes[k][0] - i)**2 + (nodes[k][1] - j)**2)
-                        dRad[5] = crosscut
-                        break
-                    else:
-                        break
-                if ogm[i][j] > obstThres:
-                    break
-            for i in range(nodes[k][0], self.xLimitUp):
-                for j in range(self.yLimitDown, nodes[k][1]):
-                    if ogm[i][j] > obstThres:
-                        crosscut = \
-                            math.sqrt((i - nodes[k][0])**2 + (nodes[k][1] - j)**2)
-                        dRad[6] = crosscut
-                        break
-                    else:
-                        break
-                if ogm[i][j] > obstThres:
-                    break
-            for i in range(self.xLimitDown, nodes[k][0]):
-                for j in range(nodes[k][1], self.yLimitUp):
-                    if ogm[i][j] > obstThres:
-                        crosscut = \
-                            math.sqrt((nodes[k][0] - i)**2 + (j - nodes[k][1])**2)
-                        dRad[7] = crosscut
-                        break
-                    else:
-                        break
-                if ogm[i][j] > obstThres:
-                    break
-
-            wTopo.append(sum(dRad) / 8)
+#        # Calculate topological cost
+#        rayLength = 800  # in pixels
+#        obstThres = 49
+#        wTopo = []
+#        dRad = []
+#        for i in range(0, 8):
+#            dRad.append(rayLength)
+#        for k in range(0, len(nodes)):
+#            # Determine whether the ray length passes the OGM limits
+#            if nodes[k][0] + rayLength > ogm.shape[0]:
+#                self.xLimitUp = ogm.shape[0] - 1
+#            else:
+#                self.xLimitUp = nodes[k][0] + rayLength
+#            if nodes[k][0] - rayLength < 0:
+#                self.xLimitDown = 0
+#            else:
+#                self.xLimitDown = nodes[k][0] - rayLength
+#            if nodes[k][1] + rayLength > ogm.shape[1]:
+#                self.yLimitUp = ogm.shape[1] - 1
+#            else:
+#                self.yLimitUp = nodes[k][1] + rayLength
+#            if nodes[k][1] - rayLength < 0:
+#                self.yLimitDown = 0
+#            else:
+#                self.yLimitDown = nodes[k][1] - rayLength
+#            #### Here We Do the Ray Casting ####  
+#            # Find the distance between the node and obstacles
+#            for i in range(nodes[k][0], self.xLimitUp):
+#                if ogm[i][nodes[k][1]] > obstThres:
+#                    dRad[0] = i - nodes[k][0]
+#                    break
+#            for i in range(self.xLimitDown, nodes[k][0]):
+#                if ogm[i][nodes[k][1]] > obstThres:
+#                    dRad[1] = nodes[k][0] - i
+#                    break
+#            for i in range(nodes[k][1], self.yLimitUp):
+#                if ogm[nodes[k][0]][i] > obstThres:
+#                    dRad[2] = i - nodes[k][1]
+#                    break
+#            for i in range(self.yLimitDown, nodes[k][1]):
+#                if ogm[nodes[k][0]][i] > obstThres:
+#                    dRad[3] = nodes[k][1] - i
+#                    break
+#            for i in range(nodes[k][0], self.xLimitUp):
+#                for j in range(nodes[k][1], self.yLimitUp):
+#                    if ogm[i][j] > obstThres:
+#                        crosscut = \
+#                            math.sqrt((i - nodes[k][0])**2 + (j - nodes[k][1])**2)
+#                        dRad[4] = crosscut
+#                        break
+#                    else:
+#                        break
+#                if ogm[i][j] > obstThres:
+#                    break
+#            for i in range(self.xLimitDown, nodes[k][0]):
+#                for j in range(self.yLimitDown, nodes[k][1]):
+#                    if ogm[i][j] > obstThres:
+#                        crosscut = \
+#                            math.sqrt((nodes[k][0] - i)**2 + (nodes[k][1] - j)**2)
+#                        dRad[5] = crosscut
+#                        break
+#                    else:
+#                        break
+#                if ogm[i][j] > obstThres:
+#                    break
+#            for i in range(nodes[k][0], self.xLimitUp):
+#                for j in range(self.yLimitDown, nodes[k][1]):
+#                    if ogm[i][j] > obstThres:
+#                        crosscut = \
+#                            math.sqrt((i - nodes[k][0])**2 + (nodes[k][1] - j)**2)
+#                        dRad[6] = crosscut
+#                        break
+#                    else:
+#                        break
+#                if ogm[i][j] > obstThres:
+#                    break
+#            for i in range(self.xLimitDown, nodes[k][0]):
+#                for j in range(nodes[k][1], self.yLimitUp):
+#                    if ogm[i][j] > obstThres:
+#                        crosscut = \
+#                            math.sqrt((nodes[k][0] - i)**2 + (j - nodes[k][1])**2)
+#                        dRad[7] = crosscut
+#                        break
+#                    else:
+#                        break
+#                if ogm[i][j] > obstThres:
+#                    break
+#
+#            wTopo.append(sum(dRad) / 8)
 #        for i in range(len(nodes)):
 #            rospy.logwarn("Topo Cost is: %f ",wTopo[i])
+
+
+#        for i in range(len(nodes)):
+#            rospy.logwarn("Distance Cost is: %f ",wDist[i])
+
+        #return self.target
 
         # Calculate distance cost
         wDist = []
@@ -239,83 +273,84 @@ class TargetSelect:
             nodesX.append(nodes[i][0])
             nodesY.append(nodes[i][1])
         for i in range(0, len(nodes)):
-            dist = math.sqrt((nodes[i][0] * resolution + origin['x'] - robotPose['x'])**2 + \
-                        (nodes[i][1] * resolution + origin['y'] - robotPose['y'])**2)
-            # numpy.var is covariance
-            tempX = ((robotPose['x'] - nodesX[i] * resolution + origin['x'])**2) / (2 * numpy.var(nodesX))
-            tempY = ((robotPose['y'] - nodesY[i] * resolution + origin['y'])**2) / (2 * numpy.var(nodesY))
-            try:
-                temp = 1 - math.exp(tempX + tempY) + 0.001 # \epsilon << 1
-            except OverflowError:
-                temp = 1
-            gaussCoeff = 1 / temp
+            dist = math.sqrt((nodes[i][0] * resolution + origin['x_px'] - robotPose['x_px'])**2 + \
+                        (nodes[i][1] * resolution + origin['y_px'] - robotPose['y_px'])**2)
+#            # numpy.var is covariance
+#            tempX = ((robotPose['x'] - nodesX[i] * resolution + origin['x'])**2) / (2 * numpy.var(nodesX))
+#            tempY = ((robotPose['y'] - nodesY[i] * resolution + origin['y'])**2) / (2 * numpy.var(nodesY))
+#            try:
+#                temp = 1 - math.exp(tempX + tempY) + 0.001 # \epsilon << 1
+#            except OverflowError:
+#                temp = 1
+#            gaussCoeff = 1 / temp
 
 #        for i in range(len(nodes)):
 #            rospy.logwarn("Distance Cost is: %f ",wDist[i])
+            gaussCoeff = 1               
+            wDist.append(dist * gaussCoeff)
 
-        #return self.target
-
-        # Calculate coverage cost
-        dSamp = 1 / resolution
-        wCove = []
-        for k in range(0, len(nodes)):
-            athr = 0
-            for i in range(-1, 1):
-                indexX = int(nodes[k][0] + i * dSamp)
-                if indexX >= 0:
-                    for j in range(-1, 1):
-                        indexY = int(nodes[k][1] + j * dSamp)
-                        if indexY >= 0:
-                            athr += coverage[indexX][indexY]
-            wCove.append(athr)
+#        # Calculate coverage cost
+#        dSamp = 1 / resolution
+#        wCove = []
+#        for k in range(0, len(nodes)):
+#            athr = 0
+#            for i in range(-1, 1):
+#                indexX = int(nodes[k][0] + i * dSamp)
+#                if indexX >= 0:
+#                    for j in range(-1, 1):
+#                        indexY = int(nodes[k][1] + j * dSamp)
+#                        if indexY >= 0:
+#                            athr += coverage[indexX][indexY]
+#            wCove.append(athr)
 
 #        for i in range(len(nodes)):
 #            rospy.logwarn("Cove Cost is: %f ",wCove[i])
 
         # Calculate rotational cost
-        wRot = []
-        for i in range(0, len(nodes)):
-            dTh = math.atan2(nodes[i][1] - robotPose['y_px'], \
-                        nodes[i][0] - robotPose['x_px']) - robotPose['th']
-            wRot.append(dTh)
+#        wRot = []
+#        for i in range(0, len(nodes)):
+#            dTh = math.atan2(nodes[i][1] - robotPose['y_px'], \
+#                        nodes[i][0] - robotPose['x_px']) - robotPose['th']
+#            wRot.append(dTh)
 
 #        for i in range(len(nodes)):
 #            rospy.logwarn("Rot Cost is: %f ",wRot[i])
 
         # Normalize costs
-        wTopoNorm = []
+#        wTopoNorm = []
         wDistNorm = []
-        wCoveNorm = []
-        wRotNorm = []
+#        wCoveNorm = []
+#        wRotNorm = []
         for i in range(0, len(nodes)):
-            if max(wTopo) - min(wTopo) == 0:
-                normTopo = 0
-            else:
-                normTopo = 1 - (wTopo[i] - min(wTopo)) / (max(wTopo) - min(wTopo))
+#            if max(wTopo) - min(wTopo) == 0:
+#                normTopo = 0
+#            else:
+#                normTopo = 1 - (wTopo[i] - min(wTopo)) / (max(wTopo) - min(wTopo))
             if max(wDist) - min(wDist) == 0:
                 normDist = 0
             else:
                 normDist = 1 - (wDist[i] - min(wDist)) / (max(wDist) - min(wDist))
-            if max(wCove) - min(wCove) == 0:
-                normCove = 0
-            else:
-                normCove = 1 - (wCove[i] - min(wCove)) / (max(wCove) - min(wCove))
-            if max(wRot) - min(wRot) == 0:
-                normRot = 0
-            else:
-                normRot = 1 - (wRot[i] - min(wRot)) / (max(wRot) - min(wRot))
-            wTopoNorm.append(normTopo)
+#            if max(wCove) - min(wCove) == 0:
+#                normCove = 0
+#            else:
+#                normCove = 1 - (wCove[i] - min(wCove)) / (max(wCove) - min(wCove))
+#            if max(wRot) - min(wRot) == 0:
+#                normRot = 0
+#            else:
+#                normRot = 1 - (wRot[i] - min(wRot)) / (max(wRot) - min(wRot))
+#            wTopoNorm.append(normTopo)
             wDistNorm.append(normDist)
-            wCoveNorm.append(normCove)
-            wRotNorm.append(normRot)
+#            wCoveNorm.append(normCove)
+#            wRotNorm.append(normRot)
 
         # Calculate Priority Weight
         priorWeight = []
         for i in range(0, len(nodes)):
-            pre = 8 * round((wTopoNorm[i] / 0.5), 0) + \
-                   4 * round((wDistNorm[i] / 0.5), 0) + \
-                    2 * round((wCoveNorm[i] / 0.5), 0) \
-                    + round((wRotNorm[i] / 0.5), 0)
+            pre = wDistNorm[i] / 0.5
+#            pre = 8 * round((wTopoNorm[i] / 0.5), 0) + \
+#                   4 * round((wDistNorm[i] / 0.5), 0) + \
+#                    2 * round((wCoveNorm[i] / 0.5), 0) \
+#                    + round((wRotNorm[i] / 0.5), 0)
             # pre = 4 * round((wDistNorm[i] / 0.5), 0) + \
             #         2 * round((wCoveNorm[i] / 0.5), 0) \
             #         + round((wRotNorm[i] / 0.5), 0)
@@ -324,8 +359,9 @@ class TargetSelect:
         # Calculate smoothing factor
         smoothFactor = []
         for i in range(0, len(nodes)):
-            coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
-                        2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
+            coeff = 1 - wDistNorm[i]
+#            coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
+#                        2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
             # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
             #             (1 - wRotNorm[i])) / (2**3 - 1)
             smoothFactor.append(coeff)
@@ -341,46 +377,38 @@ class TargetSelect:
         goals_and_costs = zip(nodes, self.costs)
         #print goals_and_costs
 
-        goals_and_costs.sort(key = lambda t: t[1], reverse = True)
+        goals_and_costs.sort(key = lambda t: t[1], reverse = False)
+        
         #sorted(goals_and_costs, key=operator.itemgetter(1))
         #print goals_and_costs 
-#        print goals_and_costs[0] 
-#        print goals_and_costs[0][0] 
-#        print goals_and_costs[0][1] 
-#        print goals_and_costs[0][0][0]
-#        print goals_and_costs[0][0][1]
-
-       # ind = random.randrange(0,min(6, len(nodes)))
-        rospy.loginfo("[Main Node] Raw node = [%u, %u]", goals_and_costs[0 + flag][0][0], goals_and_costs[0 + flag][0][1])
-        tempX = goals_and_costs[0 + flag][0][0] * resolution + origin['x']
-        tempY = goals_and_costs[0 + flag][0][1] * resolution + origin['y']
-        self.target = [tempX, tempY]
+        rospy.loginfo("[Main Node] Raw node = [%u, %u]", goals_and_costs[0][0][0], goals_and_costs[0][0][1])
+        tempX = goals_and_costs[0][0][0] * resolution + origin['x']
+        tempY = goals_and_costs[0][0][1] * resolution + origin['y']
+        th_rg = math.atan2(tempY - robotPose['y'], \
+                    tempX - robotPose['x'])
+        self.target = [tempX, tempY, th_rg]
         rospy.loginfo("[Main Node] Eligible node found at [%f, %f]", 
                         self.target[0], self.target[1])
         rospy.loginfo("[Main Node] Node Index: %u", i)
-        rospy.loginfo("[Main Node] Node Cost = %f", goals_and_costs[0 + flag][1])
+        rospy.loginfo("[Main Node] Node Cost = %f", goals_and_costs[0][1])
         rospy.loginfo("-----------------------------------------")
-        self.previousTarget = [goals_and_costs[0 + flag][0][0], goals_and_costs[0 + flag][0][1]]
-
+        self.previousTarget = [goals_and_costs[0][0][0], goals_and_costs[0][0][1]]
         
+        # pick Random node!!
+        if force_random:
+            ind = random.randrange(0,len(nodes))
+            rospy.loginfo('index is: %d', ind)
+            rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
+            tempX = nodes[ind][0] * resolution + origin['x']
+            tempY = nodes[ind][1] * resolution + origin['y']
+            th_rg = math.atan2(tempY - robotPose['y'], \
+                    tempX - robotPose['x'])
+            self.target = [tempX, tempY, th_rg]
+            rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
+                            self.target[0], self.target[1])
+            rospy.loginfo("-----------------------------------------")
+            return self.target
 
-#        for i in range(0, len(nodes)):
-#            if self.costs[i] == max(self.costs):
-#                rospy.loginfo("[Main Node] Raw node = [%u, %u]", nodes[i][0], nodes[i][1])
-#                tempX = nodes[i][0] * resolution + origin['x']
-#                tempY = nodes[i][1] * resolution + origin['y']
-#                self.target = [tempX, tempY]
-#                rospy.loginfo("[Main Node] Eligible node found at [%f, %f]", 
-#                                self.target[0], self.target[1])
-#                rospy.loginfo("[Main Node] Node Index: %u", i)
-#                rospy.loginfo("[Main Node] Node Cost = %f", self.costs[i])
-#                rospy.loginfo("-----------------------------------------")
-#                self.previousTarget = [nodes[i][0], nodes[i][1]]
-#            else:
-#                pass
-#                #rospy.logwarn("[Main Node] Did not find any nodes...")
-#                #self.target = self.selectRandomTarget(ogm, coverage, brush2, \
-#                #                        origin, ogm_limits, resolution)
 
         return self.target
 

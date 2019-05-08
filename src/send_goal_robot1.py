@@ -5,7 +5,8 @@ import actionlib
 import time
 import math
 import random
-from geometry_msgs.msg import PoseStamped, Twist
+import tf 
+from geometry_msgs.msg import PoseStamped, Twist, Quaternion
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node_two_robots import SubscriberNode
 #from target_selection_class import TargetSelect #,selectRandomTarget
@@ -45,7 +46,7 @@ class SendMoveBaseGoalClient1:
         resolution = rospy.get_param('resolution')
 
         flag = 0
-        force_random = True
+        force_random = False
 
         rospy.logwarn("Robot2 Goal is: [x, y] = [%f, %f] ", goal['x'], goal['y'])
 
@@ -61,15 +62,15 @@ class SendMoveBaseGoalClient1:
 
         self.moveBaseGoal1.target_pose.pose.position.x = float(target1[0])
         self.moveBaseGoal1.target_pose.pose.position.y = float(target1[1])
-
-#        self.moveBaseGoal.target_pose.pose.position.x = 1.0
-#        self.moveBaseGoal.target_pose.pose.position.y = 1.0
-
         self.moveBaseGoal1.target_pose.pose.position.z = 0.0
-        self.moveBaseGoal1.target_pose.pose.orientation.x = 0.0
-        self.moveBaseGoal1.target_pose.pose.orientation.y = 0.0
-        self.moveBaseGoal1.target_pose.pose.orientation.z = 0.0
-        self.moveBaseGoal1.target_pose.pose.orientation.w = 1.0
+        
+        q_angle = tf.transformations.quaternion_from_euler(0, 0, target1[2], axes='sxyz')
+        q = Quaternion(*q_angle)
+        
+        self.moveBaseGoal1.target_pose.pose.orientation = q
+
+
+
 
         moveBaseClient1.wait_for_server()
         rospy.loginfo("[Main Node] Sending goal 1....")
@@ -81,57 +82,6 @@ class SendMoveBaseGoalClient1:
         moveBaseClient1.wait_for_result()
 
 
-#        moveBaseClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-#
-#        self.moveBaseGoal.target_pose.pose.position.x = float(target1[0])
-#        self.moveBaseGoal.target_pose.pose.position.y = float(target1[1])
-#
-##        self.moveBaseGoal.target_pose.pose.position.x = 1.0
-##        self.moveBaseGoal.target_pose.pose.position.y = 1.0
-#
-#        self.moveBaseGoal.target_pose.pose.position.z = 0.0
-#        self.moveBaseGoal.target_pose.pose.orientation.x = 0.0
-#        self.moveBaseGoal.target_pose.pose.orientation.y = 0.0
-#        self.moveBaseGoal.target_pose.pose.orientation.z = 0.0
-#        self.moveBaseGoal.target_pose.pose.orientation.w = 1.0
-
-
-
-
-#
-#        moveBaseClient.wait_for_server()
-#        rospy.loginfo("[Main Node] Sending goal")
-#        rospy.loginfo("[Main Node] Goal at [%f, %f, %f]!", \
-#                        self.moveBaseGoal.target_pose.pose.position.x, \
-#                        self.moveBaseGoal.target_pose.pose.position.y, \
-#                         self.moveBaseGoal.target_pose.pose.position.z)
-#        moveBaseClient.send_goal(self.moveBaseGoal)
-#        moveBaseClient.wait_for_result()
-
-
-#    def rotateRobot(self):
-#        velocityMsg = Twist()
-#        angularSpeed = 0.3
-#        relativeAngle = 2*math.pi
-#        currentAngle = 0
-#
-#        velocityMsg.linear.x = 0
-#        velocityMsg.linear.y = 0
-#        velocityMsg.linear.z = 0
-#        velocityMsg.angular.x = 0
-#        velocityMsg.angular.y = 0
-#        velocityMsg.angular.z = angularSpeed
-#
-#        t0 = rospy.Time.now().to_sec()
-#        rospy.logwarn(rospy.get_caller_id() + ": Rotate Robot! Please wait...")
-#        while currentAngle < relativeAngle:
-#            self.velocityPub.publish(velocityMsg)
-#            t1 = rospy.Time.now().to_sec()
-#            currentAngle = angularSpeed * (t1 - t0)
-#
-#        velocityMsg.angular.z = 0
-#        self.velocityPub.publish(velocityMsg)
-#        rospy.logwarn(rospy.get_caller_id() + ": Robot Rotation OVER!")
 #
 
     
