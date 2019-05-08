@@ -117,61 +117,6 @@ class SubscriberNode:
             for j in range(0, data.info.height):
                 self.coverage[i][j] = data.data[i + data.info.width * j]
 
-#    def coverage1Callback(self, data):
-#        # Map origin data to struct
-#        self.origin['x'] = data.info.origin.position.x
-#        self.origin['y'] = data.info.origin.position.y
-#        self.origin['x_px'] = int(data.info.origin.position.x / self.resolution)
-#        self.origin['y_px'] = int(data.info.origin.position.y / self.resolution)
-#
-#        if self.previousCovWidth != data.info.width or \
-#                self.previousCovHeight != data.info.height:
-#            rospy.logwarn("I am in cov1Callback!!!!!!!")
-#            rospy.logwarn("[Main Node] Resizing Coverage1 OGM! New size: [%u, %u]", \
-#                            data.info.width, data.info.height)
-#            print "data info width1 is: "
-#            print data.info.width
-#            print "data info height2 is: "
-#            print data.info.height
-#
-#            self.coverage1 = numpy.zeros((data.info.width, data.info.height), \
-#                                dtype = numpy.int)
-#            self.previousCovWidth = data.info.width
-#            self.previousCovHeight = data.info.height
-#
-#        for i in range(0, 704):
-#            for j in range(0, 576):
-#                self.coverage1[i][j] = data.data[i + data.info.width * j]
-#
-#        print "got Through Coverage 1 ogm!!"
-#
-#    def coverage2Callback(self, data):
-#        # Map origin data to struct
-#        self.origin['x'] = data.info.origin.position.x
-#        self.origin['y'] = data.info.origin.position.y
-#        self.origin['x_px'] = int(data.info.origin.position.x / self.resolution)
-#        self.origin['y_px'] = int(data.info.origin.position.y / self.resolution)
-#
-#        if self.previousCovWidth != data.info.width or \
-#                self.previousCovHeight != data.info.height:
-#            rospy.logwarn("I am in cov2Callback!!!!!!!")
-#            rospy.logwarn("[Main Node] Resizing Coverage2 OGM! New size: [%u, %u]", \
-#                            data.info.width, data.info.height)
-#            print "data info width2 is: "
-#            print data.info.width
-#            print "data info height2 is: "
-#            print data.info.height
-#
-#            self.coverage2 = numpy.zeros((data.info.width, data.info.height), \
-#                                dtype = numpy.int)
-#            self.previousCovWidth = data.info.width
-#            self.previousCovHeight = data.info.height
-#
-#        for i in range(0, 704):
-#            for j in range(0, 576):
-#                
-#                self.coverage2[i][j] = data.data[i + data.info.width * j]
-#        print "got Through Coverage 2 ogm!!!!"
 
 
     def readRobotPose(self, event):

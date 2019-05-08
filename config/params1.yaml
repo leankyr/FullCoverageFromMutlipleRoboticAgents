@@ -20,20 +20,25 @@ resolution: 0.04                # Map resolution
 # Radius around pose
 radius: 2
 
-# Size Of Coverage Map
-#width: 704
-##height: 480
-#height: 576
-
+# Willow params
 width: 864
-#height: 480
 height: 896
 
-# Map origin
-#origin_x: -29.8
-##origin_y: -20.2
-#origin_y: -29.8
-
 origin_x: -16.36
-#origin_y: -20.2
 origin_y: -18.92
+
+
+## corridor params
+#width: 608
+#height: 672
+#
+#origin_x: -12.52
+#origin_y: -13.80
+
+### Big Map params 
+#width: 1088
+#height: 1344
+#
+#origin_x: -26.6
+#origin_y: -26.6
+

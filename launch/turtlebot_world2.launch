@@ -1,9 +1,8 @@
 <launch>
-
 	
   <arg name="world_file"  default="$(env TURTLEBOT_GAZEBO_WORLD_FILE)"/>
-	  <!--include file="$(find gazebo_ros)/launch/empty_world.launch"-->
-  <include file="/home/leankyr/catkin_ws/src/gazebo_ros_pkgs/gazebo_ros/launch/willowgarage_world.launch"/>
+	<!--include file="$(find gazebo_ros)/launch/empty_world.launch"-->
+  <include file="/home/leankyr/catkin_ws/src/gazebo_ros_pkgs/gazebo_ros/launch/willowgarage_world2.launch"/>
   <!--launch multi robot-->  
   <include file="$(find my_2d_nav)/launch/multi_robot.launch"/>
     

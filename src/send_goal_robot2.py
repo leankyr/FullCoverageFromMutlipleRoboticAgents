@@ -5,7 +5,9 @@ import actionlib
 import time
 import math
 import random
-from geometry_msgs.msg import PoseStamped, Twist
+import tf
+
+from geometry_msgs.msg import PoseStamped, Twist, Quaternion
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node_two_robots import SubscriberNode
 #from target_selection_class import TargetSelect #,selectRandomTarget
@@ -42,7 +44,7 @@ class SendMoveBaseGoalClient2:
         resolution = rospy.get_param('resolution')
 
         flag = 1
-        force_random = True      
+        force_random = False 
 
         rospy.logwarn("Robot1 Goal is: [x, y] = [%f, %f] ", goal['x'], goal['y'])
         target2 = self.selectTarget.targetSelection(ogm, coverage, origin, \
@@ -57,15 +59,12 @@ class SendMoveBaseGoalClient2:
         self.moveBaseGoal2.target_pose.pose.position.x = float(target2[0])
         self.moveBaseGoal2.target_pose.pose.position.y = float(target2[1])
 
-#        self.moveBaseGoal.target_pose.pose.position.x = 1.0
-#        self.moveBaseGoal.target_pose.pose.position.y = 1.0
-
         self.moveBaseGoal2.target_pose.pose.position.z = 0.0
-        self.moveBaseGoal2.target_pose.pose.orientation.x = 0.0
-        self.moveBaseGoal2.target_pose.pose.orientation.y = 0.0
-        self.moveBaseGoal2.target_pose.pose.orientation.z = 0.0
-        self.moveBaseGoal2.target_pose.pose.orientation.w = 1.0
 
+        q_angle = tf.transformations.quaternion_from_euler(0, 0, target2[2], axes='sxyz')
+        q = Quaternion(*q_angle)
+        
+        self.moveBaseGoal2.target_pose.pose.orientation = q
 
         moveBaseClient2.wait_for_server()
         rospy.loginfo("[Main Node] Sending goal 2......")

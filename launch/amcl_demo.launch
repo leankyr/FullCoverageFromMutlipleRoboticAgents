@@ -1,6 +1,6 @@
 <launch>
-  <node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/last_map.yaml"/>
+  <!--node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/last_map.yaml"/-->
   <!--node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/corridor_map.yaml"/-->
-    
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find my_2d_nav)/maps/Big_map.yaml"/>
   <include file="$(find my_2d_nav)/move_base_config/amcl_diff.xml" />
 </launch>
