@@ -46,7 +46,7 @@ class SendMoveBaseGoalClient1:
         resolution = rospy.get_param('resolution')
 
         flag = 0
-        force_random = False
+        force_random = True
 
         rospy.logwarn("Robot2 Goal is: [x, y] = [%f, %f] ", goal['x'], goal['y'])
 
