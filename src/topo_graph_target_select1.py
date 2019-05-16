@@ -58,8 +58,8 @@ class TargetSelect:
 #        # Big Map
         ogm_limits = {}
         ogm_limits['min_x'] = 200  # used to be 200
-        ogm_limits['max_x'] = 800  # used to be 800
-#        ogm_limits['max_x'] = 850
+#        ogm_limits['max_x'] = 800  # used to be 800
+        ogm_limits['max_x'] = 850
         ogm_limits['min_y'] = 300
         ogm_limits['max_y'] = 710
 
