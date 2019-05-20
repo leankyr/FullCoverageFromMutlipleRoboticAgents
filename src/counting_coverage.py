@@ -72,7 +72,6 @@ class CoverageCounterPublisher:
 
         # print (num_of_hundred_boxes_cov)
 
-
         now = time.ctime()
         print ('%.3f' %(num_of_hundred_boxes_cov/num_of_zero_boxes_ogm), now)
 
