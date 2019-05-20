@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+import matplotlib.pyplot as plt
+import numpy as np
 
 import datetime
 import time
@@ -8,7 +10,7 @@ import time
 # function that makes the transform
 def date_to_stamp(date):
 
-    print ('date original: ', date)
+    #print ('date original: ', date)
     # split the original string
     date_split = date.split()
     # turn it into a list
@@ -42,7 +44,7 @@ def date_to_stamp(date):
     dt = datetime.datetime(int(date[3]), int(date[0]), int(date[1]), 
                     int(date[2][0]), int(date[2][1]), int(date[2][2]))
 
-    print ('date object is:', dt)
+    #print ('date object is:', dt)
 
     # Convert it into timestamp
     timestamp = int(time.mktime(dt.timetuple()))
@@ -70,18 +72,46 @@ if __name__ == '__main__':
     for i in range(len(mat_vec)):
         mat_vec[i][1] = mat_vec[i][1] - transform
 
+
+    #print(mat_vec)
+
+    cov = list()
+    stamp = list()
+    for i in range(len(mat_vec)):
+        cov.append(mat_vec[i][0])
+        stamp.append(mat_vec[i][1])
+
+    #x = np.linspace(0, 10, 100)
+
+    #x = np.linspace(0, mat_vec[1], 100)
+    #y = np.linspace(0, mat_vec[0], 100)
+    # Plot the data
+    plt.plot(stamp, cov, linewidth=2.0)
+
+    # Add a legend
+    plt.legend()
+
+    # Show the plot
+    plt.show()
+    
+
+
+
+
+
+
     # print the output and hope that matlab will like it 
 #    for i in range(len(mat_vec)):
 #        print ('mat_vec for ', i + 1, ' is ', mat_vec[i])
 
-    f = open('exp1_med_map_timestamps.txt', 'w+')
-
-    for i in range(len(mat_vec)):
-        f.write(str(mat_vec[i]))
-        f.write('\n')
-
-
-    f.close()
+#    f = open('exp1_med_map_timestamps.txt', 'w+')
+#
+#    for i in range(len(mat_vec)):
+#        f.write(str(mat_vec[i]))
+#        f.write('\n')
+#
+#
+#    f.close()
 
 
 
