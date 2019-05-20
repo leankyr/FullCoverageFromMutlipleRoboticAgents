@@ -57,7 +57,7 @@ def date_to_stamp(date):
 if __name__ == '__main__':
     
     # date = '0.012 Mon Apr  28 22:23:15 2019'
-    with open("exp1_med_map.txt") as file_obj:
+    with open("one_robot/rand_target/exp1_med_map.txt") as file_obj:
         dates = file_obj.readlines()
 
     # input vector for matlab
@@ -71,10 +71,17 @@ if __name__ == '__main__':
         mat_vec[i][1] = mat_vec[i][1] - transform
 
     # print the output and hope that matlab will like it 
+#    for i in range(len(mat_vec)):
+#        print ('mat_vec for ', i + 1, ' is ', mat_vec[i])
+
+    f = open('exp1_med_map_timestamps.txt', 'w+')
+
     for i in range(len(mat_vec)):
-        print ('mat_vec for ', i + 1, ' is ', mat_vec[i])
+        f.write(str(mat_vec[i]))
+        f.write('\n')
 
 
+    f.close()
 
 
 
