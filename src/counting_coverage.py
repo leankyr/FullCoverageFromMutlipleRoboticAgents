@@ -74,8 +74,10 @@ class CoverageCounterPublisher:
                     num_of_hundred_boxes_cov += 1
 
         # print (num_of_hundred_boxes_cov)
-        print ('len of list is %s', str(len(self.subNode.getTimeStamp())))
-        stamp = self.subNode.getTimeStamp()[len(self.subNode.getTimeStamp()) - 1]
+        # print ('len of list is %s', str(len(self.subNode.getTimeStamp())))
+        # print (self.subNode.getTimeStamp())
+        # stamp = self.subNode.getTimeStamp()[len(self.subNode.getTimeStamp()) - 1]
+        stamp = sum(self.subNode.getTimeStamp())
         print ('%.3f' %(num_of_hundred_boxes_cov/num_of_zero_boxes_ogm), stamp)
 
         if num_of_hundred_boxes_cov/num_of_zero_boxes_ogm > 0.95: 

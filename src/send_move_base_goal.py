@@ -30,7 +30,6 @@ class SendMoveBaseGoalClient:
         rospy.loginfo("[Main Node] Wait 20 seconds for the subscribers to be ready!")
         time.sleep(20)
 
-        #velocity_topic = 'rospy.get_param('velocity_pub')'
         self.timestampPub = rospy.Publisher('/timestamps_topic', Float32, queue_size = 1)
 
         rospy.Timer(rospy.Duration(1.0), self.calculateSendGoal)
@@ -78,7 +77,6 @@ class SendMoveBaseGoalClient:
         rospy.logwarn('Clear Explore time is: %s', str(tend - tinit))
         self.timeStampMsg.data = tend - tinit
         self.timestampPub.publish(self.timeStampMsg)
- #       self.timestamp.append(tend - tinit)
 
     def rotateRobot(self):
         velocityMsg = Twist()
@@ -104,7 +102,5 @@ class SendMoveBaseGoalClient:
         self.velocityPub.publish(velocityMsg)
         rospy.logwarn(rospy.get_caller_id() + ": Robot Rotation OVER!")
 
-#def getTimeStamp(self)
-#        return self.timestamp
 
 
