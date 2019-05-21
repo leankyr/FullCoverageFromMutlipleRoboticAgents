@@ -7,7 +7,7 @@ import random
 import tf
 import time
 from nav_msgs.msg import OccupancyGrid
-
+from std_msgs.msg import Float32
 
 class SubscriberNode:
 
@@ -50,6 +50,9 @@ class SubscriberNode:
         self.robotPose['y_px'] = 0
         self.robotPose['z_px'] = 0
 
+        # timestamp list
+        self.timestamps = [0]
+
         # Robot pose tf listener and read function
         self.robotPoseListener = tf.TransformListener()
         rospy.Timer(rospy.Duration(0.11), self.readRobotPose)
@@ -61,6 +64,8 @@ class SubscriberNode:
         rospy.Subscriber(slamMapTopic, OccupancyGrid, self.ogmCallback, queue_size=1, \
                             buff_size=2**24)
         rospy.Subscriber(coverageMapTopic, OccupancyGrid, self.coverageCallback, \
+                            queue_size=1, buff_size=2**24)
+        rospy.Subscriber('/timestamps_topic', Float32, self.TimeStampCallback,
                             queue_size=1, buff_size=2**24)
 #        rospy.Subscriber(coverageMapTopic1, OccupancyGrid, self.coverage1Callback, \
 #                            queue_size=1, buff_size=2**24)
@@ -141,12 +146,14 @@ class SubscriberNode:
         angles = tf.transformations.euler_from_quaternion(rotation)
         self.robotPose['th'] = angles[2]
 
+    def TimeStampCallback(self, data):
+        self.timestamps.append(data.data)
 
     def getCoverage(self):
         return numpy.copy(self.coverage)
 
-#    def getCoverage1(self):
-#        return numpy.copy(self.coverage1)
+    def getTimeStamp(self):
+        return self.timestamps
 #
 #    def getCoverage2(self):
 #        return numpy.copy(self.coverage2)
