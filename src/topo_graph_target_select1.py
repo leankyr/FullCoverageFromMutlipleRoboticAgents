@@ -48,20 +48,20 @@ class TargetSelect:
         rospy.loginfo("[Target Select Node] OGM_Origin = [%i, %i]", origin['x'], origin['y'])
         rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
-        ogm_limits = {}
-        ogm_limits['min_x'] = 350  # used to be 200
-        ogm_limits['max_x'] = 800  # used to be 800
-        ogm_limits['min_y'] = 200
-        ogm_limits['max_y'] = 800
+        # willow params
+#        ogm_limits = {}
+#        ogm_limits['min_x'] = 350  # used to be 200
+#        ogm_limits['max_x'] = 800  # used to be 800
+#        ogm_limits['min_y'] = 200
+#        ogm_limits['max_y'] = 800
 
 #        # Big Map
-#        ogm_limits = {}
-#        ogm_limits['min_x'] = 200  # used to be 200
+        ogm_limits = {}
+        ogm_limits['min_x'] = 200  # used to be 200
 #        ogm_limits['max_x'] = 800  # used to be 800
-#        ogm_limits['max_x'] = 850
-#        ogm_limits['min_y'] = 300
-#        ogm_limits['max_y'] = 1080
-#        ogm_limits['max_y'] = 1100
+        ogm_limits['max_x'] = 850
+        ogm_limits['min_y'] = 300
+        ogm_limits['max_y'] = 710
 
 
         # publisher

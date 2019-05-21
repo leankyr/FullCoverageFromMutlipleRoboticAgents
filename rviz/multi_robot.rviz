@@ -250,12 +250,12 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 0; 0; 255
-      Max Intensity: 0.31296277
+      Max Intensity: 999999
       Min Color: 0; 0; 255
-      Min Intensity: 8.40779079e-45
+      Min Intensity: 0
       Name: "Robot1: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -267,7 +267,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: false
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -280,12 +280,12 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 170; 0
-      Max Intensity: 8.26264048e-37
+      Max Intensity: 999999
       Min Color: 255; 170; 0
-      Min Intensity: 1.10702579e-43
+      Min Intensity: 0
       Name: "Robot2: Laser"
       Position Transformer: XYZ
       Queue Size: 10
@@ -297,7 +297,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: false
-      Value: true
+      Value: false
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -666,22 +666,22 @@ Visualization Manager:
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Robot1_local_costmap
       Topic: /robot1/move_base/local_costmap/costmap
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 0.699999988
       Class: rviz/Map
       Color Scheme: costmap
       Draw Behind: false
-      Enabled: true
+      Enabled: false
       Name: Robot2_local_Costmap
       Topic: /robot2/move_base/local_costmap/costmap
       Unreliable: false
       Use Timestamp: false
-      Value: true
+      Value: false
     - Alpha: 1
       Axes Length: 1
       Axes Radius: 0.100000001
@@ -787,4 +787,4 @@ Window Geometry:
     collapsed: false
   Width: 1855
   X: 65
-Y: 24
+  Y: 24

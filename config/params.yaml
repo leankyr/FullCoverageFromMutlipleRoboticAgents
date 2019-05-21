@@ -34,7 +34,7 @@ radius: 2
 #origin_x: -12.52
 #origin_y: -13.80
 
-## Big Map params 
+### Big Map params 
 width: 1088
 height: 1344
 

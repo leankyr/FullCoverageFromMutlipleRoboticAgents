@@ -1,5 +1,5 @@
 <launch>
   <node name="coverage_counter" type="counting_coverage.py" pkg="my_2d_nav" output="screen"/>
-  <rosparam file="$(find my_2d_nav)/config/params.yaml" command="load"/>
-  <!--rosparam file="$(find my_2d_nav)/config/params_for_two_robots.yaml" command="load"/-->
+  <!--rosparam file="$(find my_2d_nav)/config/params.yaml" command="load"/-->
+  <rosparam file="$(find my_2d_nav)/config/params_for_two_robots.yaml" command="load"/>
 </launch>

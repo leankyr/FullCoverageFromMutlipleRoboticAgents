@@ -12,8 +12,8 @@ import time
 from bresenham import bresenham
 # as the coverage map is also an OGM we need:
 from nav_msgs.msg import OccupancyGrid
-from subscriber_node import SubscriberNode
-#from subscriber_node_two_robots import SubscriberNode
+# from subscriber_node import SubscriberNode
+from subscriber_node_two_robots import SubscriberNode
 
 class CoverageCounterPublisher:
 
@@ -42,7 +42,7 @@ class CoverageCounterPublisher:
         self.origin_y = rospy.get_param('origin_y')
 
         # define the timer
-        rospy.Timer(rospy.Duration(60.0), self.countCoverage)
+        rospy.Timer(rospy.Duration(45.0), self.countCoverage)
 
 
     def countCoverage(self, event):
@@ -71,7 +71,6 @@ class CoverageCounterPublisher:
                     num_of_hundred_boxes_cov += 1
 
         # print (num_of_hundred_boxes_cov)
-
 
         now = time.ctime()
         print ('%.3f' %(num_of_hundred_boxes_cov/num_of_zero_boxes_ogm), now)
