@@ -12,8 +12,8 @@ import time
 from bresenham import bresenham
 # as the coverage map is also an OGM we need:
 from nav_msgs.msg import OccupancyGrid
-# from subscriber_node import SubscriberNode
-from subscriber_node_two_robots import SubscriberNode
+from subscriber_node import SubscriberNode
+#from subscriber_node_two_robots import SubscriberNode
 
 class CoverageCounterPublisher:
 
