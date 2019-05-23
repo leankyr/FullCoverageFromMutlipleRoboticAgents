@@ -49,10 +49,10 @@ class TargetSelect:
 
 #        # willow stuff
         ogm_limits = {}
-        ogm_limits['min_x'] = 150  # used to be 200
-        ogm_limits['max_x'] = 800  # used to be 800
-        ogm_limits['min_y'] = 200
-        ogm_limits['max_y'] = 800
+#        ogm_limits['min_x'] = 150  # used to be 200
+#        ogm_limits['max_x'] = 800  # used to be 800
+#        ogm_limits['min_y'] = 200
+#        ogm_limits['max_y'] = 800
 
 
 #        # corridor
@@ -64,11 +64,11 @@ class TargetSelect:
 
         # Big Map
 #        ogm_limits = {}
-#        ogm_limits['min_x'] = 200  # used to be 200
+        ogm_limits['min_x'] = 200  # used to be 200
 #        ogm_limits['max_x'] = 800  # used to be 800
-#        #ogm_limits['max_x'] = 850
-#        ogm_limits['min_y'] = 300
-#        ogm_limits['max_y'] = 1080
+        ogm_limits['max_x'] = 850
+        ogm_limits['min_y'] = 300
+        ogm_limits['max_y'] = 1080
 #        ogm_limits['max_y'] = 1100
 
         # Big Map Modified
@@ -131,6 +131,21 @@ class TargetSelect:
                     self.target[0] - robotPose['x'])
             self.target = list(self.target)
             self.target.append(th_rg)
+            return self.target
+        
+        # pick Random node!!
+        if force_random:
+            ind = random.randrange(0,len(nodes))
+            rospy.loginfo('index is: %d', ind)
+            rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
+            tempX = nodes[ind][0] * resolution + origin['x']
+            tempY = nodes[ind][1] * resolution + origin['y']
+            th_rg = math.atan2(tempY - robotPose['y'], \
+                    tempX - robotPose['x'])
+            self.target = [tempX, tempY, th_rg]
+            rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
+                            self.target[0], self.target[1])
+            rospy.loginfo("-----------------------------------------")
             return self.target
 
         if len(nodes) > 0:
@@ -420,21 +435,7 @@ class TargetSelect:
         rospy.loginfo("-----------------------------------------")
         self.previousTarget = [goals_and_costs[0][0][0], goals_and_costs[0][0][1]]
         
-        # pick Random node!!
-        if force_random:
-            ind = random.randrange(0,len(nodes))
-            rospy.loginfo('index is: %d', ind)
-            rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
-            tempX = nodes[ind][0] * resolution + origin['x']
-            tempY = nodes[ind][1] * resolution + origin['y']
-            th_rg = math.atan2(tempY - robotPose['y'], \
-                    tempX - robotPose['x'])
-            self.target = [tempX, tempY, th_rg]
-            rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
-                            self.target[0], self.target[1])
-            rospy.loginfo("-----------------------------------------")
-            return self.target
-
+        
         return self.target
 
     def rotateRobot(self):
