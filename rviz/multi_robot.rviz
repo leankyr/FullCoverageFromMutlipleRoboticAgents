@@ -26,7 +26,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: "Robot2: Laser"
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -717,7 +717,7 @@ Visualization Manager:
       Marker Topic: /robot1/vis_nodes
       Name: MarkerArray
       Namespaces:
-        {}
+        lines: true
       Queue Size: 1
       Value: true
     - Class: rviz/MarkerArray
@@ -725,7 +725,7 @@ Visualization Manager:
       Marker Topic: /robot2/vis_nodes
       Name: MarkerArray
       Namespaces:
-        {}
+        lines: true
       Queue Size: 1
       Value: true
   Enabled: true

@@ -49,21 +49,21 @@ class TargetSelect:
         rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
         # willow params
-#        ogm_limits = {}
-#        ogm_limits['min_x'] = 150   # used to be 200
-#        ogm_limits['max_x'] = 400
-#        ogm_limits['min_y'] = 200
-#        ogm_limits['max_y'] = 800
+        ogm_limits = {}
+        ogm_limits['min_x'] = 150   # used to be 200
+        ogm_limits['max_x'] = 400
+        ogm_limits['min_y'] = 200
+        ogm_limits['max_y'] = 800
 
 
         # Big Map
-        ogm_limits = {}
-        ogm_limits['min_x'] = 200  # used to be 200
-#        ogm_limits['max_x'] = 800  # used to be 800
-        ogm_limits['max_x'] = 850
-        ogm_limits['min_y'] = 690
-        ogm_limits['max_y'] = 1080
-#        ogm_limits['max_y'] = 1100
+#        ogm_limits = {}
+#        ogm_limits['min_x'] = 200  # used to be 200
+##        ogm_limits['max_x'] = 800  # used to be 800
+#        ogm_limits['max_x'] = 850
+#        ogm_limits['min_y'] = 690
+#        ogm_limits['max_y'] = 1080
+##        ogm_limits['max_y'] = 1100
 
         # publisher
 
@@ -119,17 +119,7 @@ class TargetSelect:
             self.target.append(th_rg)
             return self.target
        
-        if len(nodes) == 0:
-            brush = self.brush.coverageLimitsBrushfire(initOgm, 
-                      coverage, robotPose, origin, resolution)
-            throw = set()
-            throw = self.filterGoal(brush, initOgm, resolution, origin)
-            brush.difference_update(throw)
-            distance_map = dict()
-            distance_map = self.calcDist(robotPose, brush)
-            self.target = min(distance_map, key = distance_map.get)
-            return self.target
-
+        
         if len(nodes) > 0:
             rospy.loginfo("[Main Node] Nodes ready! Elapsed time = %fsec", time.time() - tinit)
             rospy.loginfo("[Main Node] # of nodes = %u", len(nodes))
@@ -164,8 +154,23 @@ class TargetSelect:
             node_x = node[0] * resolution + origin['x']
             node_y = node[1] * resolution + origin['y']
             dist = math.hypot(node_x - other_goal['x'], node_y - other_goal['y']) 
-            if dist < 5 and len(nodes) > 2:
+            if dist < 1 and len(nodes) > 2:
                 nodes.remove(node)
+        
+        # pick Random node!!
+        if force_random:
+            ind = random.randrange(0,len(nodes))
+            rospy.loginfo('index is: %d', ind)
+            rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
+            tempX = nodes[ind][0] * resolution + origin['x']
+            tempY = nodes[ind][1] * resolution + origin['y']
+            th_rg = math.atan2(tempY - robotPose['y'], \
+                    tempX - robotPose['x'])
+            self.target = [tempX, tempY, th_rg]
+            rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
+                            self.target[0], self.target[1])
+            rospy.loginfo("-----------------------------------------")
+            return self.target
 
     
 #        # Calculate topological cost
@@ -395,20 +400,6 @@ class TargetSelect:
         rospy.loginfo("-----------------------------------------")
         self.previousTarget = [goals_and_costs[0][0][0], goals_and_costs[0][0][1]]
         
-        # pick Random node!!
-        if force_random:
-            ind = random.randrange(0,len(nodes))
-            rospy.loginfo('index is: %d', ind)
-            rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
-            tempX = nodes[ind][0] * resolution + origin['x']
-            tempY = nodes[ind][1] * resolution + origin['y']
-            th_rg = math.atan2(tempY - robotPose['y'], \
-                    tempX - robotPose['x'])
-            self.target = [tempX, tempY, th_rg]
-            rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
-                            self.target[0], self.target[1])
-            rospy.loginfo("-----------------------------------------")
-            return self.target
 
 
         return self.target

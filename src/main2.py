@@ -13,7 +13,7 @@ if __name__ == '__main__':
     time.sleep(10)
     
     # Initializes the ROS node
-    rospy.init_node('main_node')
+    rospy.init_node('main_node', log_level=rospy.WARN)
     # Creates a RobotController object
     smbg = SendMoveBaseGoalClient()
     # ROS waits for events

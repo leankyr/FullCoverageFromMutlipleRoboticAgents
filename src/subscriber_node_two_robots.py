@@ -8,6 +8,7 @@ import tf
 import time
 from nav_msgs.msg import OccupancyGrid
 from geometry_msgs.msg import PoseStamped
+from std_msgs.msg import Float64
 
 class SubscriberNode:
 
@@ -69,8 +70,11 @@ class SubscriberNode:
         self.goal2['x'] = 0
         self.goal2['y'] = 0
 
-
-
+        # timestamp lists
+        self.timeInit1 = [0]
+        self.timeInit2 = [0]
+        self.timeEnd1 = [0]
+        self.timeEnd2 = [0]
 
 #       Robot pose tf listener and read function
         # Robot1
@@ -97,6 +101,14 @@ class SubscriberNode:
                             buff_size=2**11)
         rospy.Subscriber('/robot2/move_base/current_goal',PoseStamped, self.subGoal2, queue_size=1,
                             buff_size=2**11)
+        rospy.Subscriber('/robot1/timeinit', Float64, self.InitTimeStamp1Callback,
+                            queue_size=1, buff_size=2**11)
+        rospy.Subscriber('/robot2/timeinit', Float64, self.InitTimeStamp2Callback,
+                            queue_size=1, buff_size=2**11)
+        rospy.Subscriber('/robot1/timeend', Float64, self.EndTimeStamp1Callback,
+                            queue_size=1, buff_size=2**11)
+        rospy.Subscriber('/robot2/timeend', Float64, self.EndTimeStamp2Callback,
+                            queue_size=1, buff_size=2**11)
 
     def subGoal1(self, data):
         self.goal1['x'] = data.pose.position.x
@@ -198,6 +210,30 @@ class SubscriberNode:
         # Getting the Euler angles
         angles = tf.transformations.euler_from_quaternion(rotation)
         self.robotPose2['th'] = angles[2]
+
+    def InitTimeStamp1Callback(self, data):
+        self.timeInit1.append(data.data)
+    
+    def InitTimeStamp2Callback(self, data):
+        self.timeInit2.append(data.data)
+
+    def EndTimeStamp1Callback(self, data):
+        self.timeEnd1.append(data.data)
+    
+    def EndTimeStamp2Callback(self, data):
+        self.timeEnd2.append(data.data)
+
+    def getTimeStampInit1(self):
+        return self.timeInit1
+
+    def getTimeStampInit2(self):
+        return self.timeInit2
+
+    def getTimeStampEnd1(self):
+        return self.timeEnd1
+
+    def getTimeStampEnd2(self):
+        return self.timeEnd2
 
 
     def getCoverage(self):
