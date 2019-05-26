@@ -5,15 +5,16 @@ import actionlib
 import time
 import math
 import tf
+from timeit import default_timer as timer 
 
 from geometry_msgs.msg import PoseStamped, Twist, Quaternion
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node import SubscriberNode
-#from target_selection_class import TargetSelect #,selectRandomTarget
-#from cov_based_target_select import TargetSelect
+# from target_selection_class import TargetSelect #,selectRandomTarget
+# from cov_based_target_select import TargetSelect
 from topo_graph_target_select import TargetSelect
 # from two_robots_cov_based_target_select import TargetSelect
-
+from std_msgs.msg import Float32
 
 class SendMoveBaseGoalClient:
 
@@ -21,6 +22,7 @@ class SendMoveBaseGoalClient:
         self.subNode = SubscriberNode()
         self.selectTarget = TargetSelect()
         self.moveBaseGoal = MoveBaseGoal()
+        self.timeStampMsg = Float32()
 
         self.moveBaseGoal.target_pose.header.frame_id = "map"
         self.moveBaseGoal.target_pose.header.stamp = rospy.Time.now()
@@ -28,8 +30,7 @@ class SendMoveBaseGoalClient:
         rospy.loginfo("[Main Node] Wait 20 seconds for the subscribers to be ready!")
         time.sleep(20)
 
-        #velocity_topic = 'rospy.get_param('velocity_pub')'
-        self.velocityPub = rospy.Publisher(rospy.get_param('velocity_pub'), Twist, queue_size = 1)
+        self.timestampPub = rospy.Publisher('/timestamps_topic', Float32, queue_size = 1)
 
         rospy.Timer(rospy.Duration(1.0), self.calculateSendGoal)
 
@@ -61,6 +62,8 @@ class SendMoveBaseGoalClient:
         
         self.moveBaseGoal.target_pose.pose.orientation = q
 
+        tinit = time.time()
+        rospy.loginfo('Initial time is: %s', str(tinit))
         moveBaseClient.wait_for_server()
         rospy.loginfo("[Main Node] Sending goal")
         rospy.loginfo("[Main Node] Goal at [%f, %f, %f]!", 
@@ -69,6 +72,11 @@ class SendMoveBaseGoalClient:
                          self.moveBaseGoal.target_pose.pose.position.z)
         moveBaseClient.send_goal(self.moveBaseGoal)
         moveBaseClient.wait_for_result()
+        tend = time.time()
+        rospy.loginfo('End time is: %s', str(tend))
+        rospy.logwarn('Clear Explore time is: %s', str(tend - tinit))
+        self.timeStampMsg.data = tend - tinit
+        self.timestampPub.publish(self.timeStampMsg)
 
     def rotateRobot(self):
         velocityMsg = Twist()
@@ -93,3 +101,6 @@ class SendMoveBaseGoalClient:
         velocityMsg.angular.z = 0
         self.velocityPub.publish(velocityMsg)
         rospy.logwarn(rospy.get_caller_id() + ": Robot Rotation OVER!")
+
+
+

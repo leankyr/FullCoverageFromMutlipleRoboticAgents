@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+from __future__ import division
 
 import rospy
 import actionlib
@@ -117,7 +117,8 @@ class TargetSelect:
             self.target = list(self.target)
             self.target.append(th_rg)
             return self.target
-
+        
+        
 
         if len(nodes) > 0:
             rospy.loginfo("[Main Node] Nodes ready! Elapsed time = %fsec", time.time() - tinit)
@@ -153,10 +154,24 @@ class TargetSelect:
             node_x = node[0] * resolution + origin['x']
             node_y = node[1] * resolution + origin['y']
             dist = math.hypot(node_x - other_goal['x'], node_y - other_goal['y']) 
-            if dist < 5 and len(nodes) > 2:
+            if dist < 1 and len(nodes) > 2:
                 nodes.remove(node)
 
-    
+        # pick Random node!!
+        if force_random:
+            ind = random.randrange(0,len(nodes))
+            rospy.loginfo('index is: %d', ind)
+            rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
+            tempX = nodes[ind][0] * resolution + origin['x']
+            tempY = nodes[ind][1] * resolution + origin['y']
+            th_rg = math.atan2(tempY - robotPose['y'], \
+                    tempX - robotPose['x'])
+            self.target = [tempX, tempY, th_rg]
+            rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
+                            self.target[0], self.target[1])
+            rospy.loginfo("-----------------------------------------")
+            return self.target
+ 
 #        # Calculate topological cost
 #        rayLength = 800  # in pixels
 #        obstThres = 49
@@ -312,6 +327,9 @@ class TargetSelect:
 #                normTopo = 0
 #            else:
 #                normTopo = 1 - (wTopo[i] - min(wTopo)) / (max(wTopo) - min(wTopo))
+#            if wDist[i] == max(wDist):
+#                nodes.remove(nodes[i])
+#                continue
             if max(wDist) - min(wDist) == 0:
                 normDist = 0
             else:
@@ -333,6 +351,7 @@ class TargetSelect:
         priorWeight = []
         for i in range(0, len(nodes)):
             pre = wDistNorm[i] / 0.5
+            #pre = 1
 #            pre = 8 * round((wTopoNorm[i] / 0.5), 0) + \
 #                   4 * round((wDistNorm[i] / 0.5), 0) + \
 #                    2 * round((wCoveNorm[i] / 0.5), 0) \
@@ -346,7 +365,7 @@ class TargetSelect:
         smoothFactor = []
         for i in range(0, len(nodes)):
             coeff = 1 - wDistNorm[i]
-            #coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
+           #coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
             #            2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
             # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
             #             (1 - wRotNorm[i])) / (2**3 - 1)
@@ -379,21 +398,7 @@ class TargetSelect:
         rospy.loginfo("-----------------------------------------")
         self.previousTarget = [goals_and_costs[0][0][0], goals_and_costs[0][0][1]]
         
-        # pick Random node!!
-        if force_random:
-            ind = random.randrange(0,len(nodes))
-            rospy.loginfo('index is: %d', ind)
-            rospy.loginfo('Random raw node is: [%u, %u]', nodes[ind][0], nodes[ind][1])
-            tempX = nodes[ind][0] * resolution + origin['x']
-            tempY = nodes[ind][1] * resolution + origin['y']
-            th_rg = math.atan2(tempY - robotPose['y'], \
-                    tempX - robotPose['x'])
-            self.target = [tempX, tempY, th_rg]
-            rospy.loginfo("[Main Node] Random target found at [%f, %f]", 
-                            self.target[0], self.target[1])
-            rospy.loginfo("-----------------------------------------")
-            return self.target
-       
+               
 
         return self.target
 

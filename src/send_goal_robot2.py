@@ -7,6 +7,7 @@ import math
 import random
 import tf
 
+from timeit import default_timer as tmpimer
 from geometry_msgs.msg import PoseStamped, Twist, Quaternion
 from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
 from subscriber_node_two_robots import SubscriberNode
@@ -14,7 +15,7 @@ from subscriber_node_two_robots import SubscriberNode
 #from cov_based_target_select import TargetSelect
 from topo_graph_target_select2 import TargetSelect
 #from two_robots_cov_based_target_select import TargetSelect
-
+from std_msgs.msg import Float64
 
 class SendMoveBaseGoalClient2:
 
@@ -22,14 +23,16 @@ class SendMoveBaseGoalClient2:
         self.subNode = SubscriberNode()
         self.selectTarget = TargetSelect()
         self.moveBaseGoal2 = MoveBaseGoal()
-        
+        self.timeInit = Float64()
+        self.timeEnd = Float64()
+
         self.moveBaseGoal2.target_pose.header.frame_id = "map"
         self.moveBaseGoal2.target_pose.header.stamp = rospy.Time.now()
         rospy.loginfo("[Main Node] Wait 20 seconds for the subscribers to be ready!")
         time.sleep(20)
 
-#        self.velocityPub = rospy.Publisher(rospy.get_param('velocity_pub2'), Twist, queue_size = 1)
-#        self.rotateRobot()
+        self.TimeInitPub = rospy.Publisher('/robot2/timeinit', Float64, queue_size = 1)
+        self.TimeEndPub = rospy.Publisher('/robot2/timeend', Float64, queue_size = 1)
 
         rospy.Timer(rospy.Duration(1.0), self.calculateSendGoal)
 
@@ -44,7 +47,7 @@ class SendMoveBaseGoalClient2:
         resolution = rospy.get_param('resolution')
 
         flag = 1
-        force_random = False 
+        force_random = False
 
         rospy.logwarn("Robot1 Goal is: [x, y] = [%f, %f] ", goal['x'], goal['y'])
         target2 = self.selectTarget.targetSelection(ogm, coverage, origin, \
@@ -65,7 +68,9 @@ class SendMoveBaseGoalClient2:
         q = Quaternion(*q_angle)
         
         self.moveBaseGoal2.target_pose.pose.orientation = q
-
+        
+        self.timeInit.data = time.time()
+        rospy.logwarn('Initial time Robot 2(Two) is: %s', str(self.timeInit.data))
         moveBaseClient2.wait_for_server()
         rospy.loginfo("[Main Node] Sending goal 2......")
         rospy.loginfo("[Main Node] Goal at [%f, %f, %f]!", \
@@ -74,8 +79,11 @@ class SendMoveBaseGoalClient2:
                          self.moveBaseGoal2.target_pose.pose.position.z)
         moveBaseClient2.send_goal(self.moveBaseGoal2)
         moveBaseClient2.wait_for_result()
-
-
+        self.timeEnd.data = time.time()
+        rospy.logwarn('End time Robot2 (Two) is: %s', str(self.timeEnd.data))
+        rospy.logerr('Clear Explore Robot2 (Two) time is: %s', str(self.timeEnd.data - self.timeInit.data))
+        self.TimeInitPub.publish(self.timeInit)
+        self.TimeEndPub.publish(self.timeEnd)
 
 
 
