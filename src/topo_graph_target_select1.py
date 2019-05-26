@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+from __future__ import division
 
 import rospy
 import actionlib
@@ -49,20 +49,20 @@ class TargetSelect:
         rospy.loginfo("[Target Select Node] OGM_Size = [%u, %u]", initOgm.shape[0], initOgm.shape[1])
 
         # willow params
-        ogm_limits = {}
-        ogm_limits['min_x'] = 350  # used to be 200
-        ogm_limits['max_x'] = 800  # used to be 800
-        ogm_limits['min_y'] = 200
-        ogm_limits['max_y'] = 800
+#        ogm_limits = {}
+#        ogm_limits['min_x'] = 350  # used to be 200
+#        ogm_limits['max_x'] = 800  # used to be 800
+#        ogm_limits['min_y'] = 200
+#        ogm_limits['max_y'] = 800
 
 #        # Big Map
-#        ogm_limits = {}
-#        ogm_limits['min_x'] = 200  # used to be 200
-##        ogm_limits['max_x'] = 800  # used to be 800
-#        ogm_limits['max_x'] = 850
-#        ogm_limits['min_y'] = 300
-#        ogm_limits['max_y'] = 710
-#
+        ogm_limits = {}
+        ogm_limits['min_x'] = 200  # used to be 200
+#        ogm_limits['max_x'] = 800  # used to be 800
+        ogm_limits['max_x'] = 850
+        ogm_limits['min_y'] = 300
+        ogm_limits['max_y'] = 710
+
 
         # publisher
 
@@ -327,6 +327,9 @@ class TargetSelect:
 #                normTopo = 0
 #            else:
 #                normTopo = 1 - (wTopo[i] - min(wTopo)) / (max(wTopo) - min(wTopo))
+#            if wDist[i] == max(wDist):
+#                nodes.remove(nodes[i])
+#                continue
             if max(wDist) - min(wDist) == 0:
                 normDist = 0
             else:
@@ -348,6 +351,7 @@ class TargetSelect:
         priorWeight = []
         for i in range(0, len(nodes)):
             pre = wDistNorm[i] / 0.5
+            #pre = 1
 #            pre = 8 * round((wTopoNorm[i] / 0.5), 0) + \
 #                   4 * round((wDistNorm[i] / 0.5), 0) + \
 #                    2 * round((wCoveNorm[i] / 0.5), 0) \
@@ -361,7 +365,7 @@ class TargetSelect:
         smoothFactor = []
         for i in range(0, len(nodes)):
             coeff = 1 - wDistNorm[i]
-            #coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
+           #coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
             #            2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
             # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
             #             (1 - wRotNorm[i])) / (2**3 - 1)

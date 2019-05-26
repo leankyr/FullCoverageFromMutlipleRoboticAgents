@@ -21,11 +21,11 @@ resolution: 0.04                # Map resolution
 radius: 2
 
 # Willow params
-width: 864
-height: 896
-
-origin_x: -16.36
-origin_y: -18.92
+#width: 864
+#height: 896
+#
+#origin_x: -16.36
+#origin_y: -18.92
 
 
 ## corridor params
@@ -36,9 +36,9 @@ origin_y: -18.92
 #origin_y: -13.80
 
 ## Big Map params 
-#width: 1088
-#height: 1344
-#
-#origin_x: -26.6
-#origin_y: -26.6
+width: 1088
+height: 1344
+
+origin_x: -26.6
+origin_y: -26.6
 
