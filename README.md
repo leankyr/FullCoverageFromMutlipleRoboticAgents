@@ -2,7 +2,7 @@
 
 My thesis repository.
 
-As long as you have the willow garage world on the gazebo resource path and GAZEBO simulator which comes out of the box with ROS, gazebo_ros_pkgs, and the navigation stack you seem to be fine... However there may be some dependencies I have yet to figure out.
+As long as you have the willow garage world on the gazebo resource path and GAZEBO simulator which comes out of the box with ROS, gazebo_ros_pkgs, and the navigation stack you seem to be fine.
 
 A python dependency is bresenham which can be installed through pip
 
