@@ -172,97 +172,6 @@ class TargetSelect:
             rospy.loginfo("-----------------------------------------")
             return self.target
  
-#        # Calculate topological cost
-#        rayLength = 800  # in pixels
-#        obstThres = 49
-#        wTopo = []
-#        dRad = []
-#        for i in range(0, 8):
-#            dRad.append(rayLength)
-#        for k in range(0, len(nodes)):
-#            # Determine whether the ray length passes the OGM limits
-#            if nodes[k][0] + rayLength > ogm.shape[0]:
-#                self.xLimitUp = ogm.shape[0] - 1
-#            else:
-#                self.xLimitUp = nodes[k][0] + rayLength
-#            if nodes[k][0] - rayLength < 0:
-#                self.xLimitDown = 0
-#            else:
-#                self.xLimitDown = nodes[k][0] - rayLength
-#            if nodes[k][1] + rayLength > ogm.shape[1]:
-#                self.yLimitUp = ogm.shape[1] - 1
-#            else:
-#                self.yLimitUp = nodes[k][1] + rayLength
-#            if nodes[k][1] - rayLength < 0:
-#                self.yLimitDown = 0
-#            else:
-#                self.yLimitDown = nodes[k][1] - rayLength
-#            #### Here We Do the Ray Casting ####  
-#            # Find the distance between the node and obstacles
-#            for i in range(nodes[k][0], self.xLimitUp):
-#                if ogm[i][nodes[k][1]] > obstThres:
-#                    dRad[0] = i - nodes[k][0]
-#                    break
-#            for i in range(self.xLimitDown, nodes[k][0]):
-#                if ogm[i][nodes[k][1]] > obstThres:
-#                    dRad[1] = nodes[k][0] - i
-#                    break
-#            for i in range(nodes[k][1], self.yLimitUp):
-#                if ogm[nodes[k][0]][i] > obstThres:
-#                    dRad[2] = i - nodes[k][1]
-#                    break
-#            for i in range(self.yLimitDown, nodes[k][1]):
-#                if ogm[nodes[k][0]][i] > obstThres:
-#                    dRad[3] = nodes[k][1] - i
-#                    break
-#            for i in range(nodes[k][0], self.xLimitUp):
-#                for j in range(nodes[k][1], self.yLimitUp):
-#                    if ogm[i][j] > obstThres:
-#                        crosscut = \
-#                            math.sqrt((i - nodes[k][0])**2 + (j - nodes[k][1])**2)
-#                        dRad[4] = crosscut
-#                        break
-#                    else:
-#                        break
-#                if ogm[i][j] > obstThres:
-#                    break
-#            for i in range(self.xLimitDown, nodes[k][0]):
-#                for j in range(self.yLimitDown, nodes[k][1]):
-#                    if ogm[i][j] > obstThres:
-#                        crosscut = \
-#                            math.sqrt((nodes[k][0] - i)**2 + (nodes[k][1] - j)**2)
-#                        dRad[5] = crosscut
-#                        break
-#                    else:
-#                        break
-#                if ogm[i][j] > obstThres:
-#                    break
-#            for i in range(nodes[k][0], self.xLimitUp):
-#                for j in range(self.yLimitDown, nodes[k][1]):
-#                    if ogm[i][j] > obstThres:
-#                        crosscut = \
-#                            math.sqrt((i - nodes[k][0])**2 + (nodes[k][1] - j)**2)
-#                        dRad[6] = crosscut
-#                        break
-#                    else:
-#                        break
-#                if ogm[i][j] > obstThres:
-#                    break
-#            for i in range(self.xLimitDown, nodes[k][0]):
-#                for j in range(nodes[k][1], self.yLimitUp):
-#                    if ogm[i][j] > obstThres:
-#                        crosscut = \
-#                            math.sqrt((nodes[k][0] - i)**2 + (j - nodes[k][1])**2)
-#                        dRad[7] = crosscut
-#                        break
-#                    else:
-#                        break
-#                if ogm[i][j] > obstThres:
-#                    break
-#
-#            wTopo.append(sum(dRad) / 8)
-#        for i in range(len(nodes)):
-#            rospy.logwarn("Topo Cost is: %f ",wTopo[i])
 
         # Calculate distance cost
         wDist = []
@@ -274,14 +183,7 @@ class TargetSelect:
         for i in range(0, len(nodes)):
             dist = math.sqrt((nodes[i][0] * resolution + origin['x_px'] - robotPose['x_px'])**2 + \
                         (nodes[i][1] * resolution + origin['y_px'] - robotPose['y_px'])**2)
-#            # numpy.var is covariance
-#            tempX = ((robotPose['x'] - nodesX[i] * resolution + origin['x'])**2) / (2 * numpy.var(nodesX))
-#            tempY = ((robotPose['y'] - nodesY[i] * resolution + origin['y'])**2) / (2 * numpy.var(nodesY))
-#            try:
-#                temp = 1 - math.exp(tempX + tempY) + 0.001 # \epsilon << 1
-#            except OverflowError:
-#                temp = 1
-#            gaussCoeff = 1 / temp
+
 
 #        for i in range(len(nodes)):
 #            rospy.logwarn("Distance Cost is: %f ",wDist[i])
@@ -290,32 +192,6 @@ class TargetSelect:
 
         #return self.target
 
-#        # Calculate coverage cost
-#        dSamp = 1 / resolution
-#        wCove = []
-#        for k in range(0, len(nodes)):
-#            athr = 0
-#            for i in range(-1, 1):
-#                indexX = int(nodes[k][0] + i * dSamp)
-#                if indexX >= 0:
-#                    for j in range(-1, 1):
-#                        indexY = int(nodes[k][1] + j * dSamp)
-#                        if indexY >= 0:
-#                            athr += coverage[indexX][indexY]
-#            wCove.append(athr)
-#
-##        for i in range(len(nodes)):
-##            rospy.logwarn("Cove Cost is: %f ",wCove[i])
-#
-#        # Calculate rotational cost
-#        wRot = []
-#        for i in range(0, len(nodes)):
-#            dTh = math.atan2(nodes[i][1] - robotPose['y_px'], \
-#                        nodes[i][0] - robotPose['x_px']) - robotPose['th']
-#            wRot.append(dTh)
-#
-##        for i in range(len(nodes)):
-##            rospy.logwarn("Rot Cost is: %f ",wRot[i])
 
         # Normalize costs
 #        wTopoNorm = []
@@ -352,23 +228,13 @@ class TargetSelect:
         for i in range(0, len(nodes)):
             pre = wDistNorm[i] / 0.5
             #pre = 1
-#            pre = 8 * round((wTopoNorm[i] / 0.5), 0) + \
-#                   4 * round((wDistNorm[i] / 0.5), 0) + \
-#                    2 * round((wCoveNorm[i] / 0.5), 0) \
-#                    + round((wRotNorm[i] / 0.5), 0)
-            # pre = 4 * round((wDistNorm[i] / 0.5), 0) + \
-            #         2 * round((wCoveNorm[i] / 0.5), 0) \
-            #         + round((wRotNorm[i] / 0.5), 0)
             priorWeight.append(pre)
 
         # Calculate smoothing factor
         smoothFactor = []
         for i in range(0, len(nodes)):
             coeff = 1 - wDistNorm[i]
-           #coeff = (8 * (1 - wTopoNorm[i]) + 4 * (1 - wDistNorm[i]) + \
-            #            2 * (1 - wCoveNorm[i]) + (1 - wRotNorm[i])) / (2**4 - 1)
-            # coeff = (4 * (1 - wDistNorm[i]) + 2 * (1 - wCoveNorm[i]) + \
-            #             (1 - wRotNorm[i])) / (2**3 - 1)
+
             smoothFactor.append(coeff)
 
         # Calculate costs
