@@ -1,4 +1,4 @@
-# my_2d_nav
+# FullCoverageFromMutlipleRoboticAgents
 
 My thesis repository.
 
@@ -12,13 +12,13 @@ how to execute:
 
 2.0) open one terminal
 
-2.1) type: `roslaunch my_2d_nav amcl_one_to_rule_them_all.launch`
+2.1) type: `roslaunch FullCoverageFromMutlipleRoboticAgents amcl_one_to_rule_them_all.launch`
 
 2.2) press Enter
 
 3.0) open another terminal(second different from the one above)
 
-3.1) type: `roslaunch my_2d_nav target_select.launch`
+3.1) type: `roslaunch FullCoverageFromMutlipleRoboticAgents target_select.launch`
 
 3.2) press Enter
 
