@@ -8,6 +8,6 @@ scipy==1.2.1
 pluginlib==1.11.3
 gazebo-plugins==2.5.18
 gazebo-ros==2.5.18
-numpy==1.11.0
+numpy==1.22
 actionlib==1.11.13
 rospkg==1.1.7
