@@ -4,7 +4,7 @@ tf==1.11.9
 tf2-geometry-msgs==0.5.20
 tf2-ros==0.5.20
 rviz==1.12.16
-scipy==1.2.1
+scipy==1.10.0
 pluginlib==1.11.3
 gazebo-plugins==2.5.18
 gazebo-ros==2.5.18
